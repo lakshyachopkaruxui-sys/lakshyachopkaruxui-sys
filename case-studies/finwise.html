@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finwise — Case Study | Lakshya Chopra</title>
+  <meta name="description" content="Redesigning onboarding for a personal-finance app to cut drop-off and turn first-time users into daily habits." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22><rect width=%2232%22 height=%2232%22 rx=%229%22 fill=%22%232f5cf5%22/></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <header class="nav">
+    <div class="container nav__row">
+      <a href="../index.html" class="nav__logo"><span class="nav__mark"></span>Lakshya Chopra</a>
+      <nav class="nav__links">
+        <a href="../index.html#work">Work</a>
+        <a href="../index.html#process">Process</a>
+        <a href="../index.html#about">About</a>
+        <a href="../index.html#contact">Contact</a>
+      </nav>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <a href="../index.html#contact" class="nav__cta">Start a project →</a>
+        <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+  </header>
+
+  <a href="../index.html#work" class="cs-back">← Back to work</a>
+
+  <main>
+    <section class="cs-cover">
+      <div class="cs-cover__panel" style="background:
+          radial-gradient(circle at 15% 15%, rgba(255,255,255,0.5), transparent 40%),
+          radial-gradient(circle at 85% 20%, rgba(120,190,255,0.5), transparent 45%),
+          radial-gradient(circle at 25% 85%, rgba(19,186,98,0.6), transparent 55%),
+          linear-gradient(150deg, #0d3a2b 0%, #0c1f4d 60%, #12132a 100%);">
+        <div class="noise hero__noise"></div>
+        <div class="cs-cover__topbar" style="color:rgba(255,255,255,0.75);">
+          <span>Lakshya Chopra</span>
+          <span class="pill pill--soft" style="background:rgba(255,255,255,0.15); color:#fff; backdrop-filter:blur(6px);">5 minute read</span>
+          <span>2024</span>
+        </div>
+        <div class="cs-cover__mid">
+          <p class="hero__credit" style="color:rgba(255,255,255,0.7);">Case Study</p>
+          <h1 class="cs-cover__title" style="color:#fff;">Finwise</h1>
+          <p class="cs-cover__tagline" style="color:rgba(255,255,255,0.78);">A personal-finance app rebuilds its first five minutes — turning a confusing setup flow into the reason people come back the next day.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="cs-meta">
+      <div class="cs-meta__item"><span>Role</span><strong>Lead UX Designer</strong></div>
+      <div class="cs-meta__item"><span>Timeline</span><strong>8 weeks</strong></div>
+      <div class="cs-meta__item"><span>Client</span><strong>Finwise (concept)</strong></div>
+      <div class="cs-meta__item"><span>Platform</span><strong>iOS &amp; Android</strong></div>
+      <div class="cs-meta__item"><span>Tools</span><strong>Figma, Maze</strong></div>
+    </div>
+
+    <div class="cs-block cs-block--split reveal">
+      <div class="cs-block__eyebrow eyebrow">
+        <span class="pill pill--blue">Overview</span>
+        <span class="eyebrow__label">Brand Overview</span>
+      </div>
+      <div class="cs-block__body">
+        <p>Finwise helps people budget, save, and track spending without the spreadsheet. It's built for a generation that wants their finances to feel less like homework — but the app's own sign-up flow was doing the opposite.</p>
+      </div>
+    </div>
+    <div class="cs-visual-grid reveal">
+      <div class="cs-visual cs-visual--wide" style="background:linear-gradient(150deg,#13ba62,#0c3a2b);">
+        <div class="mockup">
+          <div class="mockup__bar"><span class="mockup__dot"></span><span class="mockup__dot"></span><span class="mockup__dot"></span></div>
+          <div class="mockup__body"><div class="mockup__main"><div class="mockup__row"><div class="mockup__card"><div class="mockup__pill-sm"></div><div class="mockup__line mockup__line--dim"></div></div><div class="mockup__card"><div class="mockup__pill-sm"></div><div class="mockup__line mockup__line--dim"></div></div><div class="mockup__card"><div class="mockup__pill-sm"></div><div class="mockup__line mockup__line--dim"></div></div></div><div class="mockup__block"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-block cs-block--split cs-block--divider reveal">
+      <div class="cs-block__eyebrow eyebrow">
+        <span class="pill pill--blue">Pain</span>
+        <span class="eyebrow__label">Problem Statement</span>
+      </div>
+      <div class="cs-block__body">
+        <p>New users were dropping off before they ever saw the app's core value. Onboarding asked for bank linking, budget categories, and notification permissions all up front — three trust-heavy decisions before a single "aha" moment.</p>
+        <h5>As a result</h5>
+        <ul>
+          <li>41% of installs never completed account setup.</li>
+          <li>Users who skipped bank linking rarely returned within a week.</li>
+          <li>Support tickets about "what does this app actually do" outnumbered bug reports.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cs-highlight reveal">
+      <div>
+        <h3>Show value before asking for trust.</h3>
+        <p>Every step in the new flow earns the next one — nothing is asked for until the user has a reason to give it.</p>
+      </div>
+      <div class="cs-highlight__visual">
+        <div class="mockup">
+          <div class="mockup__bar"><span class="mockup__dot"></span><span class="mockup__dot"></span><span class="mockup__dot"></span></div>
+          <div class="mockup__body"><div class="mockup__main"><div class="mockup__line mockup__line--sm"></div><div class="mockup__row"><div class="mockup__pill-sm"></div><div class="mockup__pill-sm"></div></div><div class="mockup__block"></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-block cs-block--split reveal">
+      <div class="cs-block__eyebrow eyebrow">
+        <span class="pill pill--blue">Solution</span>
+        <span class="eyebrow__label">How Finwise Fits</span>
+      </div>
+      <div class="cs-block__body">
+        <p>We split onboarding into two phases: a 40-second "preview" that shows a sample budget built from a couple of quick questions, then a "commit" phase — bank linking and notifications — introduced only after the user has seen their own numbers.</p>
+        <h5>Key pain points we aimed to solve</h5>
+        <ul>
+          <li><strong>Trust before data</strong> — demonstrate value with sample data first.</li>
+          <li><strong>Front-loaded permissions</strong> — spread requests across natural moments.</li>
+          <li><strong>Unclear value prop</strong> — lead with an outcome, not a feature list.</li>
+          <li><strong>One-size onboarding</strong> — branch by goal (save, budget, or track).</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="numbered-section">
+      <div class="numbered-item reveal">
+        <div>
+          <div class="numbered-item__num">01</div>
+          <h4 class="numbered-item__title">Strategy &amp; Approach</h4>
+        </div>
+        <div class="numbered-item__body">
+          <p>Research showed most drop-off happened at the bank-linking step, not because users doubted the security, but because they hadn't yet decided the app was worth the twenty seconds it takes. So the strategy centered on sequencing:</p>
+          <ul>
+            <li><strong>Preview first</strong> — a working budget, built from two questions, before any account creation.</li>
+            <li><strong>Ask in context</strong> — request bank access only when the user tries to see real numbers.</li>
+            <li><strong>Progress, not forms</strong> — every screen shows what the user gets, not just what's required.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="numbered-item reveal">
+        <div>
+          <div class="numbered-item__num">02</div>
+          <h4 class="numbered-item__title">UI/UX Visual Workflow</h4>
+        </div>
+        <div class="numbered-item__body">
+          <p>The new flow was prototyped and tested across four rounds of moderated usability sessions:</p>
+          <ul>
+            <li>A three-question goal picker replacing an eleven-field form.</li>
+            <li>A live sample budget generated instantly from those answers.</li>
+            <li>Bank linking framed as "see your real numbers," not a security form.</li>
+            <li>A single home screen that doubles as the onboarding checklist.</li>
+          </ul>
+          <div class="numbered-item__shots">
+            <div class="shot" style="background:linear-gradient(160deg,#13ba62,#0c3a2b);"><div class="mockup"><div class="mockup__bar"><span class="mockup__dot"></span></div><div class="mockup__body"><div class="mockup__main"><div class="mockup__line mockup__line--sm"></div><div class="mockup__block"></div></div></div></div></div>
+            <div class="shot" style="background:linear-gradient(160deg,#1a3fd6,#0a1230);"><div class="mockup"><div class="mockup__bar"><span class="mockup__dot"></span></div><div class="mockup__body"><div class="mockup__main"><div class="mockup__card"><div class="mockup__pill-sm"></div><div class="mockup__line mockup__line--dim"></div></div><div class="mockup__block"></div></div></div></div></div>
+            <div class="shot" style="background:linear-gradient(160deg,#0d9750,#0a1230);"><div class="mockup"><div class="mockup__bar"><span class="mockup__dot"></span></div><div class="mockup__body"><div class="mockup__side"><div class="mockup__block"></div></div><div class="mockup__main"><div class="mockup__line mockup__line--sm"></div><div class="mockup__block"></div></div></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="numbered-item reveal">
+        <div>
+          <div class="numbered-item__num">03</div>
+          <h4 class="numbered-item__title">Testing &amp; Iteration</h4>
+        </div>
+        <div class="numbered-item__body">
+          <p>Each round of testing changed a specific assumption:</p>
+          <ul>
+            <li><strong>Round 1</strong> — the goal picker was too abstract; we added real dollar examples.</li>
+            <li><strong>Round 2</strong> — users wanted to skip bank linking entirely; we added a manual-entry path.</li>
+            <li><strong>Round 3</strong> — notification permission felt premature; moved to after first budget edit.</li>
+            <li><strong>Round 4</strong> — validated the final flow against a 12-person unmoderated study.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-block" style="padding-top:0;">
+      <div class="testimonial reveal">
+        <div class="testimonial__avatar">RP</div>
+        <div>
+          <p class="testimonial__quote">“The first version felt like a bank application. This one felt like it was already working for me before I'd given it anything.”</p>
+          <p class="testimonial__name">Riya Patel</p>
+          <p class="testimonial__role">Beta tester, Finwise</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cs-block cs-block--split cs-block--divider reveal">
+      <div class="cs-block__eyebrow eyebrow">
+        <span class="pill pill--blue">Outcome</span>
+        <span class="eyebrow__label">Results</span>
+      </div>
+      <div class="cs-block__body">
+        <ul>
+          <li><strong>Onboarding completion</strong> rose from 59% to 84% in the redesigned flow.</li>
+          <li><strong>Bank-linking rate</strong> increased by 33% once moved past the preview step.</li>
+          <li><strong>Day-7 retention</strong> improved by 22 percentage points among new sign-ups.</li>
+          <li><strong>Support volume</strong> on "what is this app" tickets dropped by half.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="cs-block cs-block--split reveal">
+      <div class="cs-block__eyebrow eyebrow">
+        <span class="pill pill--green">Reflection</span>
+        <span class="eyebrow__label">What I’d take forward</span>
+      </div>
+      <div class="cs-block__body">
+        <p>The instinct to ask for everything upfront usually comes from an internal need — legal, security, analytics — not a user need. Reordering the flow around "what does the user need to believe next" rather than "what do we need to collect next" was a small mental shift with an outsized effect on the numbers.</p>
+      </div>
+    </div>
+
+    <a href="carepath.html" class="cs-next reveal">
+      <div>
+        <p class="cs-next__label">Next project</p>
+        <h4 class="cs-next__title">CarePath — Patient portal</h4>
+      </div>
+      <span class="cs-next__arrow">→</span>
+    </a>
+
+    <section class="section" id="contact">
+      <div class="contact reveal">
+        <div class="noise" style="opacity:0.15;"></div>
+        <p class="pill pill--green" style="margin-bottom:24px;">Let’s talk</p>
+        <h2 class="contact__title">Let’s bring your<br />ideas to life.</h2>
+        <a class="contact__email" href="mailto:lakshyachopkaruxui@gmail.com">lakshyachopkaruxui@gmail.com</a>
+        <div class="contact__actions">
+          <a href="mailto:lakshyachopkaruxui@gmail.com" class="btn btn--light">Say hello</a>
+          <a href="../index.html#work" class="btn btn--ghost" style="border-color:rgba(255,255,255,0.3); color:#fff;">See more work</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© <span class="footer__year">2026</span> Lakshya Chopra. All rights reserved.</span>
+    <a href="mailto:lakshyachopkaruxui@gmail.com">lakshyachopkaruxui@gmail.com</a>
+  </footer>
+
+  <script src="../js/main.js"></script>
+</body>
+</html>
