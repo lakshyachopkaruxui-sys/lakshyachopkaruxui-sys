@@ -1,0 +1,42 @@
+{
+  "name": "tear-reality-webxr",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "A WebXR experience about physically tearing reality open with both hands.",
+  "scripts": {
+    "dev": "vite",
+    "dev:http": "vite --mode http --port 5174",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "typecheck": "tsc --noEmit",
+    "test:interaction": "node scripts/test-interaction.mjs",
+    "test:xr-rendering": "node scripts/test-xr-rendering.mjs",
+    "test:environments": "node scripts/test-environments.mjs",
+    "test:sky-flock": "node scripts/test-sky-flock.mjs",
+    "test:world-three-assets": "node scripts/test-world-three-assets.mjs",
+    "test:world-watcher": "node scripts/test-world-watcher.mjs",
+    "test:entry": "node scripts/test-entry.mjs",
+    "test:xr-hands": "node scripts/test-xr-hands.mjs",
+    "test:marine-life": "node scripts/test-marine-life.mjs",
+    "test:water-threshold": "node scripts/test-water-threshold.mjs",
+    "test:audio": "node scripts/test-audio.mjs",
+    "test:underwater-environment": "node scripts/test-underwater-environment.mjs",
+    "test:violet-audio": "node scripts/test-violet-audio.mjs",
+    "test:world-alignment": "node scripts/test-world-alignment.mjs",
+    "test:guide": "node scripts/test-guide.mjs",
+    "test:xr-help": "node scripts/test-xr-help-gesture.mjs"
+  },
+  "dependencies": {
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "@dgreenheck/ez-tree": "1.1.0",
+    "@iwer/devui": "^2.4.0",
+    "@types/three": "^0.186.0",
+    "@vitejs/plugin-basic-ssl": "^2.3.0",
+    "iwer": "^2.4.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0"
+  }
+}

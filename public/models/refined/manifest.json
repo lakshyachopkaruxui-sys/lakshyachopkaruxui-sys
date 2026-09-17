@@ -1,0 +1,130 @@
+[
+  {
+    "species": "oak",
+    "seed": 35729,
+    "leafSizeMultiplier": 1.45,
+    "triangles": 7908,
+    "bytes": 437280,
+    "bounds": {
+      "min": [
+        -3.7188987731933594,
+        0,
+        -3.6906447410583496
+      ],
+      "max": [
+        3.559049367904663,
+        8,
+        3.7995693683624268
+      ]
+    },
+    "meshes": [
+      {
+        "name": "bark",
+        "material": "bark",
+        "triangles": 3012
+      },
+      {
+        "name": "leaves",
+        "material": "leaves",
+        "triangles": 4896
+      }
+    ]
+  },
+  {
+    "species": "ash",
+    "seed": 36330,
+    "leafSizeMultiplier": 1.45,
+    "triangles": 7620,
+    "bytes": 417116,
+    "bounds": {
+      "min": [
+        -3.9103147983551025,
+        0,
+        -2.979846715927124
+      ],
+      "max": [
+        4.238113880157471,
+        8,
+        3.854088544845581
+      ]
+    },
+    "meshes": [
+      {
+        "name": "bark",
+        "material": "bark",
+        "triangles": 3012
+      },
+      {
+        "name": "leaves",
+        "material": "leaves",
+        "triangles": 4608
+      }
+    ]
+  },
+  {
+    "species": "oak_lod",
+    "seed": 35729,
+    "leafSizeMultiplier": 1.45,
+    "sourceSpecies": "oak",
+    "detail": "distant",
+    "triangles": 2816,
+    "bytes": 148356,
+    "bounds": {
+      "min": [
+        -3.328146457672119,
+        0,
+        -3.685112714767456
+      ],
+      "max": [
+        2.9019269943237305,
+        8,
+        3.2599499225616455
+      ]
+    },
+    "meshes": [
+      {
+        "name": "bark",
+        "material": "bark",
+        "triangles": 1376
+      },
+      {
+        "name": "leaves",
+        "material": "leaves",
+        "triangles": 1440
+      }
+    ]
+  },
+  {
+    "species": "ash_lod",
+    "seed": 36330,
+    "leafSizeMultiplier": 1.45,
+    "sourceSpecies": "ash",
+    "detail": "distant",
+    "triangles": 2816,
+    "bytes": 148360,
+    "bounds": {
+      "min": [
+        -2.9475340843200684,
+        0,
+        -1.9716993570327759
+      ],
+      "max": [
+        3.5988407135009766,
+        8,
+        2.4906301498413086
+      ]
+    },
+    "meshes": [
+      {
+        "name": "bark",
+        "material": "bark",
+        "triangles": 1376
+      },
+      {
+        "name": "leaves",
+        "material": "leaves",
+        "triangles": 1440
+      }
+    ]
+  }
+]

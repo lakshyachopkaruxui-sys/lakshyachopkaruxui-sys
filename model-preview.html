@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Asset preview (all CC0)</title>
+  <style>
+    body { margin: 0; background: #eef1e8; font: 13px/1.4 system-ui, sans-serif; color: #33402e; }
+    h1 { font-weight: 500; font-size: 18px; padding: 14px 16px 0; margin: 0; }
+    p.sub { padding: 4px 16px 10px; margin: 0; color: #6b7863; }
+    #stage { position: relative; }
+    #labels { position: absolute; inset: 0; pointer-events: none; }
+    .lab { position: absolute; font-size: 11px; color: #3c4a35; background: rgba(255,255,255,0.6); padding: 1px 4px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <h1>Asset preview — all CC0</h1>
+  <p class="sub">One WebGL context, scissored viewports (browsers cap the number of contexts per page).</p>
+  <div id="stage"><div id="labels"></div></div>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+    const fromUrl = new URLSearchParams(location.search).get('items');
+    const items = fromUrl ? fromUrl.split(',') : (window.PREVIEW_ITEMS || [
+      'nature/TreeHigh001','nature/TreeHigh002','nature/TreeHigh003','nature/TreeMed001','nature/TreeMed002','nature/TreeMed003',
+      'nature/TreeLow001','nature/TreeLow002','nature/TreeLow003','nature/TreeLow004','nature/Bush001','nature/Bush002',
+      'nature/Grass001','nature/Grass002','nature/Grass003','nature/Reed001','nature/Reed002','nature/Rock001','nature/Rock002','nature/Rock003',
+      'nature/Cliff001','nature/Cliff002','nature/Cliff003','nature/Hill001','nature/Hill002','nature/Mountain001','nature/MountainFar001',
+      'nature/Cloud001','nature/Cloud002','nature/Stalactite001','nature/Stalactite002','nature/Stalactite003',
+      'minion-a01','Jellyfish','Owl','Marmot'
+    ]);
+
+    const COLS = 6, CELL = 190;
+    const rows = Math.ceil(items.length / COLS);
+    const width = COLS * CELL, height = rows * CELL;
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(1);
+    renderer.setSize(width, height);
+    renderer.setScissorTest(true);
+    document.getElementById('stage').prepend(renderer.domElement);
+    const labels = document.getElementById('labels');
+
+    const loader = new GLTFLoader();
+    const cells = [];
+    window.__report = [];
+
+    items.forEach((path, i) => {
+      const label = path.split('/').pop();
+      const col = i % COLS, row = Math.floor(i / COLS);
+      const lab = document.createElement('div');
+      lab.className = 'lab';
+      lab.textContent = label;
+      lab.style.left = col * CELL + 6 + 'px';
+      lab.style.top = row * CELL + CELL - 18 + 'px';
+      labels.append(lab);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xdfe6d6);
+      scene.add(new THREE.HemisphereLight(0xffffff, 0x5a6a48, 2.4));
+      const key = new THREE.DirectionalLight(0xfff0d8, 2.4);
+      key.position.set(2, 3, 4);
+      scene.add(key);
+      const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 100);
+      camera.position.set(0, 0.35, 2.6);
+      camera.lookAt(0, 0, 0);
+      const cell = { scene, camera, col, row, root: null };
+      cells.push(cell);
+
+      loader.load(`/models/${path}.glb`, (gltf) => {
+        const root = gltf.scene;
+        const box = new THREE.Box3();
+        root.updateWorldMatrix(true, true);
+        let tris = 0;
+        root.traverse((o) => {
+          if (o.isMesh && o.geometry) {
+            o.geometry.computeBoundingBox();
+            box.union(o.geometry.boundingBox.clone().applyMatrix4(o.matrixWorld));
+            tris += o.geometry.index ? o.geometry.index.count / 3 : o.geometry.attributes.position.count / 3;
+          }
+        });
+        const size = box.getSize(new THREE.Vector3());
+        const centre = box.getCenter(new THREE.Vector3());
+        const s = 1 / Math.max(size.x, size.y, size.z, 0.001);
+        root.scale.setScalar(s);
+        root.position.sub(centre.multiplyScalar(s));
+        scene.add(root);
+        cell.root = root;
+        window.__report.push({ label, tris });
+      }, undefined, () => window.__report.push({ label, failed: true }));
+    });
+
+    renderer.setAnimationLoop((t) => {
+      for (const c of cells) {
+        const x = c.col * CELL;
+        const y = height - (c.row + 1) * CELL;
+        renderer.setViewport(x, y, CELL, CELL);
+        renderer.setScissor(x, y, CELL, CELL);
+        if (c.root) c.root.rotation.y = t * 0.0004;
+        renderer.render(c.scene, c.camera);
+      }
+    });
+  </script>
+</body>
+</html>

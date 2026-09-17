@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Tear</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0d0f14; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+    #app { position: fixed; inset: 0; }
+    #app canvas { display: block; }
+    #intro {
+      position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+      gap: 18px; color: #cfd3da; background: radial-gradient(ellipse at center, #1a1d24 0%, #0b0c10 70%);
+      z-index: 10; transition: opacity 1.2s ease; text-align: center; padding: 28px 24px;
+      box-sizing: border-box; overflow-y: auto;
+    }
+    #intro > * { flex-shrink: 0; }
+    #intro > :first-child { margin-top: auto; }
+    #intro > :last-child { margin-bottom: auto; }
+    #intro.hidden { opacity: 0; pointer-events: none; }
+    #intro h1 { font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 400; letter-spacing: 0.14em; font-size: clamp(54px, 8vw, 88px); margin: 0 0 2px 0.14em; color: #e8e2d6; }
+    #intro .eyebrow { color: #aaa08e; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; }
+    #intro .journey { color: #aaa99f; font-size: 11px; letter-spacing: 0.05em; }
+    #journey-help { width: min(100%, 470px); font-size: 12px; line-height: 1.6; }
+    #journey-help summary { color: #bcb5a7; cursor: pointer; }
+    #journey-help ol { margin: 18px 0 0; padding: 0; list-style: none; text-align: left; display: grid; gap: 15px; }
+    #journey-help li strong { display: block; color: #e8d9bd; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: clamp(24px, 4vw, 32px); line-height: 1.2; font-weight: 400; }
+    #journey-help li span { display: block; color: #9ba1ab; margin-top: 2px; }
+    #intro p { margin: 0; max-width: 420px; line-height: 1.6; font-size: 14px; color: #8d929c; }
+    #intro .buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    #intro button {
+      font: inherit; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; padding: 12px 22px;
+      border-radius: 999px; border: 1px solid #5a4f40; background: transparent; color: #e8d9bd; cursor: pointer;
+    }
+    #intro button:hover:not(:disabled) { background: #2a241c; }
+    #intro #enter-headset { background: #dfd1b8; border-color: #dfd1b8; color: #242320; }
+    #intro #enter-headset:hover:not(:disabled) { background: #f0e3cd; }
+    #intro button:disabled { opacity: 0.35; cursor: default; }
+    #intro .note { font-size: 12px; color: #9ba1ab; min-height: 1em; max-width: 470px; line-height: 1.6; }
+    #headset-help { max-width: 470px; color: #a1a6ae; font-size: 12px; line-height: 1.6; }
+    #headset-help summary { cursor: pointer; color: #bcb5a7; }
+    #headset-help p { font-size: 12px; margin-top: 10px; color: #a1a6ae; }
+    #headset-help a { color: #d9c6a2; text-underline-offset: 3px; }
+    #intro button:focus-visible, #intro summary:focus-visible, #headset-help a:focus-visible { outline: 2px solid #d9c6a2; outline-offset: 4px; }
+    @media (prefers-reduced-motion: reduce) { #intro { transition: none; } }
+    #hud { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
+    #crosshair {
+      position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px;
+      transition: opacity 0.2s;
+    }
+    #crosshair::before {
+      content: ''; position: absolute; left: 50%; top: 50%; width: 4px; height: 4px; margin: -2px 0 0 -2px;
+      border-radius: 50%; background: rgba(255,255,255,0.85); box-shadow: 0 0 4px rgba(0,0,0,0.6);
+    }
+    #crosshair::after {
+      content: ''; position: absolute; inset: 0; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0);
+      transition: border-color 0.18s, transform 0.18s;
+    }
+    #crosshair.ready::after { border-color: rgba(255,198,120,0.95); transform: scale(1.15); }
+    #crosshair.holding::after { border-color: rgba(255,150,90,0.95); transform: scale(0.75); }
+    #seam-arrow {
+      position: absolute; width: 34px; height: 34px; color: rgba(255,198,120,0.9);
+    }
+    #seam-arrow::before {
+      content: ''; position: absolute; left: 4px; top: 50%; margin-top: -8px;
+      border: 8px solid transparent; border-left-color: currentColor; filter: drop-shadow(0 0 4px rgba(0,0,0,0.6));
+    }
+    #debug {
+      position: fixed; top: 8px; left: 8px; z-index: 6; color: #bfe; font: 11px/1.45 ui-monospace, Consolas, monospace;
+      background: rgba(0,0,0,0.6); padding: 8px 10px; white-space: pre; pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <div id="intro" aria-labelledby="experience-title">
+    <p class="eyebrow">An immersive journey</p>
+    <h1 id="experience-title">TEAR</h1>
+    <p>A seam in the familiar. A glimpse of somewhere else.<br />Reach out, pinch, and gently pull.</p>
+    <p class="journey">Comfort &nbsp; / &nbsp; Curiosity &nbsp; / &nbsp; Wonder &nbsp; / &nbsp; Fear &nbsp; / &nbsp; Home</p>
+    <div class="buttons">
+      <button id="enter-headset" disabled>Checking headset…</button>
+      <button id="enter-desktop">Desktop preview</button>
+    </div>
+    <div class="note" id="xr-note" role="status" aria-live="polite"></div>
+    <details id="journey-help">
+      <summary>Four worlds, one journey</summary>
+      <ol>
+        <li><strong>The World of Stillness</strong><span>The quiet room where reality first begins to crack.</span></li>
+        <li><strong>The World of Golden Growth</strong><span>A glowing forest filled with life, warmth, and discovery.</span></li>
+        <li><strong>The World of Drowned Dreams</strong><span>An underwater world where marine animals move through a beautiful, silent mystery.</span></li>
+        <li><strong>The World of the Watching Shadow</strong><span>A dark and unsettling world where something is always observing you.</span></li>
+      </ol>
+    </details>
+    <details id="headset-help">
+      <summary>Using Quest 3S or watching from a laptop?</summary>
+      <p>Open this site in Quest Browser on your Quest 3S. Enable hand tracking, put down the controllers, and choose Enter headset. You begin in the real room around you.</p>
+      <p>Movement guidance fades after 20 seconds. On desktop, press H for field notes. In the headset, hold both open palms toward yourself for 1.5 seconds, with your elbows relaxed and your hands in view. Repeat the gesture to close the notes, or let them fade after 20 seconds. Tearing cues appear when you interact with the seam.</p>
+      <p>After crossing the tear, the forest, underwater sanctuary and violet landscape completely surround you. Tear through the violet dimension to return to your room. Desktop preview begins and ends in a walkable virtual room and needs a mouse and keyboard. Touchscreen phone controls are not supported.</p>
+      <p>To watch on a laptop, open <a href="https://horizon.meta.com/casting" target="_blank" rel="noopener noreferrer">Meta casting</a>, then choose Cast → Web → Computer in the headset. Use the same Meta account and Wi-Fi.</p>
+      <p>A local development address beginning with localhost only works on that computer. For the headset, use the published HTTPS link or your computer’s HTTPS network address.</p>
+    </details>
+  </div>
+  <div id="hud" hidden>
+    <div id="crosshair" hidden></div>
+    <div id="seam-arrow" hidden></div>
+  </div>
+  <div id="debug" hidden></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

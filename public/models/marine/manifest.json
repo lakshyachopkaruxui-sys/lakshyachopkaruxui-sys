@@ -1,0 +1,227 @@
+{
+  "date": "2026-09-16",
+  "assets": [
+    {
+      "file": "BarramundiFish.glb",
+      "creator": "Microsoft",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+      "source_page": "https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/BarramundiFish",
+      "download_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/BarramundiFish/glTF-Binary/BarramundiFish.glb",
+      "file_sha256": "a79f46c333eee26a9e7b28a7f0da276b29bfa45a13cd3a318a65b39a1fb1b6e7",
+      "bytes": 1746652,
+      "triangles": 3864,
+      "source_bounds_xyz": {
+        "min": [
+          -0.06906196475028992,
+          -0.000878453254699707,
+          -0.3253729045391083
+        ],
+        "max": [
+          0.0738416239619255,
+          0.2866283059120178,
+          0.3177383244037628
+        ],
+        "dimensions": [
+          0.14290358871221542,
+          0.28750675916671753,
+          0.6431112289428711
+        ]
+      },
+      "forward": "+Z after complete scene transforms",
+      "animations": [],
+      "modifications": [
+        "Embedded base color PNG resized2048\u21921024; ORM andnormal PNG2048\u2192512. Geometry/UV/normalattributes unchanged."
+      ]
+    },
+    {
+      "file": "Shark.glb",
+      "creator": "Quaternius",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+      "source_page": "https://quaternius.com/packs/animatedfish.html",
+      "download_url": "https://drive.google.com/uc?export=download&id=1KDMkQoY97oRGvAt1BEV5bLJ3hfm1aHiW",
+      "file_sha256": "e70535dad5c62e75e4d86139a5b69f66b39aa1a4e8188eb29fc7f891eddf7346",
+      "bytes": 418424,
+      "triangles": 10304,
+      "source_bounds_xyz": {
+        "min": [
+          -293.65288762387974,
+          -154.90749493088865,
+          -789.8782452508168
+        ],
+        "max": [
+          294.6327854959461,
+          364.0734968112548,
+          786.7486149134154
+        ],
+        "dimensions": [
+          588.2856731198258,
+          518.9809917421435,
+          1576.6268601642323
+        ]
+      },
+      "forward": "+Z after complete scene transforms",
+      "animations": [
+        {
+          "name": "Armature|Swim",
+          "duration": 1.25
+        }
+      ],
+      "modifications": [
+        "Converted original FBX tobinaryglTF withThree.js FBXLoader/GLTFExporter.",
+        "Welded coincident positions with matching remaining vertexattributes, thenrecomputed smoothvertexnormals. UVs, positions, materialgroups andjointanimationretained.",
+        "Phong materialcolors preserved inMeshStandardMaterial roughness0.57 metalness0.02 double-sided.",
+        "FBXLoader clamps vertices withmorethan4 skinweights (Whale/MantaRay); runtimeintegrationmust normalize andvalidateclipbounds.",
+        "Collapsed all source material partitions into one primitive with linear RGB COLOR_0. Duplicated only vertices crossing material-color boundaries; normals, positions, joint indices, weights, inverse binds and animations preserved. One white PBR material retains source roughness/metalness.",
+        "Baked 2 Loop subdivision passes on welded geometric topology across color boundaries. Source face colors inherited; normals recomputed. Bone weights interpolated by subdivision coefficients, strongest four retained and normalized. Original inverse-bind matrices and animation tracks retained unchanged. Superseded buffer data pruned."
+      ],
+      "draw_calls": 1,
+      "source_triangles": 644,
+      "subdivision_passes": 2,
+      "packaged_bounds_xyz": {
+        "min": [
+          -284.29622366868756,
+          -145.30606677364187,
+          -775.9303601159856
+        ],
+        "max": [
+          285.17084524424655,
+          361.89544172974973,
+          770.8732012942293
+        ],
+        "dimensions": [
+          569.4670689129341,
+          507.2015085033916,
+          1546.803561410215
+        ]
+      }
+    },
+    {
+      "file": "Whale.glb",
+      "creator": "Quaternius",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+      "source_page": "https://quaternius.com/packs/animatedfish.html",
+      "download_url": "https://drive.google.com/uc?export=download&id=1h6v3BFzlfFSHfRvfVTJ3Ezyz7shJ-57T",
+      "file_sha256": "34a838a5b52bee05808ebdf9ba8864d6131d724331d05dc6df43614d314175f8",
+      "bytes": 314572,
+      "triangles": 7104,
+      "source_bounds_xyz": {
+        "min": [
+          -194.5099855069461,
+          -233.65112711420525,
+          -651.0576527796387
+        ],
+        "max": [
+          194.57258322793726,
+          99.86513306961592,
+          353.48187056901486
+        ],
+        "dimensions": [
+          389.08256873488335,
+          333.51626018382115,
+          1004.5395233486536
+        ]
+      },
+      "forward": "+Z after complete scene transforms",
+      "animations": [
+        {
+          "name": "Armature|Swim",
+          "duration": 2.7916667461395264
+        }
+      ],
+      "modifications": [
+        "Converted original FBX tobinaryglTF withThree.js FBXLoader/GLTFExporter.",
+        "Welded coincident positions with matching remaining vertexattributes, thenrecomputed smoothvertexnormals. UVs, positions, materialgroups andjointanimationretained.",
+        "Phong materialcolors preserved inMeshStandardMaterial roughness0.57 metalness0.02 double-sided.",
+        "FBXLoader clamps vertices withmorethan4 skinweights (Whale/MantaRay); runtimeintegrationmust normalize andvalidateclipbounds.",
+        "Collapsed all source material partitions into one primitive with linear RGB COLOR_0. Duplicated only vertices crossing material-color boundaries; normals, positions, joint indices, weights, inverse binds and animations preserved. One white PBR material retains source roughness/metalness.",
+        "Baked 2 Loop subdivision passes on welded geometric topology across color boundaries. Source face colors inherited; normals recomputed. Bone weights interpolated by subdivision coefficients, strongest four retained and normalized. Original inverse-bind matrices and animation tracks retained unchanged. Superseded buffer data pruned."
+      ],
+      "draw_calls": 1,
+      "source_triangles": 444,
+      "subdivision_passes": 2,
+      "packaged_bounds_xyz": {
+        "min": [
+          -189.74064291347122,
+          -226.35245566013305,
+          -647.1068342611817
+        ],
+        "max": [
+          189.81566001185746,
+          90.01054472706083,
+          348.35154455700695
+        ],
+        "dimensions": [
+          379.5563029253287,
+          316.3630003871939,
+          995.4583788181886
+        ]
+      }
+    },
+    {
+      "file": "MantaRay.glb",
+      "creator": "Quaternius",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/legalcode",
+      "source_page": "https://quaternius.com/packs/animatedfish.html",
+      "download_url": "https://drive.google.com/uc?export=download&id=1rS0aoM_-e0SZJIFJgcyJkbC1bpGnFzdH",
+      "file_sha256": "de92e0c6837f37df29ad6a9e125e6e69ffe285ef2dd23ed67392d2aa3906cb58",
+      "bytes": 168456,
+      "triangles": 2784,
+      "source_bounds_xyz": {
+        "min": [
+          -379.0848832807184,
+          -177.58566483561276,
+          -830.6490041340872
+        ],
+        "max": [
+          355.1537210590416,
+          40.947274993984294,
+          340.55389936008913
+        ],
+        "dimensions": [
+          734.23860433976,
+          218.53293982959707,
+          1171.2029034941763
+        ]
+      },
+      "forward": "+Z after complete scene transforms",
+      "animations": [
+        {
+          "name": "Armature|Swim",
+          "duration": 4.208333492279053
+        }
+      ],
+      "modifications": [
+        "Converted original FBX tobinaryglTF withThree.js FBXLoader/GLTFExporter.",
+        "Welded coincident positions with matching remaining vertexattributes, thenrecomputed smoothvertexnormals. UVs, positions, materialgroups andjointanimationretained.",
+        "Phong materialcolors preserved inMeshStandardMaterial roughness0.57 metalness0.02 double-sided.",
+        "FBXLoader clamps vertices withmorethan4 skinweights (Whale/MantaRay); runtimeintegrationmust normalize andvalidateclipbounds.",
+        "Collapsed all source material partitions into one primitive with linear RGB COLOR_0. Duplicated only vertices crossing material-color boundaries; normals, positions, joint indices, weights, inverse binds and animations preserved. One white PBR material retains source roughness/metalness.",
+        "Baked 1 Loop subdivision passes on welded geometric topology across color boundaries. Source face colors inherited; normals recomputed. Bone weights interpolated by subdivision coefficients, strongest four retained and normalized. Original inverse-bind matrices and animation tracks retained unchanged. Superseded buffer data pruned."
+      ],
+      "draw_calls": 1,
+      "source_triangles": 696,
+      "subdivision_passes": 1,
+      "packaged_bounds_xyz": {
+        "min": [
+          -373.1026037952514,
+          -171.7830136444,
+          -777.7948414691006
+        ],
+        "max": [
+          349.1586574822436,
+          39.796974507450415,
+          340.0657470389579
+        ],
+        "dimensions": [
+          722.261261277495,
+          211.57998815185042,
+          1117.8605885080585
+        ]
+      }
+    }
+  ]
+}
