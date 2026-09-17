@@ -23,6 +23,7 @@ import { InteractionStateMachine, InteractionState } from '../state/InteractionS
 import { AudioEngine } from '../audio/AudioEngine';
 import { Soundscape, WORLD_THREE_SOUNDS, WORLD_TWO_SOUNDS, UNDERWATER_SOUNDS } from '../audio/Soundscape';
 import { TearVoice } from '../audio/TearVoice';
+import { WhaleVoice } from '../audio/WhaleVoice';
 import { DebugPanel } from '../debug/DebugPanel';
 import { Hud } from '../ui/Hud';
 import { Guide } from '../ui/Guide';
@@ -68,6 +69,7 @@ export class App {
   /** Space was pressed while the tear was wide enough: leap through. */
   private stepRequested = false;
   private soundscapes: (Soundscape | null)[] = [];
+  private whaleVoice: WhaleVoice | null = null;
   private swallow = -1;
   private swapped = false;
   private arrivedAt = -99;
@@ -177,6 +179,13 @@ export class App {
       new Soundscape(this.audio, this.worldThree, WORLD_THREE_SOUNDS)
     ];
     this.voice = new TearVoice(this.audio, this.anchor);
+    this.worldUnderwater.ready.then(() => {
+      const whaleGroup = this.worldUnderwater.marineLife.whaleGroup;
+      if (!whaleGroup) return;
+      this.whaleVoice = new WhaleVoice(this.audio, whaleGroup);
+      // The model can finish loading after the user already unlocked audio.
+      this.whaleVoice.start();
+    });
 
     this.sim.on((e) => {
       this.normal.set(0, 0, 1).transformDirection(this.anchor.matrixWorld);
@@ -268,6 +277,7 @@ export class App {
     try {
       for (const s of this.soundscapes) s?.start();
       this.voice.start();
+      this.whaleVoice?.start();
       this.creature.attachVoice(this.audio);
     } catch (err) {
       console.warn('Audio setup failed; continuing silently', err);
@@ -647,6 +657,9 @@ export class App {
       else if (!this.swapped && this.worlds[i] === this.innerWorld) s.update(dt, this.sim.openness, this.sim.crackOpenness, this.lean, false);
       else s.mute(dt);
     }
+    if (this.worldUnderwater === this.outerWorld) this.whaleVoice?.update(dt, 1, 1, true);
+    else if (!this.swapped && this.worldUnderwater === this.innerWorld) this.whaleVoice?.update(dt, this.sim.openness, this.sim.crackOpenness, false);
+    else this.whaleVoice?.mute(dt);
     this.voice.update(dt, this.sim.strain, this.sim.energy, healing, this.sim.openness);
 
     const tracked = (this.trackers[0].tracked ? 1 : 0) + (this.trackers[1].tracked ? 1 : 0);

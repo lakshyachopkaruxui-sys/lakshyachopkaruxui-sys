@@ -47,6 +47,10 @@ export class MarineLife {
     this.ready = this.loadHeroes();
   }
 
+  get whaleGroup(): THREE.Group | undefined {
+    return this.heroes.find((hero) => hero.species === 'whale')?.group;
+  }
+
   get swimState() {
     return {
       failedAssets: [...this.failures],

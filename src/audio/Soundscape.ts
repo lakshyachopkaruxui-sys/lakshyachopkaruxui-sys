@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { CONFIG } from '../config/config';
 import { damp, lerp, smoothstep } from '../utils/math';
 import type { AudioEngine } from './AudioEngine';
-import { birdsBuffer, bubblesBuffer, chimesBuffer, currentBuffer, droneBuffer, insectsBuffer, loopTrim, streamBuffer, underwaterBuffer, uneaseBuffer, whaleBuffer, windBuffer } from './synth';
+import { birdsBuffer, bubblesBuffer, chimesBuffer, currentBuffer, droneBuffer, insectsBuffer, loopTrim, streamBuffer, underwaterBuffer, uneaseBuffer, windBuffer } from './synth';
 
 export interface SoundscapeWorld {
   /** Audio and soundSpots share this world's movable local coordinate frame. */
@@ -13,7 +13,7 @@ export interface SoundscapeWorld {
 interface ClipSpec {
   /** Recorded file (CC0). Falls back to the synthesized voice if it fails. */
   file?: string;
-  synth: 'insects' | 'wind' | 'birds' | 'stream' | 'drone' | 'chimes' | 'unease' | 'water' | 'bubbles' | 'whale' | 'current';
+  synth: 'insects' | 'wind' | 'birds' | 'stream' | 'drone' | 'chimes' | 'unease' | 'water' | 'bubbles' | 'current';
   spot: string;
   gain: number;
   ref: number;
@@ -40,11 +40,15 @@ export const WORLD_THREE_SOUNDS: ClipSpec[] = [
   { synth: 'unease', spot: 'near', gain: 0.45, ref: 1.8, near: true, maxCutoff: 2300 }
 ];
 
-/** Original synthesized underwater ambience; these are not wildlife recordings. */
+/**
+ * Underwater ambience. The deep water bed is a recorded deep-ocean hydrophone
+ * clip (MBARI, CC BY 4.0 — see ASSETS.md); bubbles and current stay synthesized.
+ * The whale's own voice is not here: it is WhaleVoice, attached to the moving
+ * whale model so its call always sounds where the whale actually is.
+ */
 export const UNDERWATER_SOUNDS: ClipSpec[] = [
-  { synth: 'water', spot: 'water', gain: 0.62, ref: 12, maxCutoff: 850 },
+  { file: '/audio/deep-ocean.wav', synth: 'water', spot: 'water', gain: 0.62, ref: 12, maxCutoff: 850, seconds: 50 },
   { synth: 'bubbles', spot: 'bubbles', gain: 0.28, ref: 4, maxCutoff: 1450 },
-  { synth: 'whale', spot: 'whale', gain: 0.23, ref: 16, maxCutoff: 1050 },
   { synth: 'current', spot: 'near', gain: 0.3, ref: 1.8, near: true, maxCutoff: 700 }
 ];
 
@@ -105,7 +109,6 @@ export class Soundscape {
       case 'unease': return uneaseBuffer(ctx);
       case 'water': return underwaterBuffer(ctx);
       case 'bubbles': return bubblesBuffer(ctx);
-      case 'whale': return whaleBuffer(ctx);
       case 'current': return currentBuffer(ctx);
       default: return birdsBuffer(ctx, Math.abs(spot.z | 0) + 1);
     }

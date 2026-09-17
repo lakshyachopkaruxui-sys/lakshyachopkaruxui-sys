@@ -17,7 +17,7 @@ export class WorldUnderwater {
   readonly leanDetails: THREE.MeshBasicMaterial[] = [];
   readonly terrain: HeightField;
   readonly groundAttachments: ReefAttachment[] = [];
-  readonly soundSpots = { water: new THREE.Vector3(0, 5, -8), bubbles: new THREE.Vector3(-4, 2, -5), whale: new THREE.Vector3(8, 14, -20), near: new THREE.Vector3(0, 1, -1) };
+  readonly soundSpots = { water: new THREE.Vector3(0, 5, -8), bubbles: new THREE.Vector3(-4, 2, -5), near: new THREE.Vector3(0, 1, -1) };
   readonly ready: Promise<void>;
   readonly marineLife: MarineLife;
   private previousTime: number | undefined;
