@@ -49,10 +49,14 @@ Recorded forest ambience is CC0 from BigSoundBank:
 [forest birds](https://bigsoundbank.com/sound-0100-forest.html),
 [forest stream](https://bigsoundbank.com/sound-2716-forest-and-stream-3.html), and
 [countryside](https://bigsoundbank.com/countryside-s0097.html).
-Tearing, creature voices and the violet drone, creaks and breath-like ambience
-are synthesized locally. The unknown shadow watcher is original geometry.
+Tearing and creature voices are synthesized locally. The unknown shadow
+watcher is original geometry.
 
 No assets from Pokémon GO, Moss or other visual reference games were copied.
+
+### Violet world: dread drone
+
+- `public/audio/dread-drone.mp3`: "Low Frequency Vibrating Drone with Heart Pressure Rumbles and Booms" by bassimat ([Freesound](https://freesound.org/people/bassimat/sounds/860781/)), CC0. Grounded in real research: sustained low-frequency sound (infrasound-adjacent, below ~20Hz) is documented to cause unease/dread without a person consciously hearing anything — the effect behind Vic Tandy's 1998 "haunted lab" case (eyeball and chest resonance near 19Hz). Played on a slow ~26s volume swell (`swellPeriod`/`swellMin` in `src/audio/Soundscape.ts`) so it breathes — rises, peaks, fades toward-but-not-quite-silent, repeats — rather than holding one flat level. Replaces the previously fully-synthesized `droneBuffer` as this world's bed; `droneBuffer` remains as the load-failure fallback. Chimes and the near-field unease texture are untouched, still synthesized.
 
 ## Underwater world
 

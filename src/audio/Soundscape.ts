@@ -21,6 +21,10 @@ interface ClipSpec {
   seconds?: number;
   /** Artistic acoustic ceiling: retained after crossing into the world. */
   maxCutoff?: number;
+  /** Slow tide: volume rises and falls over this many seconds (sine), instead of holding level. */
+  swellPeriod?: number;
+  /** Fraction of full volume at the bottom of the swell — never fully silent. */
+  swellMin?: number;
 }
 
 /** Recorded ambience: BigSoundBank, CC0 (public domain). */
@@ -35,7 +39,10 @@ export const WORLD_TWO_SOUNDS: ClipSpec[] = [
 export const WORLD_THREE_SOUNDS: ClipSpec[] = [
   // Violet is the fourth world in the journey; its original export name stays
   // stable. Sound implies a presence without speech, alarms or jump stings.
-  { synth: 'drone', spot: 'drone', gain: 0.4, ref: 12, maxCutoff: 1200 },
+  // The bed is a recorded low drone (Freesound, CC0 — see ASSETS.md), always
+  // present but breathing: a slow swell up and down like waves, never fully
+  // silent and never a flat constant hum.
+  { file: '/audio/dread-drone.mp3', synth: 'drone', spot: 'drone', gain: 0.42, ref: 12, maxCutoff: 1200, seconds: 60, swellPeriod: 26, swellMin: 0.16 },
   { synth: 'chimes', spot: 'chimes', gain: 0.32, ref: 9, maxCutoff: 2400 },
   { synth: 'unease', spot: 'near', gain: 0.45, ref: 1.8, near: true, maxCutoff: 2300 }
 ];
@@ -59,6 +66,8 @@ interface Source {
   near: boolean;
   maxCutoff: number;
   volume: number;
+  swellPeriod: number;
+  swellMin: number;
 }
 
 /**
@@ -140,7 +149,10 @@ export class Soundscape {
     this.world.root.add(audio);
     audio.offset = Math.random() * buffer.duration;
     audio.play();
-    this.sources.push({ audio, filter, baseGain: clip.gain, near, maxCutoff, volume: 0 });
+    this.sources.push({
+      audio, filter, baseGain: clip.gain, near, maxCutoff, volume: 0,
+      swellPeriod: clip.swellPeriod ?? 0, swellMin: clip.swellMin ?? 1
+    });
   }
 
   /** @param inside true when the listener is standing in this world, not peering into it */
@@ -156,7 +168,9 @@ export class Soundscape {
       const localCutoff = s.near ? Math.max(cutoff, 1200 + lean * 8000) : cutoff;
       s.filter.frequency.setTargetAtTime(Math.min(localCutoff, s.maxCutoff), t, 0.05);
       const nearGain = s.near ? (inside ? 0.5 : smoothstep(0, 1, lean) * (0.3 + 0.7 * Math.max(this.leak, 0.25))) : 1;
-      s.volume = s.baseGain * volume * nearGain;
+      // A slow tide, not a flat hum: quiet at the trough, never fully gone.
+      const swell = s.swellPeriod > 0 ? lerp(s.swellMin, 1, (Math.sin((2 * Math.PI * t) / s.swellPeriod - Math.PI / 2) + 1) / 2) : 1;
+      s.volume = s.baseGain * volume * nearGain * swell;
       s.audio.setVolume(s.volume);
     }
   }
