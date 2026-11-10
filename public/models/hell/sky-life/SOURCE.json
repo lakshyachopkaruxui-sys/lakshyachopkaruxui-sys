@@ -1,0 +1,59 @@
+{
+  "title": "Vampire Bat (Animated)",
+  "author": "rubberduck",
+  "license": "CC0-1.0",
+  "sourcePage": "https://opengameart.org/content/vampire-bat-animated",
+  "download": "https://opengameart.org/sites/default/files/animated_vampire_bat.zip",
+  "verifiedOn": "2026-11-09",
+  "sourceArchive": {
+    "file": "animated-vampire-bat.zip",
+    "bytes": 16497090,
+    "sha256": "2670593426d1c2cbb428b62afc80d1df159113f104461a1e0ddf958a7f64a148"
+  },
+  "processing": [
+    "Blender 4.2.0, existing local official distribution; source loaded with auto-execution disabled.",
+    "Source anatomical bat model and authored Bat_Flying animation. No generated model or replacement procedural wing shape.",
+    "Decimate modifier reduced 7732 triangles to 1700 before armature evaluation; UVs and rig weights retained for baking.",
+    "All eight source action frames explicitly evaluated into identical-topology position and smooth-normal poses. Source hidden layer collections enabled before evaluation.",
+    "Blender Z-up converted to Three Y-up; normalized to 2.8m reference wingspan. Seven scene instances range 2.41m to 3.5m.",
+    "Five hero/caldera flight paths remain in front. Two high, wide basin circuits cover every side and the rear sky, with verified rear flyers at0/24/45seconds. No extra instances or geometry.",
+    "Source body and parts textures combined into one 1K atlas; saturation scaled to0.55. Normal atlas512. No bright substituted eyes.",
+    "One opaque instanced mesh uses Three r186 texture-backed morph targets. Only7matrices448bytes and7x9float morph weights252bytes upload per frame.",
+    "Source archive, frost alternative, other actions, source scene lights and HDRI remain outside public runtime."
+  ],
+  "runtimeFiles": [
+    {
+      "file": "vampire-flight.json",
+      "bytes": 3737,
+      "sha256": "9c61b610526cb8f4541698164da3f5e9330f2963800294e0e77c7c98e6c83dcb"
+    },
+    {
+      "file": "vampire-flight.bin",
+      "bytes": 333656,
+      "sha256": "0c840296dafe5913eaa57a04af005439a9b60963d4705c59f0a56425b739454f"
+    },
+    {
+      "file": "vampire-color-1k.jpg",
+      "bytes": 96193,
+      "sha256": "cf3b37210d4711b662acd2691665119b1667c81aaa0ed12852da42a8aa10d74c"
+    },
+    {
+      "file": "vampire-normal-512.jpg",
+      "bytes": 49502,
+      "sha256": "ffb44206357f367b62bd6d96d0c277353be1a1f408610a34dabc7cfb97c7f9a5"
+    }
+  ],
+  "budget": {
+    "instances": 7,
+    "trianglesPerInstance": 1700,
+    "totalTriangles": 11900,
+    "drawBatches": 1,
+    "newLights": 0,
+    "shadowCasters": 0,
+    "sourceRigAtRuntime": false
+  },
+  "limits": [
+    "Offline reduction and authored motion preserve source character but are adaptations, not a biological flight simulation.",
+    "Desktop and physical Quest performance require integration testing by the root task."
+  ]
+}

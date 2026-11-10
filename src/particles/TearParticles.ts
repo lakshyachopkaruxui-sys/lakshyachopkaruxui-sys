@@ -18,6 +18,7 @@ export class TearParticles {
   private cursor = 0;
   private rng = mulberry32(99);
   private moteAccumulator = 0;
+  private colorsDirty = false;
   private tmp = new THREE.Vector3();
 
   constructor(overlay: THREE.Scene) {
@@ -33,13 +34,24 @@ export class TearParticles {
     const mat = new THREE.ShaderMaterial({
       transparent: true,
       depthWrite: false,
-      blending: THREE.AdditiveBlending,
+      // RGB is already weighted by lifetime in the shader. Add it without
+      // making the real room opaque underneath an additive particle.
+      blending: THREE.CustomBlending,
+      blendSrc: THREE.OneFactor,
+      blendDst: THREE.OneFactor,
+      blendSrcAlpha: THREE.ZeroFactor,
+      blendDstAlpha: THREE.OneFactor,
       vertexShader: /* glsl */ `
         attribute vec3 color; attribute vec2 life; varying vec3 vColor; varying float vAlpha;
         void main() {
           float t = life.y > 0.0 ? clamp(life.x / life.y, 0.0, 1.0) : 1.0;
           vAlpha = life.y > 0.0 ? smoothstep(0.0, 0.08, t) * (1.0 - t) : 0.0;
           vColor = color;
+          if (vAlpha <= 0.0) {
+            gl_PointSize = 1.0;
+            gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
+            return;
+          }
           vec4 mv = modelViewMatrix * vec4(position, 1.0);
           gl_PointSize = (life.y > 2.0 ? 9.0 : 14.0) / max(-mv.z, 0.05);
           gl_Position = projectionMatrix * mv;
@@ -47,6 +59,7 @@ export class TearParticles {
       fragmentShader: /* glsl */ `
         varying vec3 vColor; varying float vAlpha;
         void main() {
+          if (vAlpha <= 0.0) discard;
           vec2 c = gl_PointCoord - 0.5;
           float d = dot(c, c);
           if (d > 0.25) discard;
@@ -54,6 +67,7 @@ export class TearParticles {
         }`
     });
     this.points = new THREE.Points(geo, mat);
+    this.points.visible = false;
     this.points.frustumCulled = false;
     overlay.add(this.points);
   }
@@ -64,6 +78,7 @@ export class TearParticles {
     this.pos.set([p.x, p.y, p.z], i * 3);
     this.vel.set([v.x, v.y, v.z], i * 3);
     this.col.set([color.r, color.g, color.b], i * 3);
+    this.colorsDirty = true;
     this.life[i * 2] = 0;
     this.life[i * 2 + 1] = maxAge;
     this.kind[i] = kind;
@@ -91,6 +106,7 @@ export class TearParticles {
       this.spawn(p, v, color, 3.5 + r() * 3, 1);
     }
 
+    let alive = 0;
     for (let i = 0; i < this.max; i++) {
       const maxAge = this.life[i * 2 + 1];
       if (maxAge <= 0) continue;
@@ -99,6 +115,7 @@ export class TearParticles {
         this.life[i * 2 + 1] = 0;
         continue;
       }
+      alive++;
       const j = i * 3;
       if (this.kind[i] === 0) {
         this.vel[j + 1] -= 1.6 * dt;
@@ -112,9 +129,14 @@ export class TearParticles {
       this.pos[j + 1] += this.vel[j + 1] * dt;
       this.pos[j + 2] += this.vel[j + 2] * dt;
     }
+    this.points.visible = alive > 0;
+    if (alive === 0) return;
     const g = this.points.geometry;
     g.attributes.position.needsUpdate = true;
-    g.attributes.color.needsUpdate = true;
+    if (this.colorsDirty) {
+      g.attributes.color.needsUpdate = true;
+      this.colorsDirty = false;
+    }
     g.attributes.life.needsUpdate = true;
   }
 }

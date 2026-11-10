@@ -1,0 +1,63 @@
+{
+  "source": "https://polyhaven.com/a/grass_medium_01",
+  "license": "CC0-1.0",
+  "authors": "Rob Tuytel (photography), Rico Cilliers (modeling)",
+  "processing": "Four rooted, curved foliage cards per clump sample three existing photographic clumps in the licensed atlas. No new/resampled images. Original high-detail 3D grass remains in the near accents.",
+  "meshes": [
+    {
+      "source": "grass_medium_01_diff_alpha_1k.png",
+      "atlasCropPixels": [
+        238,
+        778,
+        496,
+        928
+      ],
+      "mesh": "ground_grass_b",
+      "triangles": 16,
+      "vertices": 24,
+      "size": [
+        0.6200000047683716,
+        0.5199999809265137,
+        0.6200000047683716
+      ]
+    },
+    {
+      "source": "grass_medium_01_diff_alpha_1k.png",
+      "atlasCropPixels": [
+        574,
+        780,
+        823,
+        895
+      ],
+      "mesh": "ground_grass_c",
+      "triangles": 16,
+      "vertices": 24,
+      "size": [
+        0.7629114389419556,
+        0.5199999809265137,
+        0.7629114389419556
+      ]
+    },
+    {
+      "source": "grass_medium_01_diff_alpha_1k.png",
+      "atlasCropPixels": [
+        249,
+        925,
+        510,
+        1023
+      ],
+      "mesh": "ground_grass_d",
+      "triangles": 16,
+      "vertices": 24,
+      "size": [
+        0.8505436778068542,
+        0.5199999809265137,
+        0.8505436778068542
+      ]
+    }
+  ],
+  "files": {
+    "grass.bin": "56ede82659db79542f49b4aa86dad70a65ec18470555b08593260e1e7fd8be78",
+    "grass.gltf": "30da1c28fc31dd2b760c6ff89ef4c35c9da043fc06cdf321c2a53526aaa346af"
+  }
+}

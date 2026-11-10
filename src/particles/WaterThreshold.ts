@@ -7,7 +7,7 @@ export type WaterThresholdOptions = {
   openness: number;
   gap: number;
   centre: THREE.Vector2;
-  /** Actual forest terrain height, in world space. */
+  /** Current world's floor height in world space (local-floor in passthrough). */
   floorY: number;
   /** Optional exact terrain sampler for sloping banks; coordinates are world metres. */
   groundAt?: (x: number, z: number) => number;
@@ -22,9 +22,9 @@ const RIPPLE_SEGMENTS = 12;
 const UP = new THREE.Vector3(0, 1, 0);
 
 /**
- * A small, physical spill from the forest's underwater tear. The effect lives
+ * A small, physical spill from a tear into the ocean. The effect lives
  * in the overlay scene, deliberately without the portal stencil: water has
- * crossed into the forest. It copies position/yaw, NEVER the swallow scale.
+ * crossed into the current world. It copies position/yaw, NEVER the swallow scale.
  * All pools and geometries are fixed-size; neither camera nor hands are moved.
  */
 export class WaterThreshold {
@@ -58,7 +58,7 @@ export class WaterThreshold {
   private readonly nextGeometryState = new Float64Array(10);
 
   constructor(overlay: THREE.Scene) {
-    this.root.name = 'Water crossing the forest threshold';
+    this.root.name = 'Water crossing the ocean threshold';
     this.root.visible = false;
     const sheetMaterial = new THREE.ShaderMaterial({
       uniforms: { uTime: { value: 0 }, uOpacity: { value: 0 } },

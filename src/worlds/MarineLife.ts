@@ -1,28 +1,31 @@
+import { assetUrl } from '../utils/assetUrl';
 import * as THREE from 'three';
 import { GLTFLoader, type GLTF } from 'three/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { applyStencilLayer } from '../portal/PortalRenderer';
 import { fitProp, measureProp } from './props';
 import { fallbackLargeFish, fallbackRay, reefFishGeometry, type ReefFishKind } from './proceduralMarine';
+import { EnvironmentalPresence } from './EnvironmentalPresence';
 
 type Species = 'whale' | 'shark' | 'ray' | 'turtle' | 'barramundi';
 type Orbit = { x: number; y: number; z: number; rx: number; rz: number; rise: number; period: number; phase: number; reverse?: boolean };
 type Hero = { group: THREE.Group; model: THREE.Group; mixer?: THREE.AnimationMixer; orbit: Orbit; species: Species; source: 'asset' | 'original'; length: number; fins: THREE.Object3D[]; tail?: THREE.Object3D };
-type Shoal = { mesh: THREE.InstancedMesh; kind: ReefFishKind; orbit: Orbit; members: { phase: number; across: number; rise: number; length: number; sway: number }[] };
+type Shoal = { mesh: THREE.InstancedMesh; kind: ReefFishKind; orbit: Orbit; offset: THREE.Vector3; members: { phase: number; across: number; rise: number; length: number; sway: number }[] };
 type AssetSpec = { path: string; yaw: number; clip?: RegExp };
 
 /** Every URL is a bundled, documented asset: nothing is fetched from an asset
  * marketplace at runtime. Forward-axis corrections are applied before fitting. */
 export const MARINE_MODELS: Record<Exclude<Species, 'turtle'>, AssetSpec> = {
-  whale: { path: '/models/marine/Whale.glb', yaw: 0, clip: /swim|idle/i },
-  shark: { path: '/models/marine/Shark.glb', yaw: 0, clip: /swim|idle/i },
-  ray: { path: '/models/marine/MantaRay.glb', yaw: 0, clip: /swim|idle/i },
-  barramundi: { path: '/models/marine/BarramundiFish.glb', yaw: 0 }
+  whale: { path: assetUrl('/models/marine/Whale.glb'), yaw: 0, clip: /swim|idle/i },
+  shark: { path: assetUrl('/models/marine/Shark.glb'), yaw: 0, clip: /swim|idle/i },
+  ray: { path: assetUrl('/models/marine/MantaRay.glb'), yaw: 0, clip: /swim|idle/i },
+  barramundi: { path: assetUrl('/models/marine/BarramundiFish.glb'), yaw: 0 }
 };
 
 /** Calm marine traffic in local world coordinates. The scene owns lighting,
  * terrain and the water; this component owns finite, repeatable swim paths.
- * No interaction with the headset pose, camera, gravity or user locomotion. */
+ * The small fish ease aside when approached; camera, gravity and user
+ * locomotion remain untouched. A whole school moves together to retain spacing. */
 export class MarineLife {
   readonly group = new THREE.Group();
   readonly ready: Promise<void>;
@@ -35,6 +38,11 @@ export class MarineLife {
   private position = new THREE.Vector3();
   private rotation = new THREE.Euler(0, 0, 0, 'YXZ');
   private failures: string[] = [];
+  readonly presence = new EnvironmentalPresence();
+  private viewerLocal = new THREE.Vector3();
+  private reactionCentre = new THREE.Vector3();
+  private reactionTarget = new THREE.Vector3();
+  private barramundiOffset = new THREE.Vector3();
 
   constructor(private parent: THREE.Group, private stencilLayer: () => number) {
     this.group.name = 'underwater-marine-life';
@@ -49,6 +57,10 @@ export class MarineLife {
 
   get whaleGroup(): THREE.Group | undefined {
     return this.heroes.find((hero) => hero.species === 'whale')?.group;
+  }
+
+  updateView(viewerPosition: THREE.Vector3, active: boolean, dt: number) {
+    this.presence.update(viewerPosition, active, dt);
   }
 
   get swimState() {
@@ -92,7 +104,7 @@ export class MarineLife {
     }
     geometry.setAttribute('aSwimPhase', new THREE.InstancedBufferAttribute(phases, 1));
     mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-    this.shoals.push({ mesh, kind, orbit, members });
+    this.shoals.push({ mesh, kind, orbit, offset: new THREE.Vector3(), members });
     this.group.add(mesh);
   }
 
@@ -178,12 +190,26 @@ export class MarineLife {
     this.lastTime = time;
     this.clock.value = time;
     const safeDt = Number.isFinite(dt) ? THREE.MathUtils.clamp(dt, 0, 0.1) : 0;
+    this.group.updateWorldMatrix(true, false);
+    this.viewerLocal.copy(this.presence.position.value);
+    this.group.worldToLocal(this.viewerLocal);
+    this.reactionCentre.set(0, 0, 0);
+    let nearbyCount = 0;
+    for (const hero of this.heroes) if (hero.species === 'barramundi') {
+      orbitPose(hero.orbit, time, 0, this.position, this.tangent);
+      this.reactionCentre.add(this.position); nearbyCount++;
+    }
+    if (nearbyCount) this.reactionCentre.divideScalar(nearbyCount);
+    this.easeAside(this.reactionCentre, this.barramundiOffset, safeDt);
     for (const shoal of this.shoals) {
+      orbitPose(shoal.orbit, time, 0, this.reactionCentre, this.tangent);
+      this.easeAside(this.reactionCentre, shoal.offset, safeDt);
       shoal.members.forEach((member, index) => {
         const phase = orbitPose(shoal.orbit, time, member.phase, this.position, this.tangent);
         this.position.x += Math.cos(phase) * member.across;
         this.position.z += Math.sin(phase) * member.across;
         this.position.y += member.rise + Math.sin(time * 0.6 + member.sway) * 0.09;
+        this.position.add(shoal.offset);
         this.pose.position.copy(this.position);
         this.rotation.set(-Math.asin(this.tangent.y), Math.atan2(this.tangent.x, this.tangent.z), Math.sin(phase) * 0.055);
         this.pose.quaternion.setFromEuler(this.rotation);
@@ -198,6 +224,7 @@ export class MarineLife {
 
   private placeHero(hero: Hero, time: number, dt: number) {
     const phase = orbitPose(hero.orbit, time, 0, hero.group.position, this.tangent);
+    if (hero.species === 'barramundi') hero.group.position.add(this.barramundiOffset);
     this.rotation.set(-Math.asin(this.tangent.y), Math.atan2(this.tangent.x, this.tangent.z), Math.cos(phase) * (hero.species === 'ray' ? 0.065 : 0.025));
     hero.group.quaternion.setFromEuler(this.rotation);
     hero.mixer?.update(dt);
@@ -206,6 +233,21 @@ export class MarineLife {
       const value = Math.sin(time * 1.9 + hero.orbit.phase * 6) * 0.19;
       if (hero.species === 'whale') hero.tail.rotation.x = value; else hero.tail.rotation.y = value;
     }
+  }
+
+  private easeAside(centre: THREE.Vector3, offset: THREE.Vector3, dt: number) {
+    this.reactionTarget.subVectors(centre, this.viewerLocal);
+    const distance = this.reactionTarget.length();
+    this.reactionTarget.y = 0;
+    if (this.reactionTarget.lengthSq() < 0.0001) this.reactionTarget.set(1, 0, 0);
+    this.reactionTarget.normalize().multiplyScalar(
+      (1 - THREE.MathUtils.smoothstep(distance, 2, 6.5)) * this.presence.strength.value * 0.85
+    );
+    // Bounded motion, including after tab suspension or XR tracking recovery.
+    // A rigid offset retains all authored separation inside each school.
+    this.reactionTarget.sub(offset);
+    const movement = Math.min(this.reactionTarget.length(), dt * .5);
+    if (movement > 0) offset.addScaledVector(this.reactionTarget.normalize(), movement);
   }
 }
 

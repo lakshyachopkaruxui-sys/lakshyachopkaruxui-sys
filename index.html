@@ -4,45 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Tear</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%230d0f14' d='M0 0h32v32H0z'/%3E%3Cpath stroke='%23b8ebff' stroke-width='2' fill='none' d='m18 2-4 9 3 5-4 14'/%3E%3C/svg%3E" />
   <style>
     html, body { margin: 0; height: 100%; overflow: hidden; background: #0d0f14; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }
     #app { position: fixed; inset: 0; }
     #app canvas { display: block; }
-    #intro {
-      position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-      gap: 18px; color: #cfd3da; background: radial-gradient(ellipse at center, #1a1d24 0%, #0b0c10 70%);
-      z-index: 10; transition: opacity 1.2s ease; text-align: center; padding: 28px 24px;
-      box-sizing: border-box; overflow-y: auto;
-    }
-    #intro > * { flex-shrink: 0; }
-    #intro > :first-child { margin-top: auto; }
-    #intro > :last-child { margin-bottom: auto; }
-    #intro.hidden { opacity: 0; pointer-events: none; }
-    #intro h1 { font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-weight: 400; letter-spacing: 0.14em; font-size: clamp(54px, 8vw, 88px); margin: 0 0 2px 0.14em; color: #e8e2d6; }
-    #intro .eyebrow { color: #aaa08e; font-size: 10px; letter-spacing: 0.26em; text-transform: uppercase; }
-    #intro .journey { color: #aaa99f; font-size: 11px; letter-spacing: 0.05em; }
-    #journey-help { width: min(100%, 470px); font-size: 12px; line-height: 1.6; }
-    #journey-help summary { color: #bcb5a7; cursor: pointer; }
-    #journey-help ol { margin: 18px 0 0; padding: 0; list-style: none; text-align: left; display: grid; gap: 15px; }
-    #journey-help li strong { display: block; color: #e8d9bd; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: clamp(24px, 4vw, 32px); line-height: 1.2; font-weight: 400; }
-    #journey-help li span { display: block; color: #9ba1ab; margin-top: 2px; }
-    #intro p { margin: 0; max-width: 420px; line-height: 1.6; font-size: 14px; color: #8d929c; }
-    #intro .buttons { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
-    #intro button {
-      font: inherit; font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase; padding: 12px 22px;
-      border-radius: 999px; border: 1px solid #5a4f40; background: transparent; color: #e8d9bd; cursor: pointer;
-    }
-    #intro button:hover:not(:disabled) { background: #2a241c; }
-    #intro #enter-headset { background: #dfd1b8; border-color: #dfd1b8; color: #242320; }
-    #intro #enter-headset:hover:not(:disabled) { background: #f0e3cd; }
-    #intro button:disabled { opacity: 0.35; cursor: default; }
-    #intro .note { font-size: 12px; color: #9ba1ab; min-height: 1em; max-width: 470px; line-height: 1.6; }
-    #headset-help { max-width: 470px; color: #a1a6ae; font-size: 12px; line-height: 1.6; }
-    #headset-help summary { cursor: pointer; color: #bcb5a7; }
-    #headset-help p { font-size: 12px; margin-top: 10px; color: #a1a6ae; }
-    #headset-help a { color: #d9c6a2; text-underline-offset: 3px; }
-    #intro button:focus-visible, #intro summary:focus-visible, #headset-help a:focus-visible { outline: 2px solid #d9c6a2; outline-offset: 4px; }
-    @media (prefers-reduced-motion: reduce) { #intro { transition: none; } }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+    .voice-choice { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
+    .voice-choice input { width: 20px; height: 20px; accent-color: #e8d8bc; }
+    #experience-actions { position: fixed; right: 18px; top: 18px; display: flex; gap: 8px; z-index: 5; }
+    #experience-actions[hidden] { display: none; }
+    #experience-actions button { min-height: 44px; font-size: 14px; padding: 8px 14px; color: #f0e6d5; border: 1px solid #7e8c96; border-radius: 8px; background: #17212d; cursor: pointer; }
+    button:focus-visible, summary:focus-visible, input:focus-visible { outline: 3px solid #f0d4a4; outline-offset: 4px; }
+    @media (max-width: 600px) { #experience-actions { right: 8px; top: 8px; } }
     #hud { position: fixed; inset: 0; pointer-events: none; z-index: 4; }
     #crosshair {
       position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px;
@@ -70,42 +44,72 @@
       background: rgba(0,0,0,0.6); padding: 8px 10px; white-space: pre; pointer-events: none;
     }
   </style>
+  <link rel="stylesheet" href="/src/ui/entry-immersive.css" />
 </head>
 <body>
   <div id="app"></div>
-  <div id="intro" aria-labelledby="experience-title">
-    <p class="eyebrow">An immersive journey</p>
-    <h1 id="experience-title">TEAR</h1>
-    <p>A seam in the familiar. A glimpse of somewhere else.<br />Reach out, pinch, and gently pull.</p>
-    <p class="journey">Comfort &nbsp; / &nbsp; Curiosity &nbsp; / &nbsp; Wonder &nbsp; / &nbsp; Fear &nbsp; / &nbsp; Home</p>
-    <div class="buttons">
-      <button id="enter-headset" disabled>Checking headset…</button>
-      <button id="enter-desktop">Desktop preview</button>
+  <div id="intro" aria-labelledby="experience-title" data-open="false">
+    <canvas id="entry-atmosphere" aria-hidden="true"></canvas>
+    <div class="world-screen" aria-hidden="true">
+      <div class="scene-layer is-active" data-world-image="ocean"><img src="/images/entry/ocean.webp" alt="" width="1000" height="1000" fetchpriority="high" /></div>
+      <div class="scene-layer" data-world-image="shadow"><img src="/images/entry/shadow.webp" alt="" width="1000" height="1000" /></div>
+      <div class="scene-layer" data-world-image="forest"><img src="/images/entry/forest.webp" alt="" width="1000" height="1000" /></div>
     </div>
-    <div class="note" id="xr-note" role="status" aria-live="polite"></div>
+    <header class="entry-masthead"><div><span class="entry-brand">TEAR</span><span class="entry-edition">An experiment in perception</span></div><button id="entry-motion" class="motion-toggle" aria-pressed="false">Pause motion</button></header>
+    <section id="phone-entry" hidden><h2>This journey needs a bigger reality.</h2><p>Open Tear on a desktop with a mouse and keyboard, or in Meta Quest Browser with hand tracking.</p><p>Phone playback isn't supported.</p></section>
+    <main class="entry-layout">
+      <section class="entry-story" aria-labelledby="experience-title">
+      <p class="eyebrow">An immersive, hand-tracked journey</p>
+      <h1 id="experience-title" aria-label="TEAR"><span aria-hidden="true">T</span><span aria-hidden="true">E</span><span aria-hidden="true">A</span><span aria-hidden="true">R</span></h1>
+      <h2 class="entry-hook">Your room is only<br />the beginning.</h2>
+      <p class="entry-description">An ocean beneath reality. A shadow beyond it.<br />A forest that brings you back.</p>
+      <div class="entry-options"><div class="buttons"><button id="enter-headset" disabled>Checking headset…</button><button id="enter-desktop">Desktop preview</button></div>
+        <label class="voice-choice"><input type="checkbox" id="narration-enabled" checked /> Spoken narration · captions stay on</label>
+        <div class="note" id="xr-note" role="status" aria-live="polite"></div>
+      </div></section>
+      <section class="world-navigation" aria-label="World previews">
+        <span class="world-number" id="world-number" aria-hidden="true">01</span>
+        <p class="world-kicker" id="world-mood">Wonder</p>
+        <h3 class="world-name" id="world-name">How Am I Breathing?</h3>
+        <p id="glimpse-caption" aria-live="off">Beneath the surface, another world is waiting.</p>
+        <div class="world-glimpses" role="group" aria-label="Preview a world">
+          <button data-glimpse="ocean" aria-pressed="true">Ocean</button><button data-glimpse="shadow" aria-pressed="false">Shadow</button><button data-glimpse="forest" aria-pressed="false">Forest</button>
+        </div>
+      </section>
+    </main>
+    <footer class="entry-footer"><div class="entry-support">
     <details id="journey-help">
       <summary>Four worlds, one journey</summary>
       <ol>
-        <li><strong>The World of Stillness</strong><span>The quiet room where reality first begins to crack.</span></li>
-        <li><strong>The World of Golden Growth</strong><span>A glowing forest filled with life, warmth, and discovery.</span></li>
-        <li><strong>The World of Drowned Dreams</strong><span>An underwater world where marine animals move through a beautiful, silent mystery.</span></li>
-        <li><strong>The World of the Watching Shadow</strong><span>A dark and unsettling world where something is always observing you.</span></li>
+        <li><strong>Did I Wake Up?</strong><span>The quiet room where reality first begins to crack.</span></li>
+        <li><strong>How Am I Breathing?</strong><span>An underwater world where marine animals move through a beautiful, silent mystery.</span></li>
+        <li><strong>Something Knows I'm Here</strong><span>A dark and unsettling world where something is always observing you.</span></li>
+        <li><strong>Is This Finally Real?</strong><span>A glowing forest filled with life, warmth, and discovery.</span></li>
+        <li><strong>Back to your room</strong><span>The final tear returns you to your familiar surroundings.</span></li>
       </ol>
     </details>
     <details id="headset-help">
       <summary>Using Quest 3S or watching from a laptop?</summary>
       <p>Open this site in Quest Browser on your Quest 3S. Enable hand tracking, put down the controllers, and choose Enter headset. You begin in the real room around you.</p>
-      <p>Movement guidance fades after 20 seconds. On desktop, press H for field notes. In the headset, hold both open palms toward yourself for 1.5 seconds, with your elbows relaxed and your hands in view. Repeat the gesture to close the notes, or let them fade after 20 seconds. Tearing cues appear when you interact with the seam.</p>
-      <p>After crossing the tear, the forest, underwater sanctuary and violet landscape completely surround you. Tear through the violet dimension to return to your room. Desktop preview begins and ends in a walkable virtual room and needs a mouse and keyboard. Touchscreen phone controls are not supported.</p>
+      <p>On desktop, press H for field notes, N to toggle narration, and V to replay it. In the headset, hold either index fingertip inside the Field notes circle until its ring fills. Move your finger away before repeating. While notes are open, the Voice and Replay circles control narration. Notes fade after 20 seconds; tearing hides them.</p>
+      <p>Cross into the ocean, then the shadow world, then the forest. The forest's next tear returns to your room. Desktop preview begins and ends in a walkable virtual room and needs a mouse and keyboard. Touchscreen phone controls are not supported.</p>
       <p>To watch on a laptop, open <a href="https://horizon.meta.com/casting" target="_blank" rel="noopener noreferrer">Meta casting</a>, then choose Cast → Web → Computer in the headset. Use the same Meta account and Wi-Fi.</p>
       <p>A local development address beginning with localhost only works on that computer. For the headset, use the published HTTPS link or your computer’s HTTPS network address.</p>
     </details>
+    </div><p class="entry-sound-note">Headphones recommended<span>Contains unsettling scenes and sounds.</span></p></footer>
   </div>
+  <div id="experience-actions" hidden>
+    <button id="notes-toggle">Field notes · H</button>
+    <button id="voice-toggle" aria-pressed="true">Voice · N</button>
+    <button id="voice-replay">Replay · V</button>
+  </div>
+  <p id="narration-caption" class="sr-only" role="status" aria-live="polite"></p>
   <div id="hud" hidden>
     <div id="crosshair" hidden></div>
     <div id="seam-arrow" hidden></div>
   </div>
   <div id="debug" hidden></div>
   <script type="module" src="/src/main.ts"></script>
+  <script type="module" src="/src/ui/entry-immersive.ts"></script>
 </body>
 </html>

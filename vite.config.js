@@ -12,13 +12,14 @@ export default defineConfig(({ mode }) => {
   const managedPreview = portFlag >= 0 && process.argv[portFlag + 1] === '4173' && process.argv.includes('--strictPort');
   const https = mode !== 'http' && !managedPreview;
   return {
+    base: process.env.TEAR_BASE_PATH || '/',
     server: {
       host: '0.0.0.0',
       allowedHosts: ['terminal.local'],
       port: 5173,
       // Vite's watcher crashes (EBUSY) if it tries to watch asset files while
       // they are still being written, and nothing in these folders needs HMR.
-      watch: { ignored: ['**/public/**', '**/_legacy/**', '**/dist/**'] }
+      watch: { ignored: ['**/public/**', '**/_legacy/**', '**/dist/**', '**/validation/**', '**/tools/**'] }
     },
     plugins: https ? [basicSsl()] : [],
     build: {

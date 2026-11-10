@@ -28,13 +28,15 @@ export class DesktopControls {
     this.onLockChange?.(true);
   }
 
-  /** Keeps desktop walking inside the current world (a room, an island…). */
+  /** Keeps desktop walking inside the current world's traversable extent. */
   bounds: { centre: THREE.Vector3; radius: number } | null = null;
 
   /** Set false while gripping: the walk keys then pull the tear instead. */
   moveEnabled = true;
   /** Floor height of the current world at a point — the camera walks on it. */
   groundAt: (x: number, z: number) => number = () => 0;
+  /** Sweep a feet position through the current world's physical footprints. */
+  resolveMovement: ((start: THREE.Vector3, desired: THREE.Vector3, height: number, out: THREE.Vector3) => THREE.Vector3) | null = null;
   /** True while in the air after a jump. */
   airborne = false;
 
@@ -50,6 +52,9 @@ export class DesktopControls {
   private keys = new Set<string>();
   private pressed = new Set<string>();
   private move = new THREE.Vector3();
+  private moveStart = new THREE.Vector3();
+  private moveDesired = new THREE.Vector3();
+  private moveResolved = new THREE.Vector3();
   private onLockChange?: (locked: boolean) => void;
 
   constructor(private camera: THREE.PerspectiveCamera, dom: HTMLElement) {
@@ -133,30 +138,40 @@ export class DesktopControls {
   }
 
   update(dt: number) {
-    if (!this.enabled) return;
+    if (!this.enabled || !Number.isFinite(dt) || dt <= 0) return;
     const walk = this.moveEnabled;
     const f = walk ? (this.isDown('KeyW', 'ArrowUp') ? 1 : 0) - (this.isDown('KeyS', 'ArrowDown') ? 1 : 0) : 0;
     const r = walk ? (this.isDown('KeyD', 'ArrowRight') ? 1 : 0) - (this.isDown('KeyA', 'ArrowLeft') ? 1 : 0) : 0;
     const up = walk ? (this.isDown('KeyE') ? 1 : 0) - (this.isDown('KeyQ') ? 1 : 0) : 0;
     const speed = CONFIG.desktop.moveSpeed * (this.isDown('ShiftLeft', 'ShiftRight') ? 2.2 : 1);
+    const eyeHeight = CONFIG.desktop.eyeHeight + this.crouch;
+    const feetY = this.airborne ? this.camera.position.y - eyeHeight : this.groundAt(this.camera.position.x, this.camera.position.z);
+    this.moveStart.set(this.camera.position.x, feetY, this.camera.position.z);
+    this.moveDesired.copy(this.moveStart);
     this.move.set(r, 0, -f);
     if (this.move.lengthSq() > 0) {
       this.move.normalize().multiplyScalar(speed * dt).applyAxisAngle(THREE.Object3D.DEFAULT_UP, this.yaw);
-      this.camera.position.add(this.move);
+      this.moveDesired.add(this.move);
     }
     if (up !== 0) {
       this.crouch = THREE.MathUtils.clamp(this.crouch + up * speed * dt, -1.1, 1.2);
     }
     if (this.bounds) {
-      const dx = this.camera.position.x - this.bounds.centre.x;
-      const dz = this.camera.position.z - this.bounds.centre.z;
+      const dx = this.moveDesired.x - this.bounds.centre.x;
+      const dz = this.moveDesired.z - this.bounds.centre.z;
       const d = Math.hypot(dx, dz);
       if (d > this.bounds.radius) {
         const k = this.bounds.radius / d;
-        this.camera.position.x = this.bounds.centre.x + dx * k;
-        this.camera.position.z = this.bounds.centre.z + dz * k;
+        this.moveDesired.x = this.bounds.centre.x + dx * k;
+        this.moveDesired.z = this.bounds.centre.z + dz * k;
       }
     }
+    if (!this.airborne) this.moveDesired.y = this.groundAt(this.moveDesired.x, this.moveDesired.z);
+    const resolved = this.resolveMovement
+      ? this.resolveMovement(this.moveStart, this.moveDesired, Math.max(.5, eyeHeight + .15), this.moveResolved)
+      : this.moveDesired;
+    this.camera.position.x = resolved.x;
+    this.camera.position.z = resolved.z;
 
     // Stand on the floor of whichever world this is (the forest is hilly), and
     // fall back onto it after a jump.

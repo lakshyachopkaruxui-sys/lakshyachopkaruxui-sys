@@ -1,3 +1,4 @@
+import { assetUrl } from '../utils/assetUrl';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { applyStencilLayer } from '../portal/PortalRenderer';
@@ -9,7 +10,7 @@ import { cryBuffer } from '../audio/synth';
 export type CreatureState = 'wander' | 'notice' | 'approach' | 'sniff' | 'greet' | 'guide' | 'startle' | 'retreat';
 
 // Yellow blob: reads clearly against a green forest (the green one hid in it).
-export const CREATURE_MODEL = '/models/minion-c01.glb';
+export const CREATURE_MODEL = assetUrl('/models/minion-c01.glb');
 const MODEL = CREATURE_MODEL;
 const CLIPS = { idle: [0, 29], attack: [30, 59] } as const;
 const FPS = 24;

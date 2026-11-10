@@ -1,0 +1,136 @@
+{
+  "license": "CC0-1.0",
+  "license_url": "https://polyhaven.com/license",
+  "files": [
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "artists": [
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dry_branches_medium_01/dry_branches_medium_01_1k.gltf",
+      "file": "public/models/shadow/organic/dry_branches_medium_01/dry_branches_medium_01_1k.gltf",
+      "bytes": 5844,
+      "md5": "bd6d60dff97c59a80d770f94f23b566b",
+      "sha256": "23f328ded9be1e151ccd7994b303c70221551544c4857a71474c1c01a14b8a22"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "artists": [
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dry_branches_medium_01/dry_branches_medium_01_arm_1k.jpg",
+      "file": "public/models/shadow/organic/dry_branches_medium_01/textures/dry_branches_medium_01_arm_1k.jpg",
+      "bytes": 831180,
+      "md5": "a0c5fface8ffdf81a806fcd5cf05788f",
+      "sha256": "6d1ba6f4763d2815301a15bf62eaf68c345cecafb107e2681d12f26fbc657f5a"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "artists": [
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dry_branches_medium_01/dry_branches_medium_01_diff_1k.jpg",
+      "file": "public/models/shadow/organic/dry_branches_medium_01/textures/dry_branches_medium_01_diff_1k.jpg",
+      "bytes": 778799,
+      "md5": "2b01d9d1613c88496250f64828566f7c",
+      "sha256": "1fbaf810a9ca29d2faf0a179834e8dce10cf4854bafe13f63af111030b3ec660"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "artists": [
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dry_branches_medium_01/dry_branches_medium_01_nor_gl_1k.jpg",
+      "file": "public/models/shadow/organic/dry_branches_medium_01/textures/dry_branches_medium_01_nor_gl_1k.jpg",
+      "bytes": 1170647,
+      "md5": "d374fbbd8c4829310104cce0de7cd826",
+      "sha256": "62f5205bfec599000bb7a430e003bbada939bc8d7976a7d3ab7709fd5893413c"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "artists": [
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dry_branches_medium_01/dry_branches_medium_01.bin",
+      "file": "public/models/shadow/organic/dry_branches_medium_01/dry_branches_medium_01.bin",
+      "bytes": 465172,
+      "md5": "10de852c8bf38e3f3ca5fb1d6c8de9d0",
+      "sha256": "969da1e8cbb2d8201e7fa0fc0dac5b19ef354b32c3d8c62dd9faa7cb3833d8ca"
+    },
+    {
+      "asset": "dead_quiver_trunk",
+      "source": "https://polyhaven.com/a/dead_quiver_trunk",
+      "artists": [
+        "Dario Barresi",
+        "James Ray Cock",
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dead_quiver_trunk/dead_quiver_trunk_1k.gltf",
+      "file": "public/models/shadow/organic/dead_quiver_trunk/dead_quiver_trunk_1k.gltf",
+      "bytes": 2833,
+      "md5": "c51327370de65114dbab13686deb3f07",
+      "sha256": "c130bce552d608057143e7f131f36e9c4e06a9b780947c85d4e5eb1cacfedbaf"
+    },
+    {
+      "asset": "dead_quiver_trunk",
+      "source": "https://polyhaven.com/a/dead_quiver_trunk",
+      "artists": [
+        "Dario Barresi",
+        "James Ray Cock",
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dead_quiver_trunk/dead_quiver_trunk.bin",
+      "file": "public/models/shadow/organic/dead_quiver_trunk/dead_quiver_trunk.bin",
+      "bytes": 411388,
+      "md5": "14020d9d6b8a6303ef0c4204f3aecf39",
+      "sha256": "2f2a74458c071801cde2287970a396d503ffe0ebf4dedc3c5f3b39024186c00a"
+    },
+    {
+      "asset": "dead_quiver_trunk",
+      "source": "https://polyhaven.com/a/dead_quiver_trunk",
+      "artists": [
+        "Dario Barresi",
+        "James Ray Cock",
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_quiver_trunk/dead_quiver_trunk_arm_1k.jpg",
+      "file": "public/models/shadow/organic/dead_quiver_trunk/textures/dead_quiver_trunk_arm_1k.jpg",
+      "bytes": 514214,
+      "md5": "4cb21dced87f656ceef25711d8897a55",
+      "sha256": "7aa714956b606c2d4a929d4ab76490db4a45f23a1ec24c66f088867ef363f37a"
+    },
+    {
+      "asset": "dead_quiver_trunk",
+      "source": "https://polyhaven.com/a/dead_quiver_trunk",
+      "artists": [
+        "Dario Barresi",
+        "James Ray Cock",
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_quiver_trunk/dead_quiver_trunk_nor_gl_1k.jpg",
+      "file": "public/models/shadow/organic/dead_quiver_trunk/textures/dead_quiver_trunk_nor_gl_1k.jpg",
+      "bytes": 573241,
+      "md5": "dbc98d5bbef2f50325b8527811eb7377",
+      "sha256": "b3d987eba87112005529664455a82809da2325420021d494832dd8ba860eb62c"
+    },
+    {
+      "asset": "dead_quiver_trunk",
+      "source": "https://polyhaven.com/a/dead_quiver_trunk",
+      "artists": [
+        "Dario Barresi",
+        "James Ray Cock",
+        "Rico Cilliers"
+      ],
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_quiver_trunk/dead_quiver_trunk_diff_1k.jpg",
+      "file": "public/models/shadow/organic/dead_quiver_trunk/textures/dead_quiver_trunk_diff_1k.jpg",
+      "bytes": 768713,
+      "md5": "e9348ba90e390c46d9d6837cf0425d4b",
+      "sha256": "53015f7dc3cc9a5ad360439b63c72d90402314201255495684bf6a6499aef7e0"
+    }
+  ]
+}

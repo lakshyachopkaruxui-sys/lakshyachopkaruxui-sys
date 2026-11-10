@@ -139,5 +139,8 @@ export function applyWind(material: THREE.Material, timeUniform: THREE.IUniform,
        transformed.z += cos(uWindTime * 1.1 + windOrigin.x * 0.4) * bend * 0.55;`
     );
   };
+  // Closure values are shader source constants. Without a distinct key,
+  // Three.js can incorrectly reuse grass wind on trunks or alien growth.
+  material.customProgramCacheKey = () => `wind-v2-${strength}-${stiffness}`;
   material.needsUpdate = true;
 }

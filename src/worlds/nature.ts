@@ -1,3 +1,4 @@
+import { assetUrl } from '../utils/assetUrl';
 import * as THREE from 'three';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
@@ -5,7 +6,7 @@ import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 export function surfaceMaps(kind: 'ground' | 'rock', repeat = 1) {
   const loader = new THREE.TextureLoader();
   const load = (suffix: string, color = false) => {
-    const texture = loader.load(`/textures/refined/${kind}_${suffix}.jpg`);
+    const texture = loader.load(assetUrl(`/textures/refined/${kind}_${suffix}.jpg`));
     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     texture.repeat.set(repeat, repeat);
     texture.anisotropy = 4;

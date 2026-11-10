@@ -1,0 +1,18 @@
+{
+  "title": "The Sky Is On Fire",
+  "author": "Greg Zaal",
+  "provider": "Poly Haven",
+  "source": "https://polyhaven.com/a/the_sky_is_on_fire",
+  "download": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/the_sky_is_on_fire_2k.hdr",
+  "metadata": "https://api.polyhaven.com/files/the_sky_is_on_fire",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "file": "the_sky_is_on_fire_2k.hdr",
+  "width": 2048,
+  "height": 1024,
+  "bytes": 5996454,
+  "md5": "ca2a97070f1bbac3d35300c245b430da",
+  "sha256": "0d6de5d26052d30546ebd291ad6e96de88c342da3e5d8aee37298e9c12647911",
+  "downloaded": "2026-10-18",
+  "usage": "Strange World sky only. Original HDR is unchanged; crimson grading and upper-sky remapping happen in HellSky.ts. Half-float RGBA, no mipmaps or PMREM: 16 MiB GPU texture storage."
+}

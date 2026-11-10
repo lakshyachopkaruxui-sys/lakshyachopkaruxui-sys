@@ -6,6 +6,8 @@ import { registerHooks, stripTypeScriptTypes } from 'node:module';
 import test from 'node:test';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+import { recordedAudioFixture, clipAtSource } from './helpers/recorded-audio-fixture.mjs';
 
 const sourceRoot = new URL('../src/', import.meta.url).href;
 registerHooks({
@@ -25,7 +27,8 @@ registerHooks({
   }
 });
 
-THREE.TextureLoader.prototype.load = () => new THREE.Texture();
+THREE.TextureLoader.prototype.load = (_url, onLoad) => { const texture = new THREE.Texture(); queueMicrotask(() => onLoad?.(texture)); return texture; };
+HDRLoader.prototype.load = (_url, onLoad) => { const texture = new THREE.DataTexture(); queueMicrotask(() => onLoad?.(texture)); return texture; };
 GLTFLoader.prototype.load = () => undefined;
 globalThis.document = { createElement() { return {
   width: 64, height: 64,
@@ -52,8 +55,18 @@ function controlledContext(sampleRate = 48000) {
     createBufferSource: () => node({ playbackRate: param(1), detune: param(), start() {}, stop() {} })
   };
 }
-function fixture() {
+function fixture(t, options = {}) {
   const ctx = controlledContext();
+  const recordings = recordedAudioFixture(t, ctx, WORLD_THREE_SOUNDS.flatMap(clip => clip.file ? [clip.file] : []), options);
+  // The world now requests optional flying-creature geometry independently of
+  // Soundscape. Serve its real data without admitting it to the audio mock.
+  const recordedFetch=globalThis.fetch;
+  t.mock.method(globalThis,'fetch',async url=>{
+    if(String(url).startsWith('/models/hell/sky-life/')){
+      return new Response(readFileSync(new URL('../public'+url,import.meta.url)),{status:200});
+    }
+    return recordedFetch(url);
+  });
   const listener = { context: ctx, getInput: () => node(), timeDelta: 1 / 72 };
   const engine = { state: 'running', ctx, listener };
   const world = new WorldThree(new THREE.Vector3(0, 1.35, -1.1));
@@ -65,7 +78,7 @@ function fixture() {
       soundscape.update(1 / 72, openness, 0, lean, inside);
     }
   };
-  return { ctx, world, engine, soundscape, sources, step };
+  return { ctx, world, engine, soundscape, sources, step, recordings };
 }
 const makeBuffers = ctx => [droneBuffer(ctx), chimesBuffer(ctx), uneaseBuffer(ctx)];
 
@@ -111,20 +124,26 @@ test('metal and breath-like details are sparse while the low bed stays continuou
   assert.ok(rms(samples.subarray(-drone.sampleRate / 10)) > 0.02, 'bed sustains through the end');
 });
 
-test('all three violet layers use real world sound spots, unlock once and follow scene alignment', () => {
-  const f = fixture();
+test('all three violet layers use real world sound spots, unlock once and follow scene alignment', async t => {
+  const f = fixture(t);
   f.engine.state = 'locked';
   f.soundscape.start();
   assert.equal(f.sources().length, 0);
+  assert.equal(f.recordings.requested.length, 0);
   f.engine.state = 'running';
   f.soundscape.start();
   f.soundscape.start();
+  assert.equal(f.sources().length, 2, 'procedural details start while the recorded drone loads');
+  await f.recordings.settle();
   assert.equal(f.sources().length, 3, 'no silent missing spot or duplicate source');
+  assert.deepEqual(f.recordings.requested, ['/audio/dread-drone.mp3']);
+  assert.equal(f.soundscape.loadedRecordings, 1);
+  assert.equal(f.recordings.decoded.length, 1);
   f.world.root.position.set(5, -0.2, 8);
   f.world.root.rotation.y = 1.1;
   f.world.scene.updateMatrixWorld(true);
-  for (const [i, audio] of f.sources().entries()) {
-    const clip = WORLD_THREE_SOUNDS[i];
+  for (const audio of f.sources()) {
+    const clip = clipAtSource(audio, f.world, WORLD_THREE_SOUNDS);
     assert.equal(audio.gain.gain.value, 0, 'entry begins silent');
     assert.equal(audio.loop, true);
     assert.equal(audio.isPlaying, true);
@@ -139,17 +158,18 @@ test('all three violet layers use real world sound spots, unlock once and follow
   }
 });
 
-test('violet opens gently, limits nearby rustle, keeps spectral ceilings and leaves other worlds unchanged', () => {
+test('violet opens gently, limits nearby rustle, keeps spectral ceilings and leaves other worlds unchanged', async t => {
   const unchanged = JSON.stringify([WORLD_TWO_SOUNDS, UNDERWATER_SOUNDS]);
-  const f = fixture();
+  const f = fixture(t);
   f.soundscape.start();
+  await f.recordings.settle();
   f.step(1, false);
   const closed = f.sources().map(audio => audio.gain.gain.value);
   f.step(1, false, 0.5, 0.5);
   const half = f.sources().map(audio => audio.gain.gain.value);
   f.step(3, true, 1, 1);
   f.sources().forEach((audio, i) => {
-    const clip = WORLD_THREE_SOUNDS[i];
+    const clip = clipAtSource(audio, f.world, WORLD_THREE_SOUNDS);
     assert.ok(closed[i] < half[i] && half[i] < audio.gain.gain.value);
     assert.ok(audio.gain.gain.value <= clip.gain * (clip.near ? 0.5 : 1));
     assert.ok(audio.filters[0].frequency.value <= clip.maxCutoff);
@@ -157,9 +177,10 @@ test('violet opens gently, limits nearby rustle, keeps spectral ceilings and lea
   assert.equal(JSON.stringify([WORLD_TWO_SOUNDS, UNDERWATER_SOUNDS]), unchanged);
 });
 
-test('leaving violet fades all layers to silence and re-entry restores them without accumulating sources', () => {
-  const f = fixture();
+test('leaving violet fades all layers to silence and re-entry restores them without accumulating sources', async t => {
+  const f = fixture(t);
   f.soundscape.start();
+  await f.recordings.settle();
   f.step(3, true);
   let previous = f.sources().map(audio => audio.gain.gain.value);
   f.soundscape.mute(1 / 72);
@@ -176,4 +197,22 @@ test('leaving violet fades all layers to silence and re-entry restores them with
   f.step(2, true);
   assert.equal(f.sources().length, 3);
   for (const audio of f.sources()) assert.ok(audio.gain.gain.value > 0.02);
+});
+
+test('unavailable violet recording falls back once while preserving three spatial layers and acoustic ceilings', async t => {
+  const f = fixture(t, { fail: true });
+  f.soundscape.start();
+  f.soundscape.start();
+  await f.recordings.settle();
+  assert.equal(f.recordings.requested.length, 1);
+  assert.equal(f.recordings.warnings.length, 1);
+  assert.equal(f.soundscape.loadedRecordings, 0);
+  assert.equal(f.sources().length, 3);
+  f.step(3, true, 1, 1);
+  for (const audio of f.sources()) {
+    const clip = clipAtSource(audio, f.world, WORLD_THREE_SOUNDS);
+    assert.ok(audio.filters[0].frequency.value <= clip.maxCutoff);
+    assert.ok(audio.gain.gain.value > 0);
+    assert.ok(audio.buffer.getChannelData(0).some(value => Math.abs(value) > 0.001));
+  }
 });

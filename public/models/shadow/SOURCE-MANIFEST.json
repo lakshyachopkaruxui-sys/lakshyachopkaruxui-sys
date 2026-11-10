@@ -1,0 +1,78 @@
+{
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "files": [
+    {
+      "asset": "rock_face_01",
+      "source": "https://polyhaven.com/a/rock_face_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_face_01/rock_face_01_1k.gltf",
+      "file": "public/models/shadow/rock_face_01/rock_face_01_1k.gltf",
+      "bytes": 2793,
+      "md5": "b4855bc7e841a17a94332561a9b301c0",
+      "sha256": "96c332c01d173a2431115f3bac29be101fba341e5500e2a08e384f4edd17299e"
+    },
+    {
+      "asset": "rock_face_01",
+      "source": "https://polyhaven.com/a/rock_face_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_01/rock_face_01_arm_1k.jpg",
+      "file": "public/models/shadow/rock_face_01/textures/rock_face_01_arm_1k.jpg",
+      "bytes": 693610,
+      "md5": "5799e7f5546350576b87bf67c34fb49f",
+      "sha256": "59128c79d207a50a69a38002986135ade3b19642d26158cec141eca41578c9ca"
+    },
+    {
+      "asset": "rock_face_01",
+      "source": "https://polyhaven.com/a/rock_face_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_01/rock_face_01_nor_gl_1k.jpg",
+      "file": "public/models/shadow/rock_face_01/textures/rock_face_01_nor_gl_1k.jpg",
+      "bytes": 1023400,
+      "md5": "46e01f5c3b8ac4463aeef2b4c61d1cd4",
+      "sha256": "9a9d85b9a01f4e24fc9ceec8baf96c019f552bca69591ff544c7a725e28b1d97"
+    },
+    {
+      "asset": "rock_face_01",
+      "source": "https://polyhaven.com/a/rock_face_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_01/rock_face_01_diff_1k.jpg",
+      "file": "public/models/shadow/rock_face_01/textures/rock_face_01_diff_1k.jpg",
+      "bytes": 853749,
+      "md5": "98ee9f024a6383d7e6cab44ed41e1f15",
+      "sha256": "41bd26ed2db1332b1ebb4b1326fd8af4d21f0f0eb57b8ea385033115c722cfdb"
+    },
+    {
+      "asset": "rock_face_01",
+      "source": "https://polyhaven.com/a/rock_face_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_face_01/rock_face_01.bin",
+      "file": "public/models/shadow/rock_face_01/rock_face_01.bin",
+      "bytes": 476436,
+      "md5": "06caed23e725af568b64f8cbee210c1c",
+      "sha256": "873eac0319333e92bc96ddeedf8ebf69dc3c68ff1dfe32d8c14ddc165cdb20ac"
+    },
+    {
+      "asset": "aerial_rocks_02",
+      "source": "https://polyhaven.com/a/aerial_rocks_02",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_02/aerial_rocks_02_diff_1k.jpg",
+      "file": "public/textures/shadow/ground-diffuse.jpg",
+      "bytes": 785923,
+      "md5": "b5795e9b9e43d718ace73448c97d57ab",
+      "sha256": "708373b2af7fd07ac8de1500556006aaf904c41a99985a849cacc78874f38eac"
+    },
+    {
+      "asset": "aerial_rocks_02",
+      "source": "https://polyhaven.com/a/aerial_rocks_02",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_02/aerial_rocks_02_nor_gl_1k.jpg",
+      "file": "public/textures/shadow/ground-normal.jpg",
+      "bytes": 1177932,
+      "md5": "66fcad0f6a7c2ac99bc978685195420b",
+      "sha256": "6df5263ba6c30e9343ee324d87078b926024d710b0b349025083600369df8d25"
+    },
+    {
+      "asset": "aerial_rocks_02",
+      "source": "https://polyhaven.com/a/aerial_rocks_02",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/aerial_rocks_02/aerial_rocks_02_rough_1k.jpg",
+      "file": "public/textures/shadow/ground-roughness.jpg",
+      "bytes": 381745,
+      "md5": "327899ac752a79de880fc00510b6a304",
+      "sha256": "07e842a9c9f128fb2afc2655cb09db914b5ec7c7657dcff4dcfce9c487ee0aae"
+    }
+  ]
+}

@@ -5,6 +5,8 @@ const headsetButton = document.getElementById('enter-headset') as HTMLButtonElem
 const desktopButton = document.getElementById('enter-desktop') as HTMLButtonElement;
 const note = document.getElementById('xr-note')!;
 const headsetHelp = document.getElementById('headset-help') as HTMLDetailsElement;
+const voiceChoice = document.getElementById('narration-enabled') as HTMLInputElement | null;
+const actions = document.getElementById('experience-actions');
 
 // Touchscreens can read the setup page, but the desktop experience needs a
 // mouse and keyboard. Check when clicked so attaching a mouse still works.
@@ -43,6 +45,16 @@ async function supportsPassthrough() {
 }
 
 async function boot() {
+  const agent = navigator.userAgent ?? '';
+  if (/iPhone|iPod|Android.*Mobile/i.test(agent) && !/OculusBrowser|Quest/i.test(agent)) {
+    intro.dataset.phone = 'true';
+    desktopButton.disabled = true;
+    headsetButton.disabled = true;
+    const phoneMessage = document.getElementById('phone-entry');
+    if (phoneMessage) phoneMessage.hidden = false;
+    note.textContent = 'Tear is available on desktop and Meta Quest. Phone playback is not supported.';
+    return;
+  }
   await installEmulatorIfRequested();
   // The opening and headset setup remain usable even on a browser that cannot
   // render WebGL. Create the 3D scene only after the visitor chooses a mode.
@@ -51,27 +63,35 @@ async function boot() {
     intro.classList.add('hidden');
     intro.inert = true;
     intro.setAttribute('aria-hidden', 'true');
+    if (actions) actions.hidden = !!app?.renderer.xr.isPresenting;
   };
   const showIntro = () => {
+    app?.enterIntro();
     intro.classList.remove('hidden');
     intro.inert = false;
     intro.removeAttribute('aria-hidden');
+    if (actions) actions.hidden = true;
   };
   let starting = false;
   let arSupported = false;
   let checking = true;
   let graphicsUnavailable = false;
   let interactionStarted = false;
+  let preparing = false;
+  note.setAttribute('role', 'status');
 
   const refreshButtons = () => {
+    intro.dataset.busy = String(starting);
     desktopButton.disabled = starting || graphicsUnavailable;
     headsetButton.disabled = starting || checking || (graphicsUnavailable && arSupported);
-    headsetButton.textContent = starting ? 'Entering your room…' : checking ? 'Checking headset…' : 'Enter headset';
+    headsetButton.textContent = preparing ? 'Preparing worlds…' : starting ? 'Entering your room…' : checking ? 'Checking headset…' : 'Enter headset';
+    desktopButton.textContent = preparing ? 'Preparing worlds…' : 'Desktop preview';
   };
 
   const getApp = () => {
     if (!app) {
       app = new App(document.getElementById('app')!);
+      app.setNarrationEnabled(voiceChoice?.checked ?? true);
       (window as unknown as { app: App }).app = app;
       app.renderer.xr.addEventListener('sessionend', () => {
         showIntro();
@@ -81,6 +101,13 @@ async function boot() {
     }
     return app;
   };
+  voiceChoice?.addEventListener('change', () => app?.setNarrationEnabled(voiceChoice.checked));
+  document.getElementById('voice-toggle')?.addEventListener('click', () => app?.toggleNarration());
+  document.getElementById('voice-replay')?.addEventListener('click', () => app?.replayNarration());
+  document.getElementById('notes-toggle')?.addEventListener('click', () => app?.toggleNotes());
+  document.addEventListener('pointerlockchange', () => {
+    if (actions) actions.hidden = !!document.pointerLockElement || intro.classList.contains('hidden') === false || !!app?.renderer.xr.isPresenting;
+  });
 
   const explainGraphicsFailure = (err: unknown) => {
     const message = err instanceof Error ? err.message : String(err);
@@ -91,7 +118,7 @@ async function boot() {
     return true;
   };
 
-  desktopButton.addEventListener('click', () => {
+  desktopButton.addEventListener('click', async () => {
     if (starting || app?.renderer.xr.isPresenting) return;
     interactionStarted = true;
     if (touchOnly()) {
@@ -100,15 +127,23 @@ async function boot() {
       headsetHelp.scrollIntoView({ block: 'nearest' });
       return;
     }
+    starting = true;
+    preparing = true;
+    refreshButtons();
     try {
       const experience = getApp();
-      // Input and visuals can begin even when an audio device refuses to resume.
+      // Unlock audio on the click; suspended audio must not block preparation.
       void experience.startAudio();
+      await experience.prepareForestForEntry(message => { note.textContent = message; });
       experience.enterDesktop();
       hideIntro();
     } catch (err) {
       console.error(err);
       if (!explainGraphicsFailure(err)) note.textContent = 'The experience could not start. Please reload this page and try again.';
+    } finally {
+      preparing = false;
+      starting = false;
+      refreshButtons();
     }
   });
 
@@ -127,18 +162,29 @@ async function boot() {
     refreshButtons();
     note.textContent = '';
     try {
+      const experience = getApp();
+      if (!experience.forestPrepared) {
+        preparing = true;
+        refreshButtons();
+        await experience.prepareForestForEntry(message => { note.textContent = message; });
+        // Preparation consumes transient activation. A new click must request
+        // XR, so no permission prompt is issued after this asynchronous wait.
+        note.textContent = 'Worlds ready. Choose Enter headset to begin.';
+        return;
+      }
       // Preserve transient user activation: request the session BEFORE awaiting audio.
       // The public headset journey ALWAYS starts with the wearer's real room.
-      const experience = getApp();
       const session = experience.enterXR();
       void experience.startAudio();
       await session;
       hideIntro();
     } catch (err) {
+      if (app && !app.renderer.xr.isPresenting) showIntro();
       const message = err instanceof Error ? err.message : String(err);
       if (!explainGraphicsFailure(err)) note.textContent = `Could not enter your room: ${message} Use Quest Browser with hand tracking enabled, or choose Desktop preview.`;
       headsetHelp.open = true;
     } finally {
+      preparing = false;
       starting = false;
       refreshButtons();
     }

@@ -1,0 +1,174 @@
+{
+  "title": "Rock Face 01",
+  "author": "Dario Barresi",
+  "provider": "Poly Haven",
+  "source": "https://polyhaven.com/a/rock_face_01",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://polyhaven.com/license",
+  "metadataUrl": "https://api.polyhaven.com/files/rock_face_01",
+  "downloaded": "2026-11-09",
+  "textureTier": "1k",
+  "usage": "Unmodified source glTF and binary; one color, one OpenGL normal and one packed AO/roughness/metallic map. No high-resolution textures or Blender project bundled.",
+  "providerInfo": {
+    "name": "Rock Face 01",
+    "categories": [
+      "rocks",
+      "nature",
+      "collection: verdant_trail"
+    ],
+    "type": 2,
+    "version_required": {
+      "blend": "4.0.1"
+    },
+    "tags": [
+      "cliff",
+      "landscape",
+      "rock face",
+      "rock",
+      "formation",
+      "geology",
+      "weathered",
+      "lichen",
+      "rugged",
+      "outdoors",
+      "rocky surface",
+      "environment",
+      "natural"
+    ],
+    "authors": {
+      "Dario Barresi": "All"
+    },
+    "info": null,
+    "date_published": 1707177600,
+    "staging": null,
+    "max_resolution": [
+      8192,
+      8192
+    ],
+    "polycount": 20174,
+    "texel_density": 855.3811959980296,
+    "dimensions": [
+      7108.232021331787,
+      5624.304533004761,
+      4980.4371148347855
+    ],
+    "sponsors": [
+      "3237733"
+    ],
+    "files_hash": "a39e6911cc84e0ceef097a98b1146885afb4afb3",
+    "description": "Free 8K model of a weathered rock face with layered sedimentary strata, rugged cracks, lichen patches and subtle blue-red mineral tones.",
+    "category_id": "f85e579c-2409-50c7-bac6-f3193d38593d",
+    "category": "Nature/Rocks & Stone/Cliffs & Rock Faces",
+    "collections": [
+      "verdant_trail"
+    ],
+    "attributes": {
+      "condition": [
+        "weathered"
+      ],
+      "material": [
+        "stone"
+      ]
+    },
+    "img_version": "60cb9b51",
+    "download_count": 7154,
+    "thumbnail_url": "https://cdn.polyhaven.com/asset_img/thumbs/rock_face_01.png?width=256&height=256&format=webp&v=60cb9b51"
+  },
+  "files": [
+    {
+      "path": "rock_face_01_1k.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_face_01/rock_face_01_1k.gltf",
+      "bytes": 2793,
+      "md5": "b4855bc7e841a17a94332561a9b301c0",
+      "sha256": "96c332c01d173a2431115f3bac29be101fba341e5500e2a08e384f4edd17299e"
+    },
+    {
+      "path": "textures/rock_face_01_arm_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_01/rock_face_01_arm_1k.jpg",
+      "bytes": 693610,
+      "md5": "5799e7f5546350576b87bf67c34fb49f",
+      "sha256": "59128c79d207a50a69a38002986135ade3b19642d26158cec141eca41578c9ca"
+    },
+    {
+      "path": "textures/rock_face_01_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_01/rock_face_01_nor_gl_1k.jpg",
+      "bytes": 1023400,
+      "md5": "46e01f5c3b8ac4463aeef2b4c61d1cd4",
+      "sha256": "9a9d85b9a01f4e24fc9ceec8baf96c019f552bca69591ff544c7a725e28b1d97"
+    },
+    {
+      "path": "textures/rock_face_01_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_face_01/rock_face_01_diff_1k.jpg",
+      "bytes": 853749,
+      "md5": "98ee9f024a6383d7e6cab44ed41e1f15",
+      "sha256": "41bd26ed2db1332b1ebb4b1326fd8af4d21f0f0eb57b8ea385033115c722cfdb"
+    },
+    {
+      "path": "rock_face_01.bin",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_face_01/rock_face_01.bin",
+      "bytes": 476436,
+      "md5": "06caed23e725af568b64f8cbee210c1c",
+      "sha256": "873eac0319333e92bc96ddeedf8ebf69dc3c68ff1dfe32d8c14ddc165cdb20ac"
+    }
+  ],
+  "inspection": {
+    "triangles": 20174,
+    "vertices": 11106,
+    "meshes": 1,
+    "primitives": 1,
+    "materials": 1,
+    "localBoundsMeters": {
+      "min": [
+        -2.133601427078247,
+        -0.03435921296477318,
+        -3.466048240661621
+      ],
+      "max": [
+        2.8199098110198975,
+        3.5296897888183594,
+        0.36125504970550537
+      ],
+      "size": [
+        4.9535112380981445,
+        3.5640490017831326,
+        3.8273032903671265
+      ]
+    },
+    "geometryBytes": 476436,
+    "runtimeFilesBytes": 3049988,
+    "textures": [
+      {
+        "path": "textures/rock_face_01_nor_gl_1k.jpg",
+        "width": 1024,
+        "height": 1024,
+        "mode": "RGB"
+      },
+      {
+        "path": "textures/rock_face_01_diff_1k.jpg",
+        "width": 1024,
+        "height": 1024,
+        "mode": "RGB"
+      },
+      {
+        "path": "textures/rock_face_01_arm_1k.jpg",
+        "width": 1024,
+        "height": 1024,
+        "mode": "RGB"
+      }
+    ],
+    "rgba8TextureMiBWithMipmaps": 16,
+    "fourCopies": {
+      "submittedTrianglesBeforeCullingAndPasses": 80696,
+      "sharedGeometryBytes": 476436,
+      "drawCallsIfInstancedByMaterial": 1,
+      "drawCallsIfSeparateMeshes": 4
+    },
+    "validation": "All source file size and MD5 checks matched official API. SHA-256 recorded. Actual position floats finite, indices in range, index count divisible by three, buffer length exact; three JPEGs decoded and verified at 1024x1024.",
+    "placementNotes": [
+      "The official listing reports 7.1 m width, but this downloaded glTF mesh has bounds 4.95 x 3.56 x 3.83 m. Use actual glTF bounds for placement/collision.",
+      "Material is double-sided in source. Prefer front-side rendering if rear/open edges are buried and facing away from visitor.",
+      "There is no separate AO download. The single packed ARM map supplies roughness/metallic; no extra texture is required.",
+      "These are CPU asset checks and proposed budgets, not Quest frame-rate measurements."
+    ]
+  }
+}

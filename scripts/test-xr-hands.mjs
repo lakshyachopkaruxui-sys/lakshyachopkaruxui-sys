@@ -125,6 +125,17 @@ test('named joint metadata clears hidden, missing and non-finite joints without 
 function appHarness() {
   const app = Object.create(App.prototype);
   app.helpGesture = new XRHelpGesture();
+  app.narrationGesture = new XRHelpGesture();
+  app.replayGesture = new XRHelpGesture();
+  const action = () => ({ position: new THREE.Vector3(.2, 1.3, -.4), place() {}, update() {}, setText() {} });
+  app.notesTarget = action();
+  app.narrationTarget = action();
+  app.replayTarget = action();
+  app.narration = { play() {}, stop() {}, startSession() {}, setEnabled() {} };
+  app.audio = { state: 'ready', unlock: async () => {} };
+  app.narrationEnabled = true;
+  app.openingNarrated = true;
+  app.narrationReadyAt = 0;
   const session = new EventTarget();
   session.visibilityState = 'visible';
   const observation = { cameraUpdates: 0, renders: 0, poses: true, gap: 0.01 };
@@ -144,14 +155,14 @@ function appHarness() {
   app.xrAwaitingRelease = [false, false];
   app.worlds = Array.from({ length: 4 }, () => ({
     scene: new THREE.Scene(), root: new THREE.Group(), leakColor: new THREE.Color(),
-    groundAt: () => 0, update() {}, refreshStencil() {}, alignTo() {},
+    groundAt: () => 0, update() {}, updateView() {}, refreshStencil() {}, alignTo() {},
     walkBounds: { center: new THREE.Vector3(), radius: 8 }
   }));
   [app.worldOne, app.worldTwo, app.worldUnderwater, app.worldThree] = app.worlds;
   app.worldThree.updateView = () => {};
   app.worldThree.consumeReturnHint = () => false;
   app.outerIndex = 0; app.nextWorld = NEXT_WORLD;
-  app.currentWorld = 'The World of Stillness';
+  app.currentWorld = 'Did I Wake Up?';
   app.anchor = new THREE.Group();
   app.anchor.position.set(0, 1.2, -0.5);
   app.worldOne.scene.add(app.anchor);
@@ -167,7 +178,9 @@ function appHarness() {
   } };
   app.desktopHands = { forceRelease() {} };
   app.controls = { endFrame() {}, ready: false };
-  for (const key of ['tmpA', 'tmpB', 'tmpC', 'normal', 'gapCentre', 'tearWorld', 'viewerPosition', 'viewerDirection']) app[key] = new THREE.Vector3();
+  for (const key of ['tmpA', 'tmpB', 'tmpC', 'normal', 'gapCentre', 'tearWorld', 'viewerPosition', 'viewerDirection', 'collisionHeadBase']) app[key] = new THREE.Vector3();
+  app.collisionComfortMaterial = new THREE.ShaderMaterial({ uniforms: { opacity: { value: 0 } } });
+  app.collisionComfort = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), app.collisionComfortMaterial);
   app.tmpQ = new THREE.Quaternion();
   app.membrane = { sync() {} };
   app.light = app.particles = app.creature = app.handVisual = app.guide = { update() {}, flash() {} };
@@ -223,7 +236,7 @@ test('blurred frames follow head motion but freeze world time and an already-sta
   assert.equal(h.app.time, beforeTime, 'resuming frame discards the hidden interval');
   assert.equal(h.app.swallow, 1.07);
   h.app.tick(5050);
-  assert.equal(h.app.outerIndex, 1);
+  assert.equal(h.app.outerIndex, 2);
   assert.equal(h.app.swapped, true, 'the existing crossing resumes exactly once');
 });
 
@@ -250,22 +263,23 @@ test('ended sessions release visibility listeners instead of affecting the next 
   assert.equal(h.app.xrFocusSuspended, false);
 });
 
-test('App routes help to the tracked head, and blocks it during tearing, crossing and focus loss', () => {
+test('App routes the visible notes target to help and blocks tearing, crossing and focus loss', () => {
   const h = appHarness();
   h.observation.gap = 0.06;
   const toggles = [], gates = [];
   let cancellations = 0;
   h.app.helpGesture = {
-    update(samples, head, forward, dt, enabled) {
+    updateTarget(samples, target, dt, enabled) {
       assert.equal(samples.length, 2);
-      assert.ok(head.equals(h.app.camera.getWorldPosition(new THREE.Vector3())));
-      assert.ok(forward.distanceTo(h.app.camera.getWorldDirection(new THREE.Vector3())) < 1e-8);
+      assert.equal(target, h.app.notesTarget.position, 'recognizer uses the visible world-space target');
       gates.push(enabled);
       return enabled;
     },
     cancelHold() { cancellations++; }
   };
   h.app.guide = { update() {}, flash() {}, toggleNotes(head, forward, now) {
+    assert.ok(head.equals(h.app.camera.getWorldPosition(new THREE.Vector3())));
+    assert.ok(forward.distanceTo(h.app.camera.getWorldDirection(new THREE.Vector3())) < 1e-8);
     toggles.push({ head: head.clone(), forward: forward.clone(), now });
   } };
   h.app.camera.rotation.y = 0.7;
@@ -285,4 +299,33 @@ test('App routes help to the tracked head, and blocks it during tearing, crossin
   assert.equal(gates.at(-1), false);
   assert.equal(cancellations, 1, 'an interruption cancels the pending hold');
   assert.equal(toggles.length, 1);
+});
+
+test('returning to intro disables input, guidance, action targets and sound', () => {
+  const h = appHarness();
+  const events = [];
+  h.app.mode = 'xr';
+  h.app.desktopHands.enabled = true;
+  h.app.desktopHands.forceRelease = () => events.push('release hands');
+  h.app.controls.enabled = true;
+  h.app.controls.release = () => events.push('release controls');
+  h.app.hud = { setVisible(value) { assert.equal(value, false); events.push('hide HUD'); } };
+  h.app.guide = { setVisible(value) { assert.equal(value, false); events.push('hide guide'); } };
+  for (const [name, field] of [['notes', 'helpGesture'], ['voice', 'narrationGesture'], ['replay', 'replayGesture']]) {
+    h.app[field] = { cancelHold() { events.push('cancel ' + name); } };
+  }
+  h.app.narration.stop = () => events.push('stop narration');
+  h.app.audio.setActive = value => { assert.equal(value, false); events.push('mute audio'); };
+  for (const [name, field] of [['notes', 'notesTarget'], ['voice', 'narrationTarget'], ['replay', 'replayTarget']]) {
+    h.app[field].update = (_position, dt, visible) => {
+      assert.equal(dt, 0); assert.equal(visible, false); events.push('hide ' + name);
+    };
+  }
+  h.app.enterIntro();
+  assert.equal(h.app.mode, 'intro');
+  assert.equal(h.app.desktopHands.enabled, false);
+  assert.equal(h.app.controls.enabled, false);
+  assert.deepEqual(events, ['release hands', 'release controls', 'hide HUD', 'hide guide',
+    'cancel notes', 'cancel voice', 'cancel replay', 'stop narration', 'mute audio',
+    'hide notes', 'hide voice', 'hide replay']);
 });

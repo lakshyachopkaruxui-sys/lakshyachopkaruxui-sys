@@ -30,6 +30,7 @@ const DESKTOP_NOTES = [
   '[Shift] move or pull faster',
   '[Space] jump / cross an open tear',
   '[T] place a new tear · [R] release',
+  '[N] voice on / off · [V] replay narration',
   '[H] close · fades in 20s · [Esc] free mouse'
 ];
 
@@ -39,19 +40,21 @@ const XR_NOTES = [
   'Hold the open tear steady to cross',
   'Release your pinches to let it heal',
   'Pinch together to start a new tear',
-  'Help: face both open palms toward you',
-  'Hold 1.5s · repeat to close · fades in 20s'
+  'Help: hold either fingertip in the notes circle',
+  'Move away before repeating · fades in 20s'
 ];
 
 /**
  * One quiet next action, written into the space below the tear. The first
  * world teaches the interaction for twenty seconds, then idle guidance recedes.
- * Full controls are recalled with H or the deliberate two-open-palms gesture.
+ * Full controls are recalled with H or the visible fingertip dwell target.
  */
 export class Guide {
   private prompt = new DiegeticLabel(0.72, 340, { depthTest: false, renderOrder: 60 });
   private title = new DiegeticLabel(3.7, 300, { depthTest: false, renderOrder: 55 });
   private notes = new DiegeticLabel(0.92, 760, { depthTest: false, renderOrder: 58 });
+  private caption = new DiegeticLabel(1.45, 360, { depthTest: false, renderOrder: 64 });
+  private captionText = '';
   private flashText = '';
   private flashUntil = -1;
   private lastWorld = '';
@@ -71,7 +74,16 @@ export class Guide {
   private lastHalfFov = 0.85;
 
   constructor(scene: THREE.Scene) {
-    scene.add(this.prompt.mesh, this.title.mesh, this.notes.mesh);
+    scene.add(this.prompt.mesh, this.title.mesh, this.notes.mesh, this.caption.mesh);
+  }
+
+  get notesVisible() { return this.notesOn && !this.hidden; }
+
+  setNarrationCaption(text: string | null) {
+    this.captionText = text ?? '';
+    const middle = Math.floor(this.captionText.length / 2);
+    const split = this.captionText.length > 60 ? this.captionText.lastIndexOf(' ', middle) : -1;
+    this.caption.set({ text: split > 0 ? `${this.captionText.slice(0, split)}|${this.captionText.slice(split + 1)}` : this.captionText });
   }
 
   /** Start a fresh onboarding journey once the new session has a tracked pose. */
@@ -181,6 +193,11 @@ export class Guide {
     this.notes.setNotes('field notes', i.xr ? XR_NOTES : DESKTOP_NOTES);
     this.notes.targetOpacity = this.notesOn && !this.hidden ? 0.97 : 0;
     this.notes.update(dt, i.viewer);
+    this.caption.mesh.position.copy(i.viewer).addScaledVector(this.forward, 1.7);
+    this.caption.mesh.position.y = i.viewer.y + (this.notesOn ? 0.55 : -0.12);
+    this.caption.mesh.scale.setScalar(Math.min(1, 2 * 1.7 * Math.tan(this.lastHalfFov - 0.06) / 1.45));
+    this.caption.targetOpacity = this.captionText && !this.hidden ? 0.96 : 0;
+    this.caption.update(dt, i.viewer);
   }
 
   private placeNotes(viewer: THREE.Vector3, forward: THREE.Vector3) {
@@ -239,6 +256,6 @@ export class Guide {
     if (i.gripsHolding === 2) return 'Gently pull your hands apart|keep your elbows relaxed';
     if (i.gripsHolding === 1) return '{pinch} Pinch with your other hand|one hand on each side';
     if (this.isHealing(i)) return 'The tear is healing|{pinch} pinch again to hold it';
-    return '{pinch} Pinch both sides of the crack|Help: both palms toward you · hold 1.5s';
+    return '{pinch} Pinch both sides of the crack|Help: hold a fingertip in the notes circle';
   }
 }

@@ -1,0 +1,90 @@
+{
+  "scope": "Offline orthographic alpha-cutout canopy coverage at 192x320 pixels, four views per variant. Geometry/alpha diagnostic, not final WebGL lighting or FPS.",
+  "views": [
+    {
+      "name": "fir_tree_01_a_LOD2.003",
+      "angleDegrees": 0,
+      "originalOpaquePixels": 24186,
+      "balancedOpaquePixels": 19531,
+      "retainedOriginalCoverage": 0.7826
+    },
+    {
+      "name": "fir_tree_01_a_LOD2.003",
+      "angleDegrees": 90,
+      "originalOpaquePixels": 25256,
+      "balancedOpaquePixels": 20553,
+      "retainedOriginalCoverage": 0.7922
+    },
+    {
+      "name": "fir_tree_01_a_LOD2.003",
+      "angleDegrees": 180,
+      "originalOpaquePixels": 24186,
+      "balancedOpaquePixels": 19531,
+      "retainedOriginalCoverage": 0.7826
+    },
+    {
+      "name": "fir_tree_01_a_LOD2.003",
+      "angleDegrees": 270,
+      "originalOpaquePixels": 25256,
+      "balancedOpaquePixels": 20553,
+      "retainedOriginalCoverage": 0.7922
+    },
+    {
+      "name": "fir_tree_01_b_LOD2.003",
+      "angleDegrees": 0,
+      "originalOpaquePixels": 19909,
+      "balancedOpaquePixels": 16569,
+      "retainedOriginalCoverage": 0.8061
+    },
+    {
+      "name": "fir_tree_01_b_LOD2.003",
+      "angleDegrees": 90,
+      "originalOpaquePixels": 19096,
+      "balancedOpaquePixels": 15847,
+      "retainedOriginalCoverage": 0.8039
+    },
+    {
+      "name": "fir_tree_01_b_LOD2.003",
+      "angleDegrees": 180,
+      "originalOpaquePixels": 19909,
+      "balancedOpaquePixels": 16569,
+      "retainedOriginalCoverage": 0.8061
+    },
+    {
+      "name": "fir_tree_01_b_LOD2.003",
+      "angleDegrees": 270,
+      "originalOpaquePixels": 19096,
+      "balancedOpaquePixels": 15847,
+      "retainedOriginalCoverage": 0.8039
+    },
+    {
+      "name": "fir_tree_01_c_LOD2.002",
+      "angleDegrees": 0,
+      "originalOpaquePixels": 9297,
+      "balancedOpaquePixels": 8913,
+      "retainedOriginalCoverage": 0.9243
+    },
+    {
+      "name": "fir_tree_01_c_LOD2.002",
+      "angleDegrees": 90,
+      "originalOpaquePixels": 10241,
+      "balancedOpaquePixels": 9828,
+      "retainedOriginalCoverage": 0.9302
+    },
+    {
+      "name": "fir_tree_01_c_LOD2.002",
+      "angleDegrees": 180,
+      "originalOpaquePixels": 9297,
+      "balancedOpaquePixels": 8913,
+      "retainedOriginalCoverage": 0.9243
+    },
+    {
+      "name": "fir_tree_01_c_LOD2.002",
+      "angleDegrees": 270,
+      "originalOpaquePixels": 10241,
+      "balancedOpaquePixels": 9828,
+      "retainedOriginalCoverage": 0.9302
+    }
+  ],
+  "seconds": 35.21725559234619
+}

@@ -5,6 +5,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { registerHooks, stripTypeScriptTypes } from 'node:module';
 import test from 'node:test';
 import * as THREE from 'three';
+import { recordedAudioFixture, clipAtSource } from './helpers/recorded-audio-fixture.mjs';
 
 const sourceRoot = new URL('../src/', import.meta.url).href;
 registerHooks({
@@ -49,8 +50,9 @@ function controlledContext(sampleRate = 48000) {
   };
 }
 
-function fixture(clips = UNDERWATER_SOUNDS) {
+function fixture(t, clips = UNDERWATER_SOUNDS, options = {}) {
   const ctx = controlledContext();
+  const recordings = recordedAudioFixture(t, ctx, clips.flatMap(clip => clip.file ? [clip.file] : []), options);
   const listener = { context: ctx, getInput: () => node(), timeDelta: 1 / 72 };
   const engine = { state: 'running', ctx, listener };
   const world = { root: new THREE.Group(), soundSpots: {
@@ -65,7 +67,7 @@ function fixture(clips = UNDERWATER_SOUNDS) {
       soundscape.update(1 / 72, openness, 0, lean, inside);
     }
   };
-  return { ctx, engine, world, soundscape, step };
+  return { ctx, engine, world, soundscape, step, recordings };
 }
 
 const makeBuffers = ctx => [underwaterBuffer(ctx), bubblesBuffer(ctx), whaleBuffer(ctx), currentBuffer(ctx)];
@@ -114,15 +116,22 @@ test('bubble and whale voices contain quiet intervals and underwater noise is sp
   }
 });
 
-test('starting audio requires unlocked engine, creates four silent loops once, then opens progressively', () => {
-  const f = fixture();
+test('unlocked underwater starts three ambience loops once, including the recording; whale voice is separate', async t => {
+  const f = fixture(t);
   f.engine.state = 'locked';
   f.soundscape.start();
   assert.equal(f.world.root.children.length, 0);
+  assert.equal(f.recordings.requested.length, 0);
   f.engine.state = 'running';
   f.soundscape.start();
   f.soundscape.start();
-  assert.equal(f.world.root.children.length, 4);
+  assert.equal(f.world.root.children.length, 2, 'procedural bubbles/current start while the water file loads');
+  await f.recordings.settle();
+  assert.deepEqual(UNDERWATER_SOUNDS.map(clip => clip.synth), ['water', 'bubbles', 'current']);
+  assert.equal(f.world.root.children.length, 3);
+  assert.equal(f.soundscape.loadedRecordings, 1);
+  assert.deepEqual(f.recordings.requested, ['/audio/deep-ocean.wav']);
+  assert.equal(f.recordings.decoded.length, 1);
   for (const audio of f.world.root.children) {
     assert.equal(audio.gain.gain.value, 0);
     assert.equal(audio.loop, true);
@@ -138,32 +147,36 @@ test('starting audio requires unlocked engine, creates four silent loops once, t
   assert.ok(closed < half && half < inside);
 });
 
-test('all underwater clips keep their acoustic ceilings inside, including maximum close-seam lean', () => {
-  const f = fixture();
+test('all underwater clips keep their acoustic ceilings inside, including maximum close-seam lean', async t => {
+  const f = fixture(t);
   f.soundscape.start();
+  await f.recordings.settle();
   for (const inside of [false, true]) {
     f.step(4, inside, 1, 1);
-    f.world.root.children.forEach((audio, i) => {
+    f.world.root.children.forEach(audio => {
+      const clip = clipAtSource(audio, f.world, UNDERWATER_SOUNDS);
       const filter = audio.filters[0];
       assert.equal(filter.type, 'lowpass');
-      assert.ok(filter.frequency.value <= UNDERWATER_SOUNDS[i].maxCutoff);
+      assert.ok(filter.frequency.value <= clip.maxCutoff);
       assert.ok(filter.frequency.value >= 420);
     });
   }
-  const land = fixture([WORLD_TWO_SOUNDS.find(clip => clip.synth === 'wind')]);
+  const land = fixture(t, [WORLD_TWO_SOUNDS.find(clip => clip.synth === 'wind')]);
   land.soundscape.start();
   land.step(4, true);
   assert.ok(land.world.root.children[0].filters[0].frequency.value > CONFIG.audio.leakOpenCutoff * 0.99, 'forest retains its open high-frequency character');
 });
 
-test('positional sources and native panners follow a translated, rotated world exactly once', () => {
-  const f = fixture();
+test('positional sources and native panners follow a translated, rotated world exactly once', async t => {
+  const f = fixture(t);
   f.soundscape.start();
+  await f.recordings.settle();
   f.world.root.position.set(8, -2, 11);
   f.world.root.rotation.y = 1.2;
   f.world.root.updateMatrixWorld(true);
-  f.world.root.children.forEach((audio, i) => {
-    const local = f.world.soundSpots[UNDERWATER_SOUNDS[i].spot];
+  f.world.root.children.forEach(audio => {
+    const clip = clipAtSource(audio, f.world, UNDERWATER_SOUNDS);
+    const local = f.world.soundSpots[clip.spot];
     assert.ok(audio.position.distanceTo(local) < 1e-10);
     const expected = local.clone().applyMatrix4(f.world.root.matrixWorld);
     assert.ok(audio.getWorldPosition(new THREE.Vector3()).distanceTo(expected) < 1e-10);
@@ -173,9 +186,10 @@ test('positional sources and native panners follow a translated, rotated world e
   });
 });
 
-test('leaving underwater fades existing gain smoothly to exact zero and re-entry restores the sound', () => {
-  const f = fixture();
+test('leaving underwater fades existing gain smoothly to exact zero and re-entry restores the sound', async t => {
+  const f = fixture(t);
   f.soundscape.start();
+  await f.recordings.settle();
   f.step(4, true);
   let previous = f.world.root.children.map(audio => audio.gain.gain.value);
   f.soundscape.mute(1 / 72);
@@ -192,4 +206,22 @@ test('leaving underwater fades existing gain smoothly to exact zero and re-entry
   for (const audio of f.world.root.children) assert.equal(audio.gain.gain.value, 0);
   f.step(2, true);
   for (const audio of f.world.root.children) assert.ok(audio.gain.gain.value > 0.01);
+});
+
+test('unavailable water recording creates exactly one procedural fallback at the same location and ceiling', async t => {
+  const f = fixture(t, UNDERWATER_SOUNDS, { fail: true });
+  f.soundscape.start();
+  f.soundscape.start();
+  await f.recordings.settle();
+  assert.equal(f.recordings.requested.length, 1);
+  assert.equal(f.recordings.warnings.length, 1);
+  assert.equal(f.soundscape.loadedRecordings, 0);
+  assert.equal(f.world.root.children.length, 3);
+  f.step(3, true, 1, 1);
+  for (const audio of f.world.root.children) {
+    const clip = clipAtSource(audio, f.world, UNDERWATER_SOUNDS);
+    assert.ok(audio.filters[0].frequency.value <= clip.maxCutoff);
+    assert.ok(audio.gain.gain.value > 0);
+    assert.ok(audio.buffer.getChannelData(0).some(value => Math.abs(value) > 0.001));
+  }
 });

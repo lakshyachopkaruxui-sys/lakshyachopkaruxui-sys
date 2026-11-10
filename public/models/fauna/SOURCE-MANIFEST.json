@@ -1,0 +1,288 @@
+{
+  "assets": [
+    {
+      "file": "Wolf.gltf",
+      "creator": "Quaternius",
+      "pack": "Ultimate Animated Animal Pack",
+      "source_page": "https://quaternius.com/packs/ultimateanimatedanimals.html",
+      "creator_linked_folder": "https://drive.google.com/drive/folders/1uJ3N5HfB7jKTseJUNQr3N4YaN0UuEtHk",
+      "gltf_folder": "https://drive.google.com/drive/folders/1yJXdB1iSrI8Db7hG77zxZ66vKsqIt0ry",
+      "download_url": "https://drive.google.com/uc?export=download&id=1lFQoQ9ln2Z2wGuFFWObj9i5jHqUl_ftG",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-09-19",
+      "bytes": 3175890,
+      "sha256": "cc02e9d128b5715f352ee8bea086f97a35f1d875d240de99b0f9f2775c37d415",
+      "format": "glTF 2.0 JSON with embedded base64 buffer",
+      "triangles": 1962,
+      "material_count": 4,
+      "image_count": 0,
+      "source_changes": "None. Original creator files retained byte-for-byte.",
+      "appearance": "Stylized material-colored low-poly model, not a scan or textured realistic animal.",
+      "forward": "+Z",
+      "up": "+Y",
+      "head_bone": "Head",
+      "head_parent": "Neck3",
+      "idle_sample_bounds": {
+        "min": [
+          -0.528037087210589,
+          -0.010202600831795638,
+          -2.713767322131679
+        ],
+        "max": [
+          0.5280373024314499,
+          2.674447698928586,
+          2.5621065019747453
+        ],
+        "size": [
+          1.0560743896420388,
+          2.6846502997603814,
+          5.275873824106425
+        ]
+      },
+      "animations": [
+        {
+          "name": "Attack",
+          "duration": 1.3333333730697632
+        },
+        {
+          "name": "Death",
+          "duration": 1.0666667222976685
+        },
+        {
+          "name": "Eating",
+          "duration": 2.5333333015441895
+        },
+        {
+          "name": "Gallop",
+          "duration": 0.5666666626930237
+        },
+        {
+          "name": "Gallop_Jump",
+          "duration": 0.9333333373069763
+        },
+        {
+          "name": "Idle",
+          "duration": 3.3333332538604736
+        },
+        {
+          "name": "Idle_2",
+          "duration": 3.3333332538604736
+        },
+        {
+          "name": "Idle_2_HeadLow",
+          "duration": 4
+        },
+        {
+          "name": "Idle_HitReact1",
+          "duration": 0.6666666865348816
+        },
+        {
+          "name": "Idle_HitReact2",
+          "duration": 0.6666666865348816
+        },
+        {
+          "name": "Jump_ToIdle",
+          "duration": 1.3333333730697632
+        },
+        {
+          "name": "Walk",
+          "duration": 1.0666667222976685
+        }
+      ],
+      "validation": "Loaded using installed Three.js GLTFLoader; sampled Idle at 0.3 seconds with skinned bounds."
+    },
+    {
+      "file": "Stag.gltf",
+      "creator": "Quaternius",
+      "pack": "Ultimate Animated Animal Pack",
+      "source_page": "https://quaternius.com/packs/ultimateanimatedanimals.html",
+      "creator_linked_folder": "https://drive.google.com/drive/folders/1uJ3N5HfB7jKTseJUNQr3N4YaN0UuEtHk",
+      "gltf_folder": "https://drive.google.com/drive/folders/1yJXdB1iSrI8Db7hG77zxZ66vKsqIt0ry",
+      "download_url": "https://drive.google.com/uc?export=download&id=1URNoFeIFblJXPFOV6qwPrxZr5dLZ3YGx",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-09-19",
+      "bytes": 3224724,
+      "sha256": "170b964909d16d1ab4d428b1d714f25016913d32481acd9c3d62923192583be6",
+      "format": "glTF 2.0 JSON with embedded base64 buffer",
+      "triangles": 3670,
+      "material_count": 5,
+      "image_count": 0,
+      "source_changes": "None. Original creator files retained byte-for-byte.",
+      "appearance": "Stylized material-colored low-poly model, not a scan or textured realistic animal.",
+      "forward": "+Z",
+      "up": "+Y",
+      "head_bone": "Head",
+      "head_parent": "Neck3",
+      "idle_sample_bounds": {
+        "min": [
+          -1.294051118731855,
+          0.009703391812297847,
+          -1.8025549217605676
+        ],
+        "max": [
+          1.2734051004829001,
+          5.373155186025118,
+          3.044531640058051
+        ],
+        "size": [
+          2.567456219214755,
+          5.3634517942128195,
+          4.847086561818619
+        ]
+      },
+      "animations": [
+        {
+          "name": "Attack_Headbutt",
+          "duration": 0.800000011920929
+        },
+        {
+          "name": "Attack_Kick",
+          "duration": 0.800000011920929
+        },
+        {
+          "name": "Death",
+          "duration": 1.100000023841858
+        },
+        {
+          "name": "Eating",
+          "duration": 12.100000381469727
+        },
+        {
+          "name": "Gallop",
+          "duration": 0.5333333611488342
+        },
+        {
+          "name": "Gallop_Jump",
+          "duration": 1.399999976158142
+        },
+        {
+          "name": "Idle",
+          "duration": 3.3333332538604736
+        },
+        {
+          "name": "Idle_2",
+          "duration": 3.3333332538604736
+        },
+        {
+          "name": "Idle_Headlow",
+          "duration": 3.3333332538604736
+        },
+        {
+          "name": "Idle_HitReact1",
+          "duration": 0.46666666865348816
+        },
+        {
+          "name": "Idle_HitReact2",
+          "duration": 0.5333333611488342
+        },
+        {
+          "name": "Jump_toIdle",
+          "duration": 1.5333333015441895
+        },
+        {
+          "name": "Walk",
+          "duration": 1.1666666269302368
+        }
+      ],
+      "validation": "Loaded using installed Three.js GLTFLoader; sampled Idle at 0.3 seconds with skinned bounds."
+    },
+    {
+      "file": "Deer.gltf",
+      "creator": "Quaternius",
+      "pack": "Ultimate Animated Animal Pack",
+      "source_page": "https://quaternius.com/packs/ultimateanimatedanimals.html",
+      "creator_linked_folder": "https://drive.google.com/drive/folders/1uJ3N5HfB7jKTseJUNQr3N4YaN0UuEtHk",
+      "gltf_folder": "https://drive.google.com/drive/folders/1yJXdB1iSrI8Db7hG77zxZ66vKsqIt0ry",
+      "download_url": "https://drive.google.com/uc?export=download&id=1iGpXKrqYGyZCPGHPPSuDAoKnOXLhXJ0q",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "retrieved": "2026-09-19",
+      "bytes": 3288813,
+      "sha256": "b8afd0647e7a74332ce802c8326dfefe1a2b76da67ab925a631aaddb5ae9bdd4",
+      "format": "glTF 2.0 JSON with embedded base64 buffer",
+      "triangles": 2098,
+      "material_count": 7,
+      "image_count": 0,
+      "source_changes": "None. Original creator files retained byte-for-byte.",
+      "appearance": "Stylized material-colored low-poly model, not a scan or textured realistic animal.",
+      "forward": "+Z",
+      "up": "+Y",
+      "head_bone": "Head",
+      "head_parent": "Neck3",
+      "idle_sample_bounds": {
+        "min": [
+          -0.7734079997431639,
+          -0.013107348627687863,
+          -1.6421881088510464
+        ],
+        "max": [
+          0.6810867139653731,
+          4.289125353503373,
+          2.7548432891622463
+        ],
+        "size": [
+          1.4544947137085371,
+          4.302232702131061,
+          4.397031398013293
+        ]
+      },
+      "animations": [
+        {
+          "name": "Attack_Headbutt",
+          "duration": 0.800000011920929
+        },
+        {
+          "name": "Attack_Kick",
+          "duration": 0.800000011920929
+        },
+        {
+          "name": "Death",
+          "duration": 0.8333333134651184
+        },
+        {
+          "name": "Eating",
+          "duration": 6
+        },
+        {
+          "name": "Gallop",
+          "duration": 0.5333333611488342
+        },
+        {
+          "name": "Gallop_Jump",
+          "duration": 1.399999976158142
+        },
+        {
+          "name": "Idle",
+          "duration": 3.3333332538604736
+        },
+        {
+          "name": "Idle_2",
+          "duration": 3.3333332538604736
+        },
+        {
+          "name": "Idle_Headlow",
+          "duration": 3.3333332538604736
+        },
+        {
+          "name": "Idle_HitReact1",
+          "duration": 0.46666666865348816
+        },
+        {
+          "name": "Idle_HitReact2",
+          "duration": 0.5333333611488342
+        },
+        {
+          "name": "Jump_toIdle",
+          "duration": 1.5333333015441895
+        },
+        {
+          "name": "Walk",
+          "duration": 1.1666666269302368
+        }
+      ],
+      "validation": "Loaded using installed Three.js GLTFLoader; sampled Idle at 0.3 seconds with skinned bounds."
+    }
+  ]
+}

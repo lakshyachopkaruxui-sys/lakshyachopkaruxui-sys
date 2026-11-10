@@ -37,6 +37,20 @@ const { WORLD_NAMES } = await import('../src/config/worlds.ts');
 const viewer = new THREE.Vector3(0, 1.6, 0);
 const forward = new THREE.Vector3(0, 0, -1);
 
+test('narration captions remain visible above open notes and clear when stopped', () => {
+  const { guide, update } = fixture(true);
+  guide.setNarrationCaption('You returned to the world you call yours. Your perspective is not the whole picture.');
+  update(1);
+  assert.ok(guide.caption.targetOpacity > 0);
+  guide.toggleNotes(viewer, forward, 2);
+  update(2);
+  assert.ok(guide.caption.targetOpacity > 0, 'notes cannot erase caption-only narration');
+  assert.ok(guide.caption.mesh.position.y > guide.notes.mesh.position.y + 0.5);
+  guide.setNarrationCaption(null);
+  update(3);
+  assert.equal(guide.caption.targetOpacity, 0);
+});
+
 function fixture(xr = false) {
   const guide = new Guide(new THREE.Scene());
   guide.setVisible(true);

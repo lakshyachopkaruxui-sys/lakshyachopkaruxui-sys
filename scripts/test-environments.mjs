@@ -106,7 +106,7 @@ test('both triangle orientations, corners, grid edges, and outside clamping rema
 
 // Leave asynchronous prop loading pending instead of inserting substitute
 // meshes. The actual procedural world surfaces still build synchronously.
-THREE.TextureLoader.prototype.load = () => new THREE.Texture();
+THREE.TextureLoader.prototype.load = (_url, onLoad) => { const texture = new THREE.Texture(); queueMicrotask(() => onLoad?.(texture)); return texture; };
 HDRLoader.prototype.load = () => new THREE.DataTexture();
 GLTFLoader.prototype.load = () => undefined;
 globalThis.document = {
@@ -127,6 +127,24 @@ const { WorldThree } = await import('../src/worlds/WorldThree.ts');
 let forest, drift;
 const getForest = () => forest ??= new WorldTwo(new THREE.Vector3(0, 1.35, -1.1));
 const getDrift = () => drift ??= new WorldThree(new THREE.Vector3(0, 1.35, -1.1));
+
+test('responsive forest plants use identical visible and shadow displacement', () => {
+  const world = getForest();
+  for (const name of ['Paired fern fronds', 'Low woodland sedges along the trail']) {
+    const mesh = world.root.getObjectByName(name);
+    assert.ok(mesh?.isInstancedMesh && mesh.castShadow);
+    assert.ok(mesh.customDepthMaterial?.isMeshDepthMaterial, `${name} needs a matching depth pass`);
+    const shaders = [mesh.material, mesh.customDepthMaterial].map(material => {
+      const shader = { uniforms: {}, vertexShader: '#include <begin_vertex>\n#include <project_vertex>', fragmentShader: '' };
+      material.onBeforeCompile(shader, {});
+      return shader;
+    });
+    assert.equal(shaders[0].vertexShader, shaders[1].vertexShader, 'shadow and colour pass must place every plant vertex identically');
+    for (const key of ['uWindTime', 'uPresencePosition', 'uPresenceStrength']) {
+      assert.equal(shaders[0].uniforms[key], shaders[1].uniforms[key], `${name} ${key} must use the same changing value`);
+    }
+  }
+});
 
 test('forest groundAt follows actual ground after translated and rotated alignment', () => {
   const world = getForest();
@@ -202,7 +220,7 @@ test('island samplers agree with rendered tops across more than 1,000 points', (
   }
 });
 
-test('floating island surfaces are closed with consistently oriented shared edges', () => {
+test('shadow terrain surfaces are closed with consistently oriented shared edges', () => {
   for (const [islandIndex, island] of getDrift().islands.entries()) {
     const geometry = island.terrain.geometry;
     const positions = geometry.getAttribute('position');
@@ -230,22 +248,14 @@ test('floating island surfaces are closed with consistently oriented shared edge
   }
 });
 
-test('island plant and crystal attachment bases contact their actual support mesh', () => {
+test('grounded shadow surface covers the entire playable clearing without floating islands', () => {
   const world = getDrift();
-  assert.ok(world.groundAttachments.length > 0, 'scene must record its grounded attachments');
-  world.scene.updateMatrixWorld(true);
-  for (const attachment of world.groundAttachments) {
-    const matrix = attachment.object.matrixWorld.clone();
-    if (attachment.instance !== undefined) {
-      const local = new THREE.Matrix4();
-      attachment.object.getMatrixAt(attachment.instance, local);
-      matrix.multiply(local);
-    }
-    const base = new THREE.Vector3().applyMatrix4(matrix);
-    const island = world.islands[attachment.island];
-    assert.ok(island, 'attachment references a real support island');
-    close(base.y, surfaceAt(island.surface, base.x, base.z), 'grounded attachment', 0.001);
-  }
+  assert.equal(world.islands.length, 1);
+  const ground = world.islands[0];
+  assert.ok(ground.terrain.radius > world.walkBounds.radius * 3);
+  assert.equal(ground.root.position.y, 0);
+  assert.equal(world.root.getObjectByName('rootbound watching horrors'), undefined);
+  assert.equal(world.root.getObjectByName('stars falling upward'), undefined);
 });
 
 test('home island groundAt remains correct after alignment', () => {

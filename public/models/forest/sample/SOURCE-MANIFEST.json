@@ -1,0 +1,566 @@
+{
+  "license": "CC0-1.0",
+  "license_url": "https://polyhaven.com/license",
+  "retrieval": "Powered by Poly Haven API; User-Agent TEAR-Forest-Sample/1.0",
+  "assets": [
+    {
+      "id": "grass_medium_01",
+      "authors": {
+        "Rob Tuytel": "Photography",
+        "Rico Cilliers": "Modeling"
+      },
+      "source": "https://polyhaven.com/a/grass_medium_01"
+    },
+    {
+      "id": "rock_moss_set_01",
+      "authors": {
+        "Kless Gyzen": "All"
+      },
+      "source": "https://polyhaven.com/a/rock_moss_set_01"
+    },
+    {
+      "id": "dry_branches_medium_01",
+      "authors": {
+        "Rico Cilliers": "All"
+      },
+      "source": "https://polyhaven.com/a/dry_branches_medium_01"
+    }
+  ],
+  "sourceFiles": [
+    {
+      "asset": "grass_medium_01",
+      "source": "https://polyhaven.com/a/grass_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/grass_medium_01/grass_medium_01_1k.gltf",
+      "file": "validation/forest-sample-2026-10-17/originals/grass_medium_01/grass_medium_01_1k.gltf",
+      "bytes": 27110,
+      "md5": "28dd8247f3faa749bf87a0b84be01e7e",
+      "sha256": "3e5e2a314c94e16de54fd7c28e41709731fbd2b1613ab539f1544f622ddb6a85"
+    },
+    {
+      "asset": "grass_medium_01",
+      "source": "https://polyhaven.com/a/grass_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_medium_01/grass_medium_01_nor_gl_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/grass_medium_01/textures/grass_medium_01_nor_gl_1k.jpg",
+      "bytes": 956166,
+      "md5": "fcf43dd1253f56e4c361079f34155c37",
+      "sha256": "cae298d3d1d7ff7c7e210ad8ac772b96706e356f9315a6b04fde373ce01ccf1e"
+    },
+    {
+      "asset": "grass_medium_01",
+      "source": "https://polyhaven.com/a/grass_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_medium_01/grass_medium_01_diff_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/grass_medium_01/textures/grass_medium_01_diff_1k.jpg",
+      "bytes": 395673,
+      "md5": "6b18ed50d776fd20c1304d9994bd764e",
+      "sha256": "71495bd6a11fddcab0aaff38246fea1a7b802a705483f1c7cbca53955daa8050"
+    },
+    {
+      "asset": "grass_medium_01",
+      "source": "https://polyhaven.com/a/grass_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/grass_medium_01/grass_medium_01_arm_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/grass_medium_01/textures/grass_medium_01_arm_1k.jpg",
+      "bytes": 679518,
+      "md5": "37ed2730a507b681af2e9f9f7ef3ae5e",
+      "sha256": "9a3a30f72bc02f4398967c5b08f2d20cce30bd423a2613b42a727034296fa3ae"
+    },
+    {
+      "asset": "grass_medium_01",
+      "source": "https://polyhaven.com/a/grass_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/grass_medium_01/grass_medium_01.bin",
+      "file": "validation/forest-sample-2026-10-17/originals/grass_medium_01/grass_medium_01.bin",
+      "bytes": 1006632,
+      "md5": "e0527a0561c2dae5b7b5c1b478d8c6bf",
+      "sha256": "f4587cabdb96a2e96d8be644923dc954a248edfaaa717a0ff224cacb898bee1f"
+    },
+    {
+      "asset": "grass_medium_01",
+      "source": "https://polyhaven.com/a/grass_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/png/1k/grass_medium_01/grass_medium_01_alpha_1k.png",
+      "file": "validation/forest-sample-2026-10-17/originals/grass_medium_01/textures/grass_medium_01_alpha_1k.png",
+      "bytes": 648718,
+      "md5": "6b5b251ef1ca9a69ab9f49def66d758a",
+      "sha256": "711a8e49af758d6a6ce1f610db858899a27be19da6d1866bd35c13bc7b8ffeff"
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "source": "https://polyhaven.com/a/rock_moss_set_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/rock_moss_set_01/rock_moss_set_01_1k.gltf",
+      "file": "validation/forest-sample-2026-10-17/originals/rock_moss_set_01/rock_moss_set_01_1k.gltf",
+      "bytes": 9987,
+      "md5": "75113cc1c21806cca5d8badad4737af7",
+      "sha256": "c36675aca9c6b2be7785c2534cf413b03ec82a5a2a5407a2b1c0cdb0346c9727"
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "source": "https://polyhaven.com/a/rock_moss_set_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_nor_gl_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/rock_moss_set_01/textures/rock_moss_set_01_nor_gl_1k.jpg",
+      "bytes": 209975,
+      "md5": "eb7ebd31ad08e78d0497900652ff1568",
+      "sha256": "eb4aad3f207f1dc5b624d74ae240372171626a66912bd71adf7bd3e518181d6e"
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "source": "https://polyhaven.com/a/rock_moss_set_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/rock_moss_set_01/rock_moss_set_01.bin",
+      "file": "validation/forest-sample-2026-10-17/originals/rock_moss_set_01/rock_moss_set_01.bin",
+      "bytes": 1466380,
+      "md5": "207a51c9f56d34732e9814bbf9cc07b1",
+      "sha256": "de8360e6175879aaf02c171911069cf5f1852547f9ca7f10e440085dbcc3315e"
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "source": "https://polyhaven.com/a/rock_moss_set_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_rough_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/rock_moss_set_01/textures/rock_moss_set_01_rough_1k.jpg",
+      "bytes": 82624,
+      "md5": "ed9d8a2c863262f76f881346e8047c6a",
+      "sha256": "4d6ec46623abd8e2cdb855f59c7ce31873ad61b36b60e4de579e9e776a497c6b"
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "source": "https://polyhaven.com/a/rock_moss_set_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/rock_moss_set_01/rock_moss_set_01_diff_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/rock_moss_set_01/textures/rock_moss_set_01_diff_1k.jpg",
+      "bytes": 168099,
+      "md5": "b8742301e6b4bc5683d2de712e83f772",
+      "sha256": "40cea65d8aa4ee73a93b04af19963834d061eee9779c3fc2c1cba76eef812ccc"
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "source": "https://polyhaven.com/a/rock_moss_set_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/2k/rock_moss_set_01/rock_moss_set_01_diff_2k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/rock_moss_set_01/textures/rock_moss_set_01_diff_2k.jpg",
+      "bytes": 649415,
+      "md5": "d3e1292c9e34bd6b4a236698a1b41290",
+      "sha256": "bdee6da8baba67bd7e85e414e669cd46aab9afaf755114fb5163f0e68775c3d6"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dry_branches_medium_01/dry_branches_medium_01_1k.gltf",
+      "file": "validation/forest-sample-2026-10-17/originals/dry_branches_medium_01/dry_branches_medium_01_1k.gltf",
+      "bytes": 5844,
+      "md5": "bd6d60dff97c59a80d770f94f23b566b",
+      "sha256": "23f328ded9be1e151ccd7994b303c70221551544c4857a71474c1c01a14b8a22"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dry_branches_medium_01/dry_branches_medium_01_arm_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/dry_branches_medium_01/textures/dry_branches_medium_01_arm_1k.jpg",
+      "bytes": 831180,
+      "md5": "a0c5fface8ffdf81a806fcd5cf05788f",
+      "sha256": "6d1ba6f4763d2815301a15bf62eaf68c345cecafb107e2681d12f26fbc657f5a"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dry_branches_medium_01/dry_branches_medium_01_diff_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/dry_branches_medium_01/textures/dry_branches_medium_01_diff_1k.jpg",
+      "bytes": 778799,
+      "md5": "2b01d9d1613c88496250f64828566f7c",
+      "sha256": "1fbaf810a9ca29d2faf0a179834e8dce10cf4854bafe13f63af111030b3ec660"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dry_branches_medium_01/dry_branches_medium_01_nor_gl_1k.jpg",
+      "file": "validation/forest-sample-2026-10-17/originals/dry_branches_medium_01/textures/dry_branches_medium_01_nor_gl_1k.jpg",
+      "bytes": 1170647,
+      "md5": "d374fbbd8c4829310104cce0de7cd826",
+      "sha256": "62f5205bfec599000bb7a430e003bbada939bc8d7976a7d3ab7709fd5893413c"
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "source": "https://polyhaven.com/a/dry_branches_medium_01",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dry_branches_medium_01/dry_branches_medium_01.bin",
+      "file": "validation/forest-sample-2026-10-17/originals/dry_branches_medium_01/dry_branches_medium_01.bin",
+      "bytes": 465172,
+      "md5": "10de852c8bf38e3f3ca5fb1d6c8de9d0",
+      "sha256": "969da1e8cbb2d8201e7fa0fc0dac5b19ef354b32c3d8c62dd9faa7cb3833d8ca"
+    }
+  ],
+  "geometry": [
+    {
+      "asset": "grass_medium_01",
+      "name": "grass_tall_a",
+      "sourceName": "grass_medium_01_tall_a_LOD0",
+      "originalTriangles": 290,
+      "triangles": 290,
+      "vertices": 330,
+      "min": [
+        -0.08047820627689362,
+        0,
+        -0.07926574349403381
+      ],
+      "max": [
+        0.08047820627689362,
+        0.3225463926792145,
+        0.07926574349403381
+      ],
+      "originShift": [
+        -0.0008941851556301117,
+        0.005577980075031519,
+        -0.004762772470712662
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "grass_medium_01",
+      "name": "grass_tall_b",
+      "sourceName": "grass_medium_01_tall_b_LOD0",
+      "originalTriangles": 310,
+      "triangles": 310,
+      "vertices": 354,
+      "min": [
+        -0.07497423142194748,
+        0,
+        -0.06739483773708344
+      ],
+      "max": [
+        0.07497423142194748,
+        0.28566300868988037,
+        0.06739483773708344
+      ],
+      "originShift": [
+        0.008945532143115997,
+        0.0018983071204274893,
+        -0.007096648216247559
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "grass_medium_01",
+      "name": "grass_tiny_a",
+      "sourceName": "grass_medium_01_tiny_a_LOD0",
+      "originalTriangles": 79,
+      "triangles": 79,
+      "vertices": 87,
+      "min": [
+        -0.03367387875914574,
+        0,
+        -0.036884378641843796
+      ],
+      "max": [
+        0.03367387875914574,
+        0.11245334148406982,
+        0.036884378641843796
+      ],
+      "originShift": [
+        -0.010372779332101345,
+        0.0026543086860328913,
+        0.0141221322119236
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "grass_medium_01",
+      "name": "grass_small_b",
+      "sourceName": "grass_medium_01_small_b_LOD0",
+      "originalTriangles": 653,
+      "triangles": 653,
+      "vertices": 700,
+      "min": [
+        -0.08297835290431976,
+        0,
+        -0.09494605660438538
+      ],
+      "max": [
+        0.08297835290431976,
+        0.09989527612924576,
+        0.09494605660438538
+      ],
+      "originShift": [
+        0.009177599102258682,
+        0.007656285539269447,
+        0.002896275371313095
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "grass_medium_01",
+      "name": "grass_mid_b",
+      "sourceName": "grass_medium_01_mid_b_LOD0",
+      "originalTriangles": 1257,
+      "triangles": 1257,
+      "vertices": 1386,
+      "min": [
+        -0.09389440715312958,
+        0,
+        -0.10051430016756058
+      ],
+      "max": [
+        0.09389440715312958,
+        0.17772157490253448,
+        0.10051430016756058
+      ],
+      "originShift": [
+        -0.017439287155866623,
+        0.003344380995258689,
+        -0.012829549610614777
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "grass_medium_01",
+      "name": "grass_large_b",
+      "sourceName": "grass_medium_01_large_b_LOD0",
+      "originalTriangles": 4626,
+      "triangles": 4626,
+      "vertices": 4823,
+      "min": [
+        -0.14204871654510498,
+        0,
+        -0.1378699392080307
+      ],
+      "max": [
+        0.14204871654510498,
+        0.1692626178264618,
+        0.1378699392080307
+      ],
+      "originShift": [
+        0.0039609745144844055,
+        0.025613101199269295,
+        -0.00403362512588501
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "name": "rock_03",
+      "sourceName": "rock_moss_set_01_rock03",
+      "originalTriangles": 5000,
+      "triangles": 5000,
+      "vertices": 2741,
+      "min": [
+        -1.0542912483215332,
+        0,
+        -1.039792776107788
+      ],
+      "max": [
+        1.0542912483215332,
+        1.0996944904327393,
+        1.039792776107788
+      ],
+      "originShift": [
+        -0.036291658878326416,
+        0.4108721911907196,
+        -0.016173064708709717
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "name": "rock_06",
+      "sourceName": "rock_moss_set_01_rock06",
+      "originalTriangles": 8994,
+      "triangles": 8994,
+      "vertices": 4748,
+      "min": [
+        -1.0629911422729492,
+        0,
+        -1.3786516189575195
+      ],
+      "max": [
+        1.0629911422729492,
+        1.261852741241455,
+        1.3786516189575195
+      ],
+      "originShift": [
+        0.13778606057167053,
+        0.5280566811561584,
+        0.10149461030960083
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "rock_moss_set_01",
+      "name": "pebble_03",
+      "sourceName": "rock_moss_set_01_rock03",
+      "originalTriangles": 5000,
+      "triangles": 398,
+      "vertices": 294,
+      "min": [
+        -1.0418064594268799,
+        0,
+        -1.0391749143600464
+      ],
+      "max": [
+        1.0418064594268799,
+        1.0947265625,
+        1.0391749143600464
+      ],
+      "originShift": [
+        -0.036291658878326416,
+        0.4108721911907196,
+        -0.016173064708709717
+      ],
+      "process": "Derived from rock_03 using Three.js r186 SimplifyModifier (meshoptimizer), target 400 triangles; normal and UV attributes participate in error metric and are preserved. Recentered XZ and Ybase=0 after simplification."
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "name": "branch_b",
+      "sourceName": "dry_branches_medium_01_b",
+      "originalTriangles": 5254,
+      "triangles": 5254,
+      "vertices": 3493,
+      "min": [
+        -0.07558189332485199,
+        0,
+        -0.5192518830299377
+      ],
+      "max": [
+        0.07558189332485199,
+        0.14188739657402039,
+        0.5192518830299377
+      ],
+      "originShift": [
+        -0.015632782131433487,
+        0.0626467615365982,
+        -0.06479291617870331
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    },
+    {
+      "asset": "dry_branches_medium_01",
+      "name": "branch_c",
+      "sourceName": "dry_branches_medium_01_c",
+      "originalTriangles": 5616,
+      "triangles": 5616,
+      "vertices": 3641,
+      "min": [
+        -0.06528449058532715,
+        0,
+        -0.3885629177093506
+      ],
+      "max": [
+        0.06528449058532715,
+        0.14325982332229614,
+        0.3885629177093506
+      ],
+      "originShift": [
+        0.00336458720266819,
+        0.053956836462020874,
+        0.016167685389518738
+      ],
+      "process": "Selected authored mesh; catalog transform removed; XZ centered and lowest source vertex moved to local Y=0. No simplification."
+    }
+  ],
+  "textureProcessing": [
+    {
+      "file": "public/models/forest/sample/grass_medium_01/textures/grass_medium_01_diff_alpha_1k.png",
+      "process": "Original decoded JPEG RGB and original 16-bit alpha PNG combined into one 1024px RGBA PNG; alpha scaled from 0..65535 to 0..255 without clipping, no RGB color adjustment."
+    },
+    {
+      "file": "public/models/forest/sample/grass_medium_01/textures/grass_medium_01_arm_512.jpg",
+      "process": "512px RGB JPEG, Lanczos resampling where needed, quality 94 with no chroma subsampling; no color adjustment."
+    },
+    {
+      "file": "public/models/forest/sample/grass_medium_01/textures/grass_medium_01_nor_gl_512.jpg",
+      "process": "512px RGB JPEG, Lanczos resampling where needed, quality 94 with no chroma subsampling; no color adjustment."
+    },
+    {
+      "file": "public/models/forest/sample/rock_moss_set_01/textures/rock_moss_set_01_diff_2k.jpg",
+      "process": "2048px RGB JPEG, Lanczos resampling where needed, quality 94 with no chroma subsampling; no color adjustment."
+    },
+    {
+      "file": "public/models/forest/sample/rock_moss_set_01/textures/rock_moss_set_01_nor_gl_1k.jpg",
+      "process": "1024px RGB JPEG, Lanczos resampling where needed, quality 94 with no chroma subsampling; no color adjustment."
+    },
+    {
+      "file": "public/models/forest/sample/rock_moss_set_01/textures/rock_moss_set_01_rough_512.jpg",
+      "process": "512px RGB JPEG, Lanczos resampling where needed, quality 94 with no chroma subsampling; no color adjustment."
+    },
+    {
+      "file": "public/models/forest/sample/dry_branches_medium_01/textures/dry_branches_medium_01_arm_512.jpg",
+      "process": "512px RGB JPEG, Lanczos resampling where needed, quality 94 with no chroma subsampling; no color adjustment."
+    },
+    {
+      "file": "public/models/forest/sample/dry_branches_medium_01/textures/dry_branches_medium_01_diff_512.jpg",
+      "process": "512px RGB JPEG, Lanczos resampling where needed, quality 94 with no chroma subsampling; no color adjustment."
+    },
+    {
+      "file": "public/models/forest/sample/dry_branches_medium_01/textures/dry_branches_medium_01_nor_gl_512.jpg",
+      "process": "512px RGB JPEG, Lanczos resampling where needed, quality 94 with no chroma subsampling; no color adjustment."
+    }
+  ],
+  "materialProcessing": "Grass uses the published alpha map combined into RGBA with MASK alphaCutoff 0.45; source ARM provides occlusion. Rocks/branches use single-sided opaque materials. All images retain source color.",
+  "files": [
+    {
+      "file": "public/models/forest/sample/dry_branches_medium_01/sample.bin",
+      "bytes": 293508,
+      "sha256": "0ce9fb53ee07a5639b05f9c2c8bbfaeb3dc675a13fdf41079351d92f2acccf09"
+    },
+    {
+      "file": "public/models/forest/sample/dry_branches_medium_01/sample.gltf",
+      "bytes": 4774,
+      "sha256": "3964769185c145de63dbf2316f08ef46c8d4aefdfb9c7b3802248e704e6e7c19"
+    },
+    {
+      "file": "public/models/forest/sample/dry_branches_medium_01/textures/dry_branches_medium_01_arm_512.jpg",
+      "bytes": 164494,
+      "sha256": "528cd528cbd5ac5c6bf089b7cd78013f3b13498410a126c2a7548dbd9a236376"
+    },
+    {
+      "file": "public/models/forest/sample/dry_branches_medium_01/textures/dry_branches_medium_01_diff_512.jpg",
+      "bytes": 130627,
+      "sha256": "7bf143d31f84c32ecc48d9553b2e6ccbaad6ca908549c6c6fa923cd8836d20ef"
+    },
+    {
+      "file": "public/models/forest/sample/dry_branches_medium_01/textures/dry_branches_medium_01_nor_gl_512.jpg",
+      "bytes": 242847,
+      "sha256": "72bc45c4e59a89a7913629a9a319dfd1e4662621d320da9d1a62e05e16c46d9b"
+    },
+    {
+      "file": "public/models/forest/sample/grass_medium_01/sample.bin",
+      "bytes": 289056,
+      "sha256": "bb8981eaf6b321bca691bc048abbb6ae1af76e80b1cf98df402f0f746861a19f"
+    },
+    {
+      "file": "public/models/forest/sample/grass_medium_01/sample.gltf",
+      "bytes": 11344,
+      "sha256": "a4edb90f71f4b2da4a8b8a260b10a6a8b4117e045e47c23612cc8b956d3a2b80"
+    },
+    {
+      "file": "public/models/forest/sample/grass_medium_01/textures/grass_medium_01_arm_512.jpg",
+      "bytes": 148332,
+      "sha256": "cbc5bd62cbd5fb92bce6b669bcc804170d738814fb2af5691b8ac576f91ab79c"
+    },
+    {
+      "file": "public/models/forest/sample/grass_medium_01/textures/grass_medium_01_diff_alpha_1k.png",
+      "bytes": 1003533,
+      "sha256": "b284c37a94761afcef099913b44f6e1724004cdb8bf188cd799ee6627238726a"
+    },
+    {
+      "file": "public/models/forest/sample/grass_medium_01/textures/grass_medium_01_nor_gl_512.jpg",
+      "bytes": 209204,
+      "sha256": "bc5cafe282904f3d987885a459bafc469e77f1f774069faed099993572ed4ef0"
+    },
+    {
+      "file": "public/models/forest/sample/rock_moss_set_01/sample.bin",
+      "bytes": 335408,
+      "sha256": "15d95a1b38d83d1a093730d081c6205d13642ac68c44153a5069f4d44526d09b"
+    },
+    {
+      "file": "public/models/forest/sample/rock_moss_set_01/sample.gltf",
+      "bytes": 6249,
+      "sha256": "bc59790dd3050b3d533585ec81b2cb08a5beaeabdf620e7cd5e01267fc9f06da"
+    },
+    {
+      "file": "public/models/forest/sample/rock_moss_set_01/textures/rock_moss_set_01_diff_2k.jpg",
+      "bytes": 919874,
+      "sha256": "fddc32e47e769219a9c5d1f28bb89484c875ac1d75ab721773bf36e6ee80a392"
+    },
+    {
+      "file": "public/models/forest/sample/rock_moss_set_01/textures/rock_moss_set_01_nor_gl_1k.jpg",
+      "bytes": 364202,
+      "sha256": "3df775440fdbcca3f4d879705a5d95d36e241997201520578f4910a961c6af78"
+    },
+    {
+      "file": "public/models/forest/sample/rock_moss_set_01/textures/rock_moss_set_01_rough_512.jpg",
+      "bytes": 41714,
+      "sha256": "34158943983bfbe870be329317f34e680481f508a75ab90989356ceada8ec66c"
+    }
+  ]
+}

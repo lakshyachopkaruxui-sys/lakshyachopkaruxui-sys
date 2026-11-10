@@ -1,0 +1,61 @@
+{
+  "title": "3D Horror Game Monster",
+  "creator": "City Building Game Art / HorrorGameMaker.com",
+  "source": "https://opengameart.org/content/3d-horror-game-monster",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "retrieved": "2026-09-19",
+  "download": "https://opengameart.org/sites/default/files/Poses.zip",
+  "source_archive": {
+    "bytes": 86723187,
+    "sha256": "10b7f947b64a6e1cf4f845800f8417d91e830f6df56c24a03922065df2cf0af3"
+  },
+  "attribution": "3D Horror Game Monster by HorrorGameMaker.com, distributed by City Building Game Art on OpenGameArt, CC0.",
+  "conversion": {
+    "script": "scripts/convert-horror-fbx.mjs",
+    "tool": "Three.js 0.186 FBXLoader / GLTFExporter",
+    "notes": [
+      "Creator Idle, Walk, Run animation exports merged. Duplicate Maya short joint names normalized to full hierarchy paths before animation-track binding.",
+      "Largest four FBX skin weights kept and normalized by Three loader. 78 source rig bones, 58 runtime weighted joints; unweighted transforms retained as glTF nodes.",
+      "Original 2048px albedo and tangent normal converted to JPEG; Unity smoothness alpha inverted/clamped to roughness and packed into glTF green channel; non-metal skin. Source geometry and UV unchanged."
+    ],
+    "triangles": 3584,
+    "vertices": 10752,
+    "runtime_weighted_joints": 58,
+    "clips": [
+      "Idle",
+      "Walk",
+      "Run"
+    ],
+    "runtime_usage": "Two skeleton clones play authored Idle/Walk clips, follow continuous collision-aware paths, and turn heads toward visitor. Run exported for provenance but not used for lunges.",
+    "quality_boundary": "Authored textured game model; not photogrammetry or a claim of photorealism. No copied television character."
+  },
+  "files": [
+    {
+      "file": "albedo.jpg",
+      "bytes": 1067346,
+      "sha256": "863a0a5658d141dee8835b9eaf9b0bd71eb84bfe76adc99aebac46254a3f9562"
+    },
+    {
+      "file": "horror-humanoid.gltf",
+      "bytes": 2293306,
+      "sha256": "67208d790dfb30e7dbe2239679b546388d2ba826130f868c5553ff4e0d3b44f9"
+    },
+    {
+      "file": "normal.jpg",
+      "bytes": 1552032,
+      "sha256": "27c3bb9bd6a9afcc4cfa0066eda514d8410ecafc3d9178b13837f126579b4053"
+    },
+    {
+      "file": "roughness.png",
+      "bytes": 408057,
+      "sha256": "71247fc482519b2b7356882b1f9864e31447ca3d9e5c96700df076d62f2abe8b"
+    }
+  ],
+  "runtime_collision": {
+    "sampled_idle_walk_anatomy_radius_m_at_height_2_45": 0.6723323694006108,
+    "body_radius_m": 0.7,
+    "self_approach_stop_m": 3.75,
+    "foot_support": "Sample authored sole vertices after updating SkinnedMesh bind matrices; shift independent model wrapper vertically to terrain contact without editing geometry."
+  }
+}

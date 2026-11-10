@@ -1,0 +1,56 @@
+[
+  {
+    "name": "grass",
+    "meshes": 6,
+    "triangles": 1105,
+    "parse": "pass"
+  },
+  {
+    "name": "rocks",
+    "meshes": 3,
+    "triangles": 1854,
+    "parse": "pass"
+  },
+  {
+    "name": "branches",
+    "meshes": 2,
+    "triangles": 1574,
+    "parse": "pass"
+  },
+  {
+    "name": "ferns",
+    "meshes": 4,
+    "triangles": 1368,
+    "parse": "pass"
+  },
+  {
+    "name": "stumps",
+    "meshes": 1,
+    "triangles": 2872,
+    "parse": "pass"
+  },
+  {
+    "name": "conifers",
+    "meshes": 12,
+    "triangles": 31402,
+    "parse": "pass"
+  },
+  {
+    "tree": "a",
+    "bounds": "identical",
+    "rootSamples": 3179,
+    "retainedRootSamples": 3179
+  },
+  {
+    "tree": "b",
+    "bounds": "identical",
+    "rootSamples": 5646,
+    "retainedRootSamples": 5646
+  },
+  {
+    "tree": "c",
+    "bounds": "identical",
+    "rootSamples": 670,
+    "retainedRootSamples": 670
+  }
+]

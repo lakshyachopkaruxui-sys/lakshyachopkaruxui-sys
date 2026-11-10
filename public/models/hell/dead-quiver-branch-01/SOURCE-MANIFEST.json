@@ -1,0 +1,49 @@
+{
+  "asset": "dead_quiver_branch_01",
+  "source": "https://polyhaven.com/a/dead_quiver_branch_01",
+  "api": "https://api.polyhaven.com/files/dead_quiver_branch_01",
+  "license": "CC0-1.0",
+  "authors": {
+    "Greg Zaal": "Photography",
+    "Jenelle van Heerden": "modeling"
+  },
+  "downloaded": "2026-11-09",
+  "files": [
+    {
+      "file": "dead_quiver_branch_01_1k.gltf",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/1k/dead_quiver_branch_01/dead_quiver_branch_01_1k.gltf",
+      "bytes": 2866,
+      "md5": "e8cf949bee8b828856a71d6486546504",
+      "sha256": "120a9bae2f367b414852fce40d28935db0559e66634827d2e7dc045764fd4b47"
+    },
+    {
+      "file": "textures/dead_quiver_branch_01_nor_gl_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_quiver_branch_01/dead_quiver_branch_01_nor_gl_1k.jpg",
+      "bytes": 1023490,
+      "md5": "32e39448a04678618c9de25fb39bc9ea",
+      "sha256": "1d6603df36d0dd711d73e0ae2f067cd96f63d5e3ab0681d4a85bcb8df2049388"
+    },
+    {
+      "file": "textures/dead_quiver_branch_01_diff_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_quiver_branch_01/dead_quiver_branch_01_diff_1k.jpg",
+      "bytes": 720703,
+      "md5": "c99cf6384238acd5655095dd9743a3aa",
+      "sha256": "2da1b4bdd5ea430d7ad1ba2fb547bf4f18d9def6f711781be89972e004757d2a"
+    },
+    {
+      "file": "dead_quiver_branch_01.bin",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/gltf/8k/dead_quiver_branch_01/dead_quiver_branch_01.bin",
+      "bytes": 363116,
+      "md5": "a09e761f87363e1a453a1231d42e0cb1",
+      "sha256": "d1a9890a4f83d7ac2ff62b98e46380ac48b72dd3290218daccf3cfa6d64ae4c8"
+    },
+    {
+      "file": "textures/dead_quiver_branch_01_arm_1k.jpg",
+      "url": "https://dl.polyhaven.org/file/ph-assets/Models/jpg/1k/dead_quiver_branch_01/dead_quiver_branch_01_arm_1k.jpg",
+      "bytes": 595028,
+      "md5": "54febac298d6fa8789ae6132bd969377",
+      "sha256": "9fc47d37b740a409fea889edc7f2d7bedac3d970a3a506092e18cfca10d2ed82"
+    }
+  ],
+  "notes": "Original 1K glTF and maps downloaded unchanged. Public API supplied geometry BIN under 8k folder; texture maps are 1K."
+}

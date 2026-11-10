@@ -1,3 +1,4 @@
+import { assetUrl } from '../utils/assetUrl';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
@@ -420,7 +421,7 @@ export class WorldOne {
    */
   private buildEchoTraces() {
     new GLTFLoader().load(
-      '/models/minion-c01.glb', // the same (yellow) creature from the forest
+      assetUrl('/models/minion-c01.glb'), // the same (yellow) creature from the forest
       (gltf) => {
         const blob = gltf.scene;
         fitProp(blob, 0.4);

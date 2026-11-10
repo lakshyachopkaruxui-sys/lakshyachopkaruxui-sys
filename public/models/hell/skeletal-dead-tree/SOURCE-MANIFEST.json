@@ -1,0 +1,42 @@
+{
+  "asset": "Dead Tree — TerrainTale Realistic Surfaces & Structure library",
+  "source": "https://terraintale.com/library/realistic-surfaces/dead-tree",
+  "download": "https://terraintale.com/library/realistic-surfaces/dead_tree.glb",
+  "publisher": "TerrainTale",
+  "sourceAttribution": "ambientCG; trees grown with ez-tree by Daniel Greenheck (MIT)",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "downloaded": "2026-11-09",
+  "origin": "Procedural bare-tree geometry made with ez-tree, PBR bark credited by publisher to ambientCG. This is not a photographed whole-tree scan.",
+  "file": {
+    "path": "dead-tree.glb",
+    "bytes": 284256,
+    "sha256": "77b87a9e430fc80eff8c64d7c73e4dc25b032190e9f401b7f003401d8be998ee",
+    "triangles": 3608,
+    "vertices": 3208,
+    "geometryBytes": 124304,
+    "textureBytes": 158252,
+    "meshes": 1,
+    "materials": 1,
+    "animations": 0,
+    "textures": 3,
+    "textureDimensions": [512, 512],
+    "textureFormat": "WebP",
+    "textureRoles": ["baseColor", "normal", "packedRoughnessMetallic"],
+    "bounds": {
+      "min": [-1.565606951713562, 0, -1.4332377910614014],
+      "max": [1.3584750890731812, 3.6892786026000977, 1.4081125259399414]
+    }
+  },
+  "modifications": "None; original publisher GLB retained byte-for-byte. Runtime may apply a charred material tint and authored placement/scale.",
+  "observations": [
+    "Many thin pointed twigs and nonuniform multi-level branches; more natural silhouette than the magnified cut-ended quiver branch.",
+    "Actual binary height is3.6893m, differing from source page's5.6m prose. Use measured bounds for normalization.",
+    "Shape inspected from two offline diagnostic angles. Material and immersion acceptance require browser review."
+  ],
+  "budgetForTwoInstances": {
+    "submittedTriangles": 7216,
+    "drawBatchesIfInstanced": 1,
+    "newDynamicShadows": 0
+  }
+}

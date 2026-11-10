@@ -27,7 +27,7 @@ registerHooks({
 
 // Browser image/GLB loading is covered separately. The real procedural floors,
 // room, island, props and transforms are built here without substitute meshes.
-THREE.TextureLoader.prototype.load = () => new THREE.Texture();
+THREE.TextureLoader.prototype.load = (_url, onLoad) => { const texture = new THREE.Texture(); queueMicrotask(() => onLoad?.(texture)); return texture; };
 HDRLoader.prototype.load = () => new THREE.DataTexture();
 GLTFLoader.prototype.load = () => undefined;
 GLTFLoader.prototype.loadAsync = () => new Promise(() => {});
@@ -68,6 +68,14 @@ function fixture(inXR) {
   [app.worldOne, app.worldTwo, app.worldUnderwater, app.worldThree] = worlds;
   app.outerIndex = 0;
   app.nextWorld = NEXT_WORLD;
+  app.notesTarget = { place() {} };
+  app.narrationTarget = { place() {} };
+  app.replayTarget = { place() {} };
+  app.helpGesture = { reset() {} };
+  app.narrationGesture = { reset() {} };
+  app.replayGesture = { reset() {} };
+  app.narration = { play() {}, stop() {} };
+  app.viewerPosition = new THREE.Vector3(); app.viewerDirection = new THREE.Vector3();
   app.camera = new THREE.PerspectiveCamera();
   const headset = new THREE.PerspectiveCamera();
   app.renderer = { xr: { isPresenting: inXR, getCamera: () => headset } };
@@ -89,13 +97,15 @@ for (const inXR of [false, true]) test(`${inXR ? 'Quest pose' : 'desktop pose'}:
     viewer.updateMatrixWorld(true);
     const originalPose = viewer.matrixWorld.clone();
     const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(viewer.quaternion).setY(0).normalize();
-    for (const next of [1, 2, 3, 0]) {
+    for (const next of [2, 3, 1, 0]) {
       app.placeSeamInFront();
       const destination = worlds[next];
       const destinationForward = new THREE.Vector3(0, 0, -1).transformDirection(destination.root.matrixWorld);
       close(destinationForward.dot(forward), 1, `${destination.constructor.name}: destination follows viewing heading`);
       close(destination.root.rotation.x, 0, 'floor remains level in pitch');
       close(destination.root.rotation.z, 0, 'floor remains level in roll');
+      if (destination instanceof WorldTwo) close(destination.scene.environmentRotation.y,
+        destination.root.rotation.y + Math.PI / 2, 'forest lighting follows the visible canopy after rotated entry');
       assert.ok(destination.root.scale.distanceTo(new THREE.Vector3(1, 1, 1)) < 1e-10, 'destination retains life-size scale');
       verifyFloor(destination, floors[next], viewer.position);
       const bounds = destination.walkBounds;
@@ -127,6 +137,24 @@ test('all virtual destinations use world-space tear yaw while ignoring pitch, ro
     assert.ok(world.root.scale.distanceTo(new THREE.Vector3(1, 1, 1)) < 1e-10, '26x swallow scale is not inherited');
     for (const [x, z] of [[0, .65], [0, 1.1], [-2, -3], [3, -4]]) {
       verifyFloor(world, floors[index], world.root.localToWorld(new THREE.Vector3(x, 0, z)));
+    }
+  }
+});
+
+test('forest photograph and environment lookup agree in every horizontal direction after yaw alignment',()=>{
+  const forest=worlds[1],sky=forest.root.children.find(o=>o.name==='Photographic Forest Slope distant pine canopy');
+  const p=sky.geometry.attributes.position,uv=sky.geometry.attributes.uv;
+  for(const yaw of [0,.7,-2.1]){
+    const anchor=new THREE.Group();anchor.rotation.y=yaw;anchor.updateMatrixWorld(true);forest.alignTo(anchor);
+    sky.updateWorldMatrix(true,false);
+    const inverseEnvironment=new THREE.Matrix4().makeRotationY(-forest.scene.environmentRotation.y);
+    for(let i=49;i<p.count-49;i+=13){
+      const direction=new THREE.Vector3().fromBufferAttribute(p,i).transformDirection(sky.matrixWorld).transformDirection(inverseEnvironment);
+      const u=Math.atan2(direction.z,direction.x)/(2*Math.PI)+.5;
+      const v=Math.asin(THREE.MathUtils.clamp(direction.y,-1,1))/Math.PI+.5;
+      const du=Math.abs(u-uv.getX(i));
+      assert.ok(Math.min(du,Math.abs(1-du))<1e-5,'sky and lighting sample the same longitude');
+      close(v,uv.getY(i),'sky and lighting sample the same latitude');
     }
   }
 });

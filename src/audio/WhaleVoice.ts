@@ -1,3 +1,4 @@
+import { assetUrl } from '../utils/assetUrl';
 import * as THREE from 'three';
 import { CONFIG } from '../config/config';
 import { damp, lerp, mulberry32 } from '../utils/math';
@@ -12,10 +13,10 @@ interface Call {
 
 /** Recorded humpback calls: NPS, Glacier Bay hydrophone (public domain). See ASSETS.md. */
 const CALLS: Call[] = [
-  { file: '/audio/whale-moan-1.wav', gain: 1, rateRange: [0.96, 1.04] },
-  { file: '/audio/whale-moan-2.wav', gain: 1, rateRange: [0.96, 1.04] },
-  { file: '/audio/whale-whup.wav', gain: 1.15, rateRange: [0.97, 1.03] },
-  { file: '/audio/whale-feeding.wav', gain: 0.8, rateRange: [0.98, 1.02] }
+  { file: assetUrl('/audio/whale-moan-1.wav'), gain: 1, rateRange: [0.96, 1.04] },
+  { file: assetUrl('/audio/whale-moan-2.wav'), gain: 1, rateRange: [0.96, 1.04] },
+  { file: assetUrl('/audio/whale-whup.wav'), gain: 1.15, rateRange: [0.97, 1.03] },
+  { file: assetUrl('/audio/whale-feeding.wav'), gain: 0.8, rateRange: [0.98, 1.02] }
 ];
 
 /**

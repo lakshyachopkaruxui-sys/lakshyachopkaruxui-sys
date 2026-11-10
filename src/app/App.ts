@@ -1,13 +1,14 @@
 import * as THREE from 'three';
 import { CONFIG } from '../config/config';
-import { WORLD_NAMES } from '../config/worlds';
+import { WORLD_NAMES, NEXT_WORLD } from '../config/worlds';
 import { smoothstep } from '../utils/math';
 import { PortalRenderer } from '../portal/PortalRenderer';
 import { WorldOne } from '../worlds/WorldOne';
 import { WorldTwo } from '../worlds/WorldTwo';
+import { prepareForestGpu } from '../worlds/ForestGpuPreparation';
 import { WorldThree } from '../worlds/WorldThree';
 import { WorldUnderwater } from '../worlds/WorldUnderwater';
-import { Creature } from '../worlds/Creature';
+import type { WorldCollisions } from '../worlds/WorldCollisions';
 import { TearSimulation } from '../tear/TearSimulation';
 import { Membrane } from '../tear/Membrane';
 import { LightLeak } from '../lighting/LightLeak';
@@ -24,15 +25,20 @@ import { AudioEngine } from '../audio/AudioEngine';
 import { Soundscape, WORLD_THREE_SOUNDS, WORLD_TWO_SOUNDS, UNDERWATER_SOUNDS } from '../audio/Soundscape';
 import { TearVoice } from '../audio/TearVoice';
 import { WhaleVoice } from '../audio/WhaleVoice';
+import { HellHorrorAudio } from '../audio/HellHorrorAudio';
 import { DebugPanel } from '../debug/DebugPanel';
 import { Hud } from '../ui/Hud';
 import { Guide } from '../ui/Guide';
+import { XRActionTarget } from '../ui/XRActionTarget';
+import { Narration } from '../audio/Narration';
+import { WORLD_NARRATION, type NarrationCueId } from '../audio/narrationScript';
 import type { HandSource } from '../interaction/types';
 import { SpectatorView } from '../xr/SpectatorView';
+import { setupXRSession } from '../xr/XRSessionSetup';
 
 export type AppMode = 'intro' | 'desktop' | 'xr';
 /** A complete journey returns to the original room, then can begin again. */
-export const NEXT_WORLD = [1, 2, 3, 0] as const;
+export { NEXT_WORLD } from '../config/worlds';
 
 export class App {
   readonly renderer: THREE.WebGLRenderer;
@@ -45,13 +51,14 @@ export class App {
   private xrAwaitingRelease: [boolean, boolean] = [false, false];
   private spectator: SpectatorView;
   currentWorld: string = WORLD_NAMES[0];
+  forestPrepared = false;
+  private forestPreparation?: Promise<void>;
 
   private portal: PortalRenderer;
   private worldOne = new WorldOne();
   private worldTwo: WorldTwo;
   private worldThree: WorldThree;
   private worldUnderwater: WorldUnderwater;
-  private creature: Creature;
   /** outer world index; the next one is what you see through the tear. */
   private outerIndex = 0;
   private readonly nextWorld = NEXT_WORLD;
@@ -63,25 +70,47 @@ export class App {
     refreshStencil(): void;
     groundAt(x: number, z: number): number;
     readonly walkBounds?: { center: THREE.Vector3; radius: number };
+    readonly collisions?: WorldCollisions;
     alignTo?(anchor: THREE.Object3D): void;
   }[];
   private guide: Guide;
+  private notesTarget: XRActionTarget;
+  private narrationTarget: XRActionTarget;
+  private replayTarget: XRActionTarget;
+  private narrationGesture = new XRHelpGesture();
+  private replayGesture = new XRHelpGesture();
+  readonly narration: Narration;
+  private narrationEnabled = true;
+  private openingNarrated = false;
+  private narrationReadyAt = 0;
+  private pendingNarration: { id: NarrationCueId; world: number; at: number } | null = null;
+  private presentedFrames = 0;
   /** Space was pressed while the tear was wide enough: leap through. */
   private stepRequested = false;
   private soundscapes: (Soundscape | null)[] = [];
   private whaleVoice: WhaleVoice | null = null;
+  private hellAudio: HellHorrorAudio | null = null;
   private swallow = -1;
   private swapped = false;
   private arrivedAt = -99;
   private maskScene = new THREE.Scene();
   private overlay = new THREE.Scene();
+  // Per-eye screen overlay: visual penetration feedback only. Never moves an XR pose.
+  private collisionComfortMaterial = new THREE.ShaderMaterial({
+    uniforms: { opacity: { value: 0 } }, transparent: true, depthTest: false, depthWrite: false,
+    vertexShader: 'void main(){ gl_Position = vec4(position.xy, 0.0, 1.0); }',
+    fragmentShader: 'uniform float opacity; void main(){ gl_FragColor = vec4(0.0, 0.0, 0.0, opacity); }',
+  });
+  private collisionComfort = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), this.collisionComfortMaterial);
+  private collisionHeadBase = new THREE.Vector3();
+  private desktopCollisionBody = { radius: .28, height: 1.7 };
   private anchor = new THREE.Group();
   private sim: TearSimulation;
   private membrane: Membrane;
   private light: LightLeak;
   private particles: TearParticles;
   private waterThreshold: WaterThreshold;
-  private readonly forestGroundAt = (x: number, z: number) => this.worldTwo.groundAt(x, z);
+  private readonly currentGroundAt = (x: number, z: number) => this.outerWorld.groundAt(x, z);
   private trackers: [PinchTracker, PinchTracker] = [new PinchTracker(), new PinchTracker()];
   private xrHands: XRHandSource;
   private helpGesture = new XRHelpGesture();
@@ -137,7 +166,7 @@ export class App {
 
     this.sim = new TearSimulation(this.anchor);
     this.membrane = new Membrane(this.anchor, this.maskScene, 0);
-    this.light = new LightLeak(this.anchor, this.worldTwo.leakColor);
+    this.light = new LightLeak(this.anchor, this.innerWorld.leakColor);
     this.particles = new TearParticles(this.overlay);
     this.waterThreshold = new WaterThreshold(this.overlay);
     this.handVisual = new HandVisual(this.overlay);
@@ -149,14 +178,6 @@ export class App {
       world.stencilLayer = world === this.worldOne ? 0 : 1;
       world.refreshStencil();
     }
-    // Added after the layer sweep: it applies its own stencil layer once loaded.
-    // Creature positions, home, perch and ground samples all belong to the
-    // forest root, so aligning the destination carries the creature with it.
-    this.creature = new Creature(this.worldTwo.root, new THREE.Vector3(), 1, this.worldTwo.perchLocal);
-    // Its model arrives later; re-apply the forest's current portal layer then.
-    this.creature.onLoaded = () => this.worldTwo.refreshStencil();
-    this.creature.groundAt = (x, z) => this.worldTwo.groundHeight(x, z);
-
     // Hands belong to the overlay, which is drawn in every world — not to the
     // scene of whichever world happens to be outside right now.
     this.xrHands = new XRHandSource(this.renderer, this.overlay);
@@ -165,19 +186,44 @@ export class App {
     this.desktopHands = new DesktopHandSource(this.camera, this.renderer.domElement, this.anchor, this.controls);
     this.desktopHands.enabled = false;
     this.controls.groundAt = (x, z) => this.outerWorld.groundAt(x, z);
+    this.controls.resolveMovement = (start, desired, height, out) => {
+      const collisions = this.outerWorld.collisions;
+      this.desktopCollisionBody.height = height;
+      return collisions ? collisions.move(start, desired, this.desktopCollisionBody, out) : out.copy(desired);
+    };
+    this.collisionComfort.name = 'XR virtual obstacle fade';
+    this.collisionComfort.frustumCulled = false;
+    this.collisionComfort.renderOrder = 10000;
+    this.collisionComfort.visible = false;
+    this.overlay.add(this.collisionComfort);
     this.guide = new Guide(this.overlay);
+    this.notesTarget = new XRActionTarget(this.overlay, 'Field notes');
+    this.narrationTarget = new XRActionTarget(this.overlay, 'Voice on', -1);
+    this.replayTarget = new XRActionTarget(this.overlay, 'Replay voice', 0, 0.08);
     // Clicking empty space tears there instead of doing nothing.
     this.desktopHands.onSeamRequest = (ray) => this.placeSeamAlongRay(ray);
     this.desktopHands.snapToSeam = (x, y) => this.sim.closestPoint(x, y);
     this.placeSeamInFront();
 
     this.audio = new AudioEngine(this.camera);
+    this.narration = new Narration(this.audio, {
+      onCaption: (caption) => {
+        this.guide.setNarrationCaption(caption?.text ?? null);
+        const accessibleCaption = document.getElementById('narration-caption');
+        if (accessibleCaption) accessibleCaption.textContent = caption?.text ?? '';
+      }
+    });
+    void this.narration.prepare();
     this.soundscapes = [
       null, // World One: the room is silent on purpose
       new Soundscape(this.audio, this.worldTwo, WORLD_TWO_SOUNDS),
       new Soundscape(this.audio, this.worldUnderwater, UNDERWATER_SOUNDS),
       new Soundscape(this.audio, this.worldThree, WORLD_THREE_SOUNDS)
     ];
+    this.hellAudio = new HellHorrorAudio(this.audio, this.worldThree);
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) this.hellAudio?.mute(0, true);
+    });
     this.voice = new TearVoice(this.audio, this.anchor);
     this.worldUnderwater.ready.then(() => {
       const whaleGroup = this.worldUnderwater.marineLife.whaleGroup;
@@ -201,12 +247,20 @@ export class App {
 
     this.renderer.xr.addEventListener('sessionstart', () => {
       this.mode = 'xr';
+      this.audio.setActive(true);
       this.xrSessionState = `${this.xrMode} running`;
       this.pendingXRPose = true;
       this.waterThreshold.reset();
       this.xrFocusSuspended = false;
       this.xrAwaitingRelease = [false, false];
       this.helpGesture.reset();
+      this.narrationGesture.reset();
+      this.replayGesture.reset();
+      this.narration.startSession();
+      this.pendingNarration = null;
+      this.openingNarrated = false;
+      this.presentedFrames = 0;
+      this.narrationReadyAt = this.time + 4;
       this.desktopHands.forceRelease();
       this.trackers = [new PinchTracker(), new PinchTracker()];
       this.sim.reset();
@@ -231,6 +285,9 @@ export class App {
       this.xrFocusSuspended = false;
       this.xrAwaitingRelease = [false, false];
       this.helpGesture.reset();
+      this.narrationGesture.reset();
+      this.replayGesture.reset();
+      this.narration.stop();
       this.worldOne.root.visible = true;
       this.renderer.setClearAlpha(1);
       this.desktopHands.forceRelease();
@@ -250,7 +307,7 @@ export class App {
       this.mode = 'desktop';
       this.renderer.shadowMap.enabled = CONFIG.render.shadows;
       resize();
-      this.enterDesktop();
+      this.enterIntro();
       this.placeSeamInFront();
     });
 
@@ -272,16 +329,122 @@ export class App {
     this.renderer.setAnimationLoop((t) => this.tick(t));
   }
 
+  /** Prepare every world before entering desktop or immersive XR.
+   * Asset readiness alone does not upload textures or compile GPU programs. */
+  prepareForestForEntry(onProgress?: (message: string) => void): Promise<void> {
+    if (this.forestPreparation) return this.forestPreparation;
+    this.forestPreparation = (async () => {
+      // The seam's spot and point lights travel into each entered scene.
+      // Compiling only the unoccupied scene misses that new light count.
+      // Use temporary clones inside synchronous preparation calls; the live
+      // anchor and its lights remain available to the intro render loop.
+      const excludedLights: THREE.Light[] = [];
+      this.anchor.traverse(object => { if ((object as THREE.Light).isLight) excludedLights.push(object as THREE.Light); });
+      const additionalLights = excludedLights.map(light => light.clone());
+      const lighting = { excludedLights, additionalLights };
+      onProgress?.('Loading forest…');
+      await this.worldTwo.ready;
+      const camera = this.camera.clone();
+      this.worldTwo.root.updateWorldMatrix(true, true);
+      camera.position.copy(this.worldTwo.root.localToWorld(new THREE.Vector3(0, 1.65, 2)));
+      camera.lookAt(this.worldTwo.root.localToWorld(new THREE.Vector3(0, 1.4, -12)));
+      camera.updateMatrixWorld(true);
+      const result = await prepareForestGpu(this.renderer, this.worldTwo.scene, camera, onProgress,
+        { ...lighting, preparationMeshes: this.worldTwo.understory.preparationMeshes });
+      if (result.status !== 'ready') {
+        this.forestPreparation = undefined;
+        throw new Error(result.error ?? 'Forest preparation did not finish. Please try again.');
+      }
+      onProgress?.('Loading Strange World…');
+      await this.worldThree.ready;
+      this.worldThree.root.updateWorldMatrix(true, true);
+      camera.position.copy(this.worldThree.root.localToWorld(new THREE.Vector3(0, 1.65, 0)));
+      camera.lookAt(this.worldThree.root.localToWorld(new THREE.Vector3(0, 4, -35)));
+      camera.updateMatrixWorld(true);
+      const hell = await prepareForestGpu(this.renderer, this.worldThree.scene, camera,
+        message => onProgress?.(message.replace(/Forest/g, 'Strange World')), lighting);
+      if (hell.status !== 'ready') {
+        throw new Error(hell.error ?? 'Strange World preparation did not finish. Please try again.');
+      }
+      onProgress?.('Loading Ocean…');
+      await this.worldUnderwater.ready;
+      for (const [name, world, target] of [
+        ['Ocean', this.worldUnderwater, new THREE.Vector3(0, 4, -12)],
+        ['Room', this.worldOne, new THREE.Vector3(0, 1.4, -4)]
+      ] as const) {
+        world.root.updateWorldMatrix(true, true);
+        camera.position.copy(world.root.localToWorld(new THREE.Vector3(0, 1.65, 0)));
+        camera.lookAt(world.root.localToWorld(target));
+        camera.updateMatrixWorld(true);
+        const prepared = await prepareForestGpu(this.renderer, world.scene, camera,
+          message => onProgress?.(message.replace(/Forest/g, name)), lighting);
+        if (prepared.status !== 'ready') throw new Error(prepared.error ?? `${name} preparation did not finish. Please try again.`);
+      }
+      this.forestPrepared = true;
+    })().catch(error => {
+      this.forestPreparation = undefined;
+      throw error;
+    });
+    return this.forestPreparation;
+  }
+
   async startAudio() {
     await this.audio.unlock();
     try {
       for (const s of this.soundscapes) s?.start();
       this.voice.start();
       this.whaleVoice?.start();
-      this.creature.attachVoice(this.audio);
+      this.hellAudio?.start();
     } catch (err) {
       console.warn('Audio setup failed; continuing silently', err);
     }
+  }
+
+  setNarrationEnabled(enabled: boolean) {
+    this.narrationEnabled = enabled;
+    this.narration.setEnabled(enabled);
+    this.narrationTarget.setText(enabled ? 'Voice on' : 'Voice off');
+    document.getElementById('voice-toggle')?.setAttribute('aria-pressed', String(enabled));
+    const choice = document.getElementById('narration-enabled') as HTMLInputElement | null;
+    if (choice) choice.checked = enabled;
+  }
+
+  async replayNarration() {
+    const mode = this.mode;
+    const session = this.renderer.xr.getSession();
+    const world = this.outerIndex;
+    await Promise.race([this.audio.unlock(), new Promise(resolve => setTimeout(resolve, 1500))]);
+    if (this.mode !== mode || this.renderer.xr.getSession() !== session || this.outerIndex !== world || this.xrFocusSuspended || this.pendingXRPose) return;
+    this.pendingNarration = null;
+    this.narration.play(this.outerIndex === 0 && this.arrivedAt < 0 ? 'opening' : WORLD_NARRATION[this.outerIndex], true);
+  }
+
+  toggleNotes() {
+    this.camera.getWorldDirection(this.tmpB).setY(0).normalize();
+    this.guide.toggleNotes(this.camera.getWorldPosition(this.tmpA), this.tmpB, this.time);
+  }
+
+  toggleNarration() { this.setNarrationEnabled(!this.narrationEnabled); }
+
+  /** Return to a quiet entry screen after headset exit or failed startup. */
+  enterIntro() {
+    this.pendingNarration = null;
+    this.mode = 'intro';
+    this.desktopHands.forceRelease();
+    this.desktopHands.enabled = false;
+    this.controls.enabled = false;
+    this.controls.release();
+    this.hud.setVisible(false);
+    this.guide.setVisible(false);
+    this.helpGesture.cancelHold();
+    this.narrationGesture.cancelHold();
+    this.replayGesture.cancelHold();
+    this.narration.stop();
+    this.audio.setActive(false);
+    this.hellAudio?.mute(0, true);
+    this.notesTarget.update(this.viewerPosition, 0, false);
+    this.narrationTarget.update(this.viewerPosition, 0, false);
+    this.replayTarget.update(this.viewerPosition, 0, false);
   }
 
   private get outerWorld() {
@@ -316,7 +479,11 @@ export class App {
   private suspendXRInteraction() {
     if (this.xrFocusSuspended) return;
     this.xrFocusSuspended = true;
+    this.hellAudio?.mute(0, true);
     this.helpGesture.cancelHold();
+    this.narrationGesture.cancelHold();
+    this.replayGesture.cancelHold();
+    this.narration.stop();
     this.xrAwaitingRelease = [true, true];
     this.trackers = [new PinchTracker(), new PinchTracker()];
     this.stepRequested = false;
@@ -328,7 +495,14 @@ export class App {
 
   enterDesktop() {
     if (this.renderer.xr.isPresenting) return;
+    if (this.mode === 'intro') {
+      this.narration.startSession();
+      this.pendingNarration = null;
+      this.openingNarrated = false;
+      this.presentedFrames = 0;
+    }
     this.mode = 'desktop';
+    this.audio.setActive(true);
     if (this.outerIndex === 0) this.currentWorld = WORLD_NAMES[0];
     this.worldOne.root.visible = true;
     this.renderer.setClearAlpha(1);
@@ -339,6 +513,7 @@ export class App {
     this.camera.getWorldDirection(this.tmpB).setY(0).normalize();
     this.guide.showNotesFor(20, this.time, this.camera.getWorldPosition(this.tmpA), this.tmpB);
     this.applyWalkBounds();
+    this.narrationReadyAt = this.time + 4;
   }
 
   /**
@@ -383,6 +558,7 @@ export class App {
     this.anchor.updateMatrixWorld();
     this.sim.reset();
     this.alignInnerWorld();
+    this.placeActionTargets();
     return true;
   }
 
@@ -472,6 +648,19 @@ export class App {
     this.anchor.rotation.set(0, Math.atan2(-dir.x, -dir.z), 0);
     this.anchor.updateMatrixWorld();
     this.alignInnerWorld();
+    this.placeActionTargets();
+  }
+
+  private placeActionTargets() {
+    const view = this.renderer.xr.isPresenting ? this.renderer.xr.getCamera() : this.camera;
+    view.getWorldPosition(this.viewerPosition);
+    view.getWorldDirection(this.viewerDirection);
+    this.notesTarget.place(this.viewerPosition, this.viewerDirection);
+    this.narrationTarget.place(this.viewerPosition, this.viewerDirection);
+    this.replayTarget.place(this.viewerPosition, this.viewerDirection);
+    this.helpGesture.reset();
+    this.narrationGesture.reset();
+    this.replayGesture.reset();
   }
 
   async enterXR(mode: 'immersive-ar' | 'immersive-vr' = 'immersive-ar') {
@@ -493,6 +682,7 @@ export class App {
         // Every headset entry starts the full journey, even after a desktop preview.
         this.desktopHands.forceRelease();
         this.outerIndex = 0;
+        this.arrivedAt = -99;
         this.currentWorld = WORLD_NAMES[0];
         this.worldOne.scene.add(this.anchor);
         this.anchor.scale.setScalar(1);
@@ -506,7 +696,8 @@ export class App {
         }
         this.worldOne.root.visible = mode !== 'immersive-ar';
         this.renderer.setClearAlpha(mode === 'immersive-ar' ? 0 : 1);
-        await this.renderer.xr.setSession(session);
+        const presentation = await setupXRSession(this.renderer, session, mode);
+        this.xrSessionState = `${mode} · ${presentation.layer} · alpha ${presentation.sourceAlpha}`;
       } catch (err) {
         await session.end().catch(() => {});
         this.worldOne.root.visible = true;
@@ -566,6 +757,8 @@ export class App {
         this.camera.getWorldDirection(this.tmpB).setY(0).normalize();
         this.guide.toggleNotes(this.camera.getWorldPosition(this.tmpA), this.tmpB, this.time);
       }
+      if (this.controls.consumePress('KeyN')) this.setNarrationEnabled(!this.narrationEnabled);
+      if (this.controls.consumePress('KeyV')) this.replayNarration();
       // Space is a jump. Jumping at a tear that is open wide enough is a leap
       // through it; at a tear held but not yet wide, it hops and says why.
       if (this.controls.consumePress('Space')) {
@@ -578,6 +771,15 @@ export class App {
       }
       this.controls.update(dt);
     }
+
+    // Audio unlock and XR pose arrive independently. Wait for both when possible;
+    // a blocked audio device still gets the opening captions after a short bound.
+    if (!this.openingNarrated && this.presentedFrames >= 2 && this.mode !== 'intro' && !this.xrFocusSuspended &&
+      (!inXR || !this.pendingXRPose) && this.time >= this.narrationReadyAt) {
+      this.openingNarrated = true;
+      this.narration.play(this.outerIndex === 0 && this.arrivedAt < 0 ? 'opening' : WORLD_NARRATION[this.outerIndex]);
+    }
+    this.updateArrivalNarration();
 
     const source: HandSource = inXR ? this.xrHands : this.desktopHands;
     const samples = [source.sample('left'), source.sample('right')];
@@ -604,15 +806,31 @@ export class App {
     // Head lean: real XR head position (or desktop camera).
     const viewCam: THREE.Object3D = inXR ? this.renderer.xr.getCamera() : this.camera;
     const head = viewCam.getWorldPosition(this.viewerPosition);
+    this.collisionHeadBase.copy(head).y -= .12;
+    const headInsideObstacle = inXR && !this.xrFocusSuspended && !this.pendingXRPose && this.swallow < 0 &&
+      this.outerWorld.collisions?.queryWorld(this.collisionHeadBase, .13, .24, undefined, true);
+    const fade = this.collisionComfortMaterial.uniforms.opacity;
+    fade.value = inXR ? THREE.MathUtils.lerp(fade.value, headInsideObstacle ? .82 : 0, 1 - Math.exp(-dt * 10)) : 0;
+    this.collisionComfort.visible = fade.value > .001;
     this.viewerDirection.set(0, 0, -1).applyQuaternion(viewCam.getWorldQuaternion(this.tmpQ)).normalize();
-    // An open-palms hold recalls help without sharing the tear's pinch gesture.
+    // A visible target recalls help without sharing the tear's pinch gesture.
     // World transitions, healing tears and interrupted tracking cannot summon it.
     const canRecallHelp = inXR && !this.xrFocusSuspended && !this.pendingXRPose &&
       this.swallow < 0 && this.sim.gripsHolding === 0 && this.sim.tornLength <= 0.005 &&
       !this.trackers[0].pinching && !this.trackers[1].pinching;
-    if (this.helpGesture.update(samples, head, this.viewerDirection, dt, canRecallHelp)) {
+    if (this.helpGesture.updateTarget(samples, this.notesTarget.position, dt, canRecallHelp)) {
       this.guide.toggleNotes(head, this.viewerDirection, this.time);
     }
+    const canToggleVoice = canRecallHelp && this.guide.notesVisible;
+    if (this.narrationGesture.updateTarget(samples, this.narrationTarget.position, dt, canToggleVoice)) {
+      this.setNarrationEnabled(!this.narrationEnabled);
+    }
+    if (this.replayGesture.updateTarget(samples, this.replayTarget.position, dt, canToggleVoice)) {
+      void this.replayNarration();
+    }
+    this.notesTarget.update(head, dt, canRecallHelp, this.helpGesture.progress);
+    this.narrationTarget.update(head, dt, canToggleVoice, this.narrationGesture.progress);
+    this.replayTarget.update(head, dt, canToggleVoice, this.replayGesture.progress);
     this.anchor.getWorldPosition(this.tmpB);
     const headDist = head.distanceTo(this.tmpB);
     this.lean = smoothstep(CONFIG.audio.leanFarDistance, CONFIG.audio.leanNearDistance, headDist);
@@ -625,41 +843,43 @@ export class App {
     this.membrane.sync(this.sim, this.time, leak);
     this.light.update(dt, this.sim.openness, this.sim.crackOpenness, leak);
     this.particles.update(dt, this.gapCentre, this.normal, this.sim.openness, leak);
-    const enteringWater = this.outerWorld === this.worldTwo && this.innerWorld === this.worldUnderwater && !this.swapped;
+    const enteringWater = this.innerWorld === this.worldUnderwater && !this.swapped;
     this.waterThreshold.update(this.time, dt, this.anchor, {
       active: enteringWater && !this.xrFocusSuspended,
       openness: this.sim.openness,
       gap: this.sim.gap,
       centre: this.sim.centre,
       floorY: this.outerWorld.groundAt(this.tmpB.x, this.tmpB.z),
-      groundAt: enteringWater ? this.forestGroundAt : undefined,
+      groundAt: enteringWater ? this.currentGroundAt : undefined,
       crossing: this.swallow < 0 ? 0 : Math.min(this.swallow / 1.5, 1)
     });
     this.worldThree.updateView(head, this.viewerDirection,
       (this.mode === 'desktop' || this.mode === 'xr') &&
       this.outerWorld === this.worldThree && !this.swapped && this.swallow < 0 && !this.xrFocusSuspended, dt);
-    if (this.worldThree.consumeReturnHint()) this.guide.flash('Something is watching.|The seam can take you home.', this.time);
+    const exploring = this.swallow < 0 && !this.xrFocusSuspended && this.mode !== 'intro';
+    this.worldTwo.updateView(head, exploring && this.outerWorld === this.worldTwo, dt);
+    this.worldUnderwater.updateView(head, exploring && this.outerWorld === this.worldUnderwater, dt);
+    if (this.worldThree.consumeReturnHint()) this.guide.flash('Something is watching.|A warmer world waits beyond the seam.', this.time);
     this.outerWorld.update(this.time, 0);
     this.innerWorld.update(this.time, this.lean);
     this.anchor.getWorldPosition(this.tearWorld);
-    if (this.worldTwo === this.outerWorld || this.worldTwo === this.innerWorld) {
-      this.creature.update(
-        dt, this.time, this.tearWorld, this.normal, this.sim.openness, this.sim.energy,
-        this.worldTwo === this.outerWorld, head
-      );
-    }
 
     const healing = this.sim.gripsHolding === 0 && this.sim.tornLength > 0 && !this.sim.releaseSuspended;
     for (let i = 0; i < this.soundscapes.length; i++) {
       const s = this.soundscapes[i];
       if (!s) continue;
-      if (i === this.outerIndex) s.update(dt, 1, 1, this.lean, true);
+      if (this.mode === 'intro') s.mute(dt);
+      else if (i === this.outerIndex) s.update(dt, 1, 1, this.lean, true);
       else if (!this.swapped && this.worlds[i] === this.innerWorld) s.update(dt, this.sim.openness, this.sim.crackOpenness, this.lean, false);
       else s.mute(dt);
     }
-    if (this.worldUnderwater === this.outerWorld) this.whaleVoice?.update(dt, 1, 1, true);
+    if (this.mode === 'intro') this.whaleVoice?.mute(dt);
+    else if (this.worldUnderwater === this.outerWorld) this.whaleVoice?.update(dt, 1, 1, true);
     else if (!this.swapped && this.worldUnderwater === this.innerWorld) this.whaleVoice?.update(dt, this.sim.openness, this.sim.crackOpenness, false);
     else this.whaleVoice?.mute(dt);
+    if (this.mode === 'intro' || this.xrFocusSuspended || this.pendingXRPose) this.hellAudio?.mute(0, true);
+    else if (this.outerWorld === this.worldThree && this.swallow < 0) this.hellAudio?.update(dt, 1, 1, true);
+    else this.hellAudio?.mute(dt, this.outerWorld !== this.worldThree && this.innerWorld !== this.worldThree);
     this.voice.update(dt, this.sim.strain, this.sim.energy, healing, this.sim.openness);
 
     const tracked = (this.trackers[0].tracked ? 1 : 0) + (this.trackers[1].tracked ? 1 : 0);
@@ -723,14 +943,15 @@ export class App {
     const portalOpen = !this.swapped &&
       (this.sim.openness > 0.0005 || this.sim.tornLength > 0.001 || this.swallow >= 0);
     const passes = portalOpen
-      ? [this.outerWorld.scene, this.maskScene, this.innerWorld.scene, this.overlay]
-      : [this.outerWorld.scene, this.overlay];
+      ? [this.outerWorld.scene, this.maskScene, this.innerWorld.scene]
+      : [this.outerWorld.scene];
     // The same AR session carries the whole journey. On the way home the real
     // room is visible only inside the tear; crossing restores full passthrough.
     const liveRoom = inXR && this.xrMode === 'immersive-ar' && this.outerIndex === 0;
     const returningToRoom = inXR && this.xrMode === 'immersive-ar' && portalOpen && this.innerWorld === this.worldOne;
-    this.portal.render(this.camera, passes, liveRoom ? 'passthrough' : returningToRoom ? 'portal-passthrough' : 'opaque');
-    if (inXR) this.spectator.render(this.camera, passes, { sessionMode: this.xrMode, sameComputer: true });
+    this.portal.render(this.camera, passes, liveRoom ? 'passthrough' : returningToRoom ? 'portal-passthrough' : 'opaque', this.overlay);
+    if (this.mode !== 'intro') this.presentedFrames++;
+    if (inXR) this.spectator.render(this.camera, [...passes, this.overlay], { sessionMode: this.xrMode, sameComputer: true });
     this.controls.endFrame();
   }
 
@@ -792,6 +1013,18 @@ export class App {
     this.currentWorld = WORLD_NAMES[next];
     this.arrivedAt = this.time;
     this.applyWalkBounds();
+    this.openingNarrated = true;
+    this.narration.stop();
+    this.pendingNarration = { id: WORLD_NARRATION[next], world: next, at: this.time + 4 };
+  }
+
+  private updateArrivalNarration() {
+    const cue = this.pendingNarration;
+    if (!cue || this.mode === 'intro' || this.xrFocusSuspended || this.pendingXRPose || this.swallow >= 0) return;
+    if (cue.world !== this.outerIndex) { this.pendingNarration = null; return; }
+    if (this.time < cue.at) return;
+    this.pendingNarration = null;
+    this.narration.play(cue.id);
   }
 
   private updateDebug(inXR: boolean) {
@@ -800,7 +1033,8 @@ export class App {
     const f = (v: number, d = 3) => v.toFixed(d);
     const angle = (Math.atan2(s.pullDir.y, s.pullDir.x) * 180) / Math.PI;
     this.debug.show([
-      `fps        ${f(this.debug.fps, 0)}`,
+      `fps        ${f(this.outerWorld === this.worldTwo ? this.worldTwo.frameTiming.fps : this.debug.fps, 0)}`,
+      ...(this.outerWorld === this.worldTwo ? [`frame p95  ${f(this.worldTwo.frameTiming.p95Ms, 1)} ms`] : []),
       `xr         ${this.xrSessionState} (${this.mode})`,
       `world      ${this.currentWorld}`,
       `state      ${this.state.state}`,
@@ -812,7 +1046,7 @@ export class App {
       `strain     ${f(s.strain)}  energy ${f(s.energy, 2)}`,
       `direction  ${f(angle, 0)} deg`,
       `lean       ${f(this.lean, 2)}`,
-      `creature   ${this.creature.state}${this.creature.ready ? '' : ' (loading)'}`,
+      `deer       ${this.worldTwo.fauna.status}`,
       `audio      ${this.audio.state} rec=${this.soundscapes[1]?.loadedRecordings ?? 0}/3`,
       `swallow    ${this.swallow < 0 ? '-' : this.swallow.toFixed(2)}`
     ], inXR);

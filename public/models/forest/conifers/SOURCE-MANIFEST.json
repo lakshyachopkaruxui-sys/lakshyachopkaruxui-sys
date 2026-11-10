@@ -1,0 +1,101 @@
+{
+  "license": "CC0-1.0",
+  "license_url": "https://polyhaven.com/license",
+  "authors": [
+    "Rico Cilliers (modeling)",
+    "Rob Tuytel (photography)"
+  ],
+  "converter": "Blender 4.2.0 --background --disable-autoexec",
+  "changes": [
+    "Original LOD2 foliage cards retained.",
+    "Hero A/B trunk scans retain 50% of source geometry; other woody meshes retain 13%.",
+    "Original corner-vector UVMap converted to standard UV layer; original bark UV scale baked into coordinates.",
+    "Scanned maps retained in direct glTF PBR materials.",
+    "Texture longest edge limited to 2048px.",
+    "Authoring layout offsets removed from individual tree variants.",
+    "Original twig RGB and explicit cutout packed into RGBA PNG with glTF MASK; run scripts/pack-fir-alpha.py after Blender conversion.",
+    "Woody normals recomputed with area-weighted coincident-position smoothing; positions, UVs and triangle indices unchanged. Run scripts/smooth-fir-normals.py last."
+  ],
+  "exports": [
+    {
+      "asset": "fir_tree_01",
+      "source": "https://polyhaven.com/a/fir_tree_01",
+      "source_blend_md5": "a08031ea8ffb49711b294e1c8213a909",
+      "source_lod": "_LOD2",
+      "runtime": "public/models/forest/conifers/fir_tree_01.glb",
+      "bytes": 16987120,
+      "sha256": "795f8b075cb6cdaa8c8934e761f6a405571738fcbc9c9f0810529c966c3d2480",
+      "triangles": 98454,
+      "objects": [
+        {
+          "name": "fir_tree_01_a_LOD2",
+          "material": "fir_tree_01_dead_branches_WebPBR",
+          "triangles": 412
+        },
+        {
+          "name": "fir_tree_01_b_LOD2",
+          "material": "fir_tree_01_dead_branches_WebPBR",
+          "triangles": 535
+        },
+        {
+          "name": "fir_tree_01_c_LOD2",
+          "material": "fir_tree_01_trunk_c_WebPBR",
+          "triangles": 2019
+        },
+        {
+          "name": "fir_tree_01_a_LOD2.001",
+          "material": "fir_tree_01_bark_WebPBR",
+          "triangles": 9534
+        },
+        {
+          "name": "fir_tree_01_a_LOD2.002",
+          "material": "fir_tree_01_trunk_a_WebPBR",
+          "triangles": 7923
+        },
+        {
+          "name": "fir_tree_01_a_LOD2.003",
+          "material": "fir_tree_01_twig_WebPBR",
+          "triangles": 33753
+        },
+        {
+          "name": "fir_tree_01_b_LOD2.001",
+          "material": "fir_tree_01_bark_WebPBR",
+          "triangles": 4292
+        },
+        {
+          "name": "fir_tree_01_b_LOD2.002",
+          "material": "fir_tree_01_trunk_b_WebPBR",
+          "triangles": 12394
+        },
+        {
+          "name": "fir_tree_01_b_LOD2.003",
+          "material": "fir_tree_01_twig_WebPBR",
+          "triangles": 17920
+        },
+        {
+          "name": "fir_tree_01_c_LOD2.001",
+          "material": "fir_tree_01_bark_WebPBR",
+          "triangles": 4280
+        },
+        {
+          "name": "fir_tree_01_c_LOD2.002",
+          "material": "fir_tree_01_twig_WebPBR",
+          "triangles": 5016
+        },
+        {
+          "name": "fir_tree_01_c_LOD2.003",
+          "material": "fir_tree_01_dead_branches_WebPBR",
+          "triangles": 376
+        }
+      ]
+    },
+    {
+      "asset": "fir_tree_01",
+      "source": "https://polyhaven.com/a/fir_tree_01",
+      "runtime": "public/models/forest/conifers/fir_tree_01_bare.glb",
+      "bytes": 9553820,
+      "sha256": "cf190af9ac5a2bf0dc3a2cbfc1e502b1cb365195facfac24ab41409cf66cca89",
+      "modification": "Needle/twig-card material excluded; woody branches retained."
+    }
+  ]
+}

@@ -65,6 +65,10 @@ function controlledRenderer(blendMode = 'alpha-blend', presenting = true) {
       background.render(scene);
       draws.push(scene);
       if (scene.userData.sampleRGBA) pixel = [...scene.userData.sampleRGBA];
+      if (scene.userData.samplePremultipliedForeground) {
+        const front = scene.userData.samplePremultipliedForeground;
+        pixel = pixel.map((value, channel) => front[channel] + value * (1 - front[3]));
+      }
       if (scene.userData.sampleStencil !== undefined) stencil = scene.userData.sampleStencil;
       const mesh = scene.children[0];
       if (mesh?.material?.blendSrcAlpha === THREE.OneFactor &&
@@ -123,7 +127,7 @@ test('virtual phase seals final alpha while preserving RGB despite Three alpha-b
   assert.deepEqual(mock.clears, [1]);
   assert.equal(mock.clearAlpha, 0, 'installed Three overrides the GL clear value during rendering');
   assert.deepEqual(mock.draws.slice(0, 4), passes, 'portal order is unchanged');
-  assert.equal(mock.draws.length, 5, 'opacity is enforced after all world and overlay draws');
+  assert.equal(mock.draws.length, 5, 'opacity is enforced after all world draws');
   assert.deepEqual(mock.pixel, [0.17, 0.31, 0.63, 1]);
 });
 
@@ -171,6 +175,38 @@ test('closing a return tear restores opaque output without carrying its old sten
   outer.userData.sampleRGBA = [0.2, 0.15, 0.4, 0.12];
   portal.render(camera, [outer], 'opaque');
   assert.deepEqual(mock.pixel, [0.2, 0.15, 0.4, 1]);
+});
+
+test('foreground survives the return cutout and is blended exactly once after world alpha', () => {
+  for (const [output, stencil] of [['portal-passthrough', 0], ['portal-passthrough', 1], ['opaque', 1], ['passthrough', 1]]) {
+    const mock = controlledRenderer();
+    const world = new THREE.Scene();
+    const mask = new THREE.Scene();
+    world.userData.sampleRGBA = [.4, .2, .1, .3];
+    mask.userData.sampleStencil = stencil;
+    const foreground = new THREE.Scene();
+    const front = [.15, .1, .05, .5];
+    foreground.userData.samplePremultipliedForeground = front;
+    new PortalRenderer(mock.renderer).render(new THREE.PerspectiveCamera(), [world, mask], output, foreground);
+    assert.equal(mock.draws.at(-1), foreground, 'hands/captions must follow seal and cutout');
+    assert.equal(mock.draws.filter(scene => scene === foreground).length, 1, 'translucent effects must not draw twice');
+    const corrections = output === 'portal-passthrough' ? 2 : output === 'opaque' ? 1 : 0;
+    assert.equal(mock.draws.length, 3 + corrections);
+    const behind = output === 'portal-passthrough' && stencil === 1 ? [0, 0, 0, 0]
+      : [.4, .2, .1, output === 'passthrough' ? .3 : 1];
+    assert.deepEqual(mock.pixel, behind.map((value, channel) => front[channel] + value * .5));
+    if (output === 'portal-passthrough' && stencil === 1) {
+      assert.deepEqual(mock.pixel, front, 'the room opening cannot erase foreground RGB or alpha');
+    }
+  }
+});
+
+test('desktop foreground is submitted once after its ordinary world passes', () => {
+  const mock = controlledRenderer('opaque', false);
+  const world = new THREE.Scene();
+  const foreground = new THREE.Scene();
+  new PortalRenderer(mock.renderer).render(new THREE.PerspectiveCamera(), [world], 'opaque', foreground);
+  assert.deepEqual(mock.draws, [world, foreground]);
 });
 
 test('the return cutout never runs for desktop or opaque VR output', () => {
@@ -280,11 +316,29 @@ test('ordinary non-XR render targets retain their existing storage and samples',
   assert.ok(!h.order.includes('rebind'));
 });
 
+function initializeActions(app) {
+  app.helpGesture = new XRHelpGesture();
+  app.narrationGesture = new XRHelpGesture();
+  app.replayGesture = new XRHelpGesture();
+  const action = () => ({ position: new THREE.Vector3(.2, 1.3, -.4), place() {}, update() {}, setText() {} });
+  app.notesTarget = action();
+  app.narrationTarget = action();
+  app.replayTarget = action();
+  app.narrationEvents = [];
+  app.narration = { play(cue) { app.narrationEvents.push(cue); }, stop() {}, startSession() {}, setEnabled() {} };
+  app.narrationEnabled = true;
+  app.openingNarrated = true;
+  app.narrationReadyAt = 0;
+  app.audio = { state: 'ready', unlock: async () => {} };
+}
+
 function sessionHarness(blendMode) {
   const requests = [];
   let ended = 0;
   let installed = null;
-  const session = { environmentBlendMode: blendMode, end: async () => { ended++; } };
+  const session = new EventTarget();
+  session.environmentBlendMode = blendMode;
+  session.end = async () => { ended++; session.dispatchEvent(new Event('end')); };
   Object.defineProperty(globalThis, 'navigator', {
     configurable: true,
     value: { xr: { requestSession: async (mode, features) => { requests.push({ mode, features }); return session; } } }
@@ -292,8 +346,11 @@ function sessionHarness(blendMode) {
   const app = Object.create(App.prototype);
   app.helpGesture = new XRHelpGesture();
   app.xrStartPromise = null;
+  initializeActions(app);
   app.renderer = {
-    xr: { isPresenting: false, getSession: () => null, setSession: async value => { installed = value; } },
+    xr: { isPresenting: false, getSession: () => installed, async setSession(value) { installed = value; this.isPresenting = true; },
+      getBaseLayer: () => ({ blendTextureSourceAlpha: true }) },
+    getContext: () => ({ getContextAttributes: () => ({ alpha: true, stencil: true }), isContextLost: () => false }),
     setClearAlpha() {}
   };
   app.worldOne = { scene: new THREE.Scene(), root: new THREE.Group() };
@@ -312,7 +369,7 @@ test('public headset entry defaults to immersive-ar, hides the virtual room, and
   assert.ok(h.requests[0].features.requiredFeatures.includes('hand-tracking'));
   assert.equal(h.app.worldOne.root.visible, false);
   assert.equal(h.app.outerIndex, 0);
-  assert.equal(h.app.currentWorld, 'The World of Stillness');
+  assert.equal(h.app.currentWorld, 'Did I Wake Up?');
   assert.equal(h.installed, h.session);
   assert.equal(h.ended, 0);
 });
@@ -381,7 +438,8 @@ test('creature behavior is invariant when forest, tear and viewer translate toge
 function transitionHarness(outerIndex = 0, inXR = false) {
   const app = Object.create(App.prototype);
   app.helpGesture = new XRHelpGesture();
-  const observations = { passes: [], output: '', maskScale: 0, maskParent: null, nextAudio: [], views: [], water: [] };
+  initializeActions(app);
+  const observations = { passes: [], foreground: null, output: '', maskScale: 0, maskParent: null, nextAudio: [], views: [], water: [] };
   app.time = 0;
   app.timer = { update() {}, getDelta: () => 0.05 };
   const session = { environmentBlendMode: 'alpha-blend', visibilityState: 'visible', end: () => assert.fail('journey must keep its XR session') };
@@ -402,7 +460,7 @@ function transitionHarness(outerIndex = 0, inXR = false) {
   app.worlds = Array.from({ length: 4 }, () => ({
     scene: new THREE.Scene(), leakColor: new THREE.Color(0xffffff),
     root: new THREE.Group(),
-    groundAt: () => 0, update() {}, refreshStencil() {}, alignTo() {},
+    groundAt: () => 0, update() {}, updateView() {}, refreshStencil() {}, alignTo() {},
     walkBounds: { center: new THREE.Vector3(), radius: 8 }
   }));
   app.outerIndex = outerIndex;
@@ -426,7 +484,9 @@ function transitionHarness(outerIndex = 0, inXR = false) {
   app.xrHands = app.desktopHands;
   app.spectator = { render() {} };
   app.controls = { endFrame() {}, ready: false };
-  for (const key of ['tmpA', 'tmpB', 'tmpC', 'normal', 'gapCentre', 'tearWorld', 'viewerPosition', 'viewerDirection']) app[key] = new THREE.Vector3();
+  for (const key of ['tmpA', 'tmpB', 'tmpC', 'normal', 'gapCentre', 'tearWorld', 'viewerPosition', 'viewerDirection', 'collisionHeadBase']) app[key] = new THREE.Vector3();
+  app.collisionComfortMaterial = new THREE.ShaderMaterial({ uniforms: { opacity: { value: 0 } } });
+  app.collisionComfort = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), app.collisionComfortMaterial);
   app.tmpQ = new THREE.Quaternion();
   app.sim = {
     update() {}, gripsHolding: 2, gap: 0.6, centre: new THREE.Vector2(),
@@ -440,21 +500,24 @@ function transitionHarness(outerIndex = 0, inXR = false) {
   app.waterThreshold = { reset() {}, update(_time, _dt, _anchor, options) { observations.water.push(options); } };
   app.voice = { update() {}, rip() {} };
   app.debug = { tick: () => false };
-  app.soundscapes = [null, { update() {}, mute() {} }, {
+  app.soundscapes = [null, { update() {}, mute() {} }, { update() {}, mute() {} }, {
     update() { observations.nextAudio.push('audible'); }, mute() { observations.nextAudio.push('muted'); }
-  }, { update() {}, mute() {} }];
-  app.portal = { render(_camera, passes, output) { observations.passes = passes; observations.output = output; } };
+  }];
+  app.portal = { render(_camera, passes, output, foreground) {
+    observations.passes = passes; observations.output = output; observations.foreground = foreground;
+  } };
   return { app, observations };
 }
 
 test('arrival renders only its world and synchronizes the mask after transition transforms', () => {
   const { app, observations } = transitionHarness();
   app.tick(50);
-  assert.equal(app.outerIndex, 1);
+  assert.equal(app.outerIndex, 2);
   assert.equal(app.swapped, true);
   assert.equal(app.anchor.visible, false);
-  assert.deepEqual(observations.passes, [app.worlds[1].scene, app.overlay]);
-  assert.equal(observations.maskParent, app.worlds[1].scene);
+  assert.deepEqual(observations.passes, [app.worlds[2].scene]);
+  assert.equal(observations.foreground, app.overlay);
+  assert.equal(observations.maskParent, app.worlds[2].scene);
   assert.equal(observations.maskScale, app.anchor.scale.x);
   assert.ok(observations.maskScale > 1);
   assert.deepEqual(observations.nextAudio, ['muted']);
@@ -469,37 +532,72 @@ test('transition completion shows a newly synchronized closed seam without the n
   assert.equal(app.swapped, false);
   assert.equal(app.anchor.visible, true);
   assert.equal(observations.maskScale, 1);
-  assert.deepEqual(observations.passes, [app.worlds[1].scene, app.overlay]);
+  assert.deepEqual(observations.passes, [app.worlds[2].scene]);
+  assert.equal(observations.foreground, app.overlay);
 });
 
-test('four-world journey visits underwater before violet and returns to the original first world', () => {
+test('journey follows room to ocean to shadow to forest and back to the same room', () => {
   const { app } = transitionHarness();
   const route = [app.outerIndex];
   for (let step = 0; step < 4; step++) { app.stepThrough(); route.push(app.outerIndex); }
-  assert.deepEqual(route, [0, 1, 2, 3, 0]);
+  assert.deepEqual(route, [0, 2, 3, 1, 0]);
+  assert.deepEqual(app.narrationEvents, [], 'crossing leaves time to observe before narration');
+  assert.equal(app.pendingNarration.id, 'return', 'ending narration belongs to final room arrival');
   assert.equal(app.outerWorld, app.worldOne);
-  assert.equal(app.currentWorld, 'The World of Stillness');
+  assert.equal(app.currentWorld, 'Did I Wake Up?');
   assert.equal(app.worldOne.root.visible, true);
   assert.equal(app.anchor.parent, app.worldOne.scene);
 });
 
-test('Quest return previews room through the tear, then fully returns without changing session', () => {
-  const { app, observations } = transitionHarness(3, true);
+test('arrival narration waits for settling and never speaks a stale world cue', () => {
+  const { app } = transitionHarness();
+  app.mode = 'desktop';
+  app.stepThrough();
+  assert.equal(app.pendingNarration.id, 'ocean');
+  const scheduled = app.pendingNarration.at;
+  app.swallow = -1;
+  app.pendingXRPose = false;
+  app.xrFocusSuspended = false;
+  app.time = scheduled - .01;
+  app.updateArrivalNarration();
+  assert.deepEqual(app.narrationEvents, []);
+  app.time = scheduled;
+  app.xrFocusSuspended = true;
+  app.updateArrivalNarration();
+  assert.deepEqual(app.narrationEvents, [], 'no speech over a headset system menu');
+  app.xrFocusSuspended = false;
+  app.updateArrivalNarration();
+  assert.deepEqual(app.narrationEvents, ['ocean']);
+  app.updateArrivalNarration();
+  assert.deepEqual(app.narrationEvents, ['ocean'], 'arrival line only fires once');
+  app.stepThrough();
+  assert.equal(app.pendingNarration.id, 'shadow');
+  app.outerIndex = 1;
+  app.time += 10;
+  app.updateArrivalNarration();
+  assert.equal(app.pendingNarration, null);
+  assert.deepEqual(app.narrationEvents, ['ocean'], 'abandoned world cannot speak late');
+});
+
+test('Quest forest return previews room through the tear, then returns without changing session', () => {
+  const { app, observations } = transitionHarness(1, true);
   app.worldOne.root.visible = false;
   app.swallow = -1;
   const session = app.renderer.xr.getSession();
   app.tick(50);
   assert.equal(observations.output, 'portal-passthrough');
   assert.equal(app.worldOne.root.visible, false, 'virtual furniture and floor stay hidden behind the return tear');
-  assert.deepEqual(observations.passes, [app.worldThree.scene, app.maskScene, app.worldOne.scene, app.overlay]);
-  assert.equal(observations.views.at(-1).active, true);
+  assert.deepEqual(observations.passes, [app.worldTwo.scene, app.maskScene, app.worldOne.scene]);
+  assert.equal(observations.foreground, app.overlay);
+  assert.equal(observations.views.at(-1).active, false, 'shadow watcher is inactive in final forest');
   app.swallow = 1.07;
   app.tick(100);
   assert.equal(app.outerIndex, 0);
-  assert.equal(app.currentWorld, 'The World of Stillness');
+  assert.equal(app.currentWorld, 'Did I Wake Up?');
   assert.equal(app.worldOne.root.visible, false);
   assert.equal(observations.output, 'passthrough');
-  assert.deepEqual(observations.passes, [app.worldOne.scene, app.overlay]);
+  assert.deepEqual(observations.passes, [app.worldOne.scene]);
+  assert.equal(observations.foreground, app.overlay);
   assert.equal(observations.views.at(-1).active, false);
   app.swallow = 1.49;
   app.tick(150);
@@ -508,12 +606,12 @@ test('Quest return previews room through the tear, then fully returns without ch
   assert.equal(app.renderer.xr.isPresenting, true);
 });
 
-test('desktop return draws the same furnished room with opaque output', () => {
-  const { app, observations } = transitionHarness(3);
+test('desktop forest return draws the same furnished room with opaque output', () => {
+  const { app, observations } = transitionHarness(1);
   app.tick(50);
   assert.equal(app.outerWorld, app.worldOne);
   assert.equal(app.worldOne.root.visible, true);
-  assert.equal(app.currentWorld, 'The World of Stillness');
+  assert.equal(app.currentWorld, 'Did I Wake Up?');
   assert.equal(observations.output, 'opaque');
 });
 
@@ -572,21 +670,22 @@ test('return room translates its floor and walking bounds around a distant seam'
 });
 
 for (const inXR of [false, true]) {
-  test(`${inXR ? 'Quest' : 'desktop'} water spills only through the forest-to-underwater tear`, () => {
-    const { app, observations } = transitionHarness(1, inXR);
+  test(`${inXR ? 'Quest' : 'desktop'} water spills only through the initial room-to-ocean tear`, () => {
+    const { app, observations } = transitionHarness(0, inXR);
     app.swallow = -1;
     app.tick(50);
     assert.equal(app.innerWorld, app.worldUnderwater);
     assert.equal(observations.water.at(-1).active, true);
     assert.equal(observations.water.at(-1).openness, 1);
-    assert.equal(observations.output, 'opaque');
+    assert.equal(observations.output, inXR ? 'passthrough' : 'opaque');
     app.swallow = 1.07;
     app.tick(100);
     assert.equal(app.outerWorld, app.worldUnderwater);
-    assert.equal(app.currentWorld, 'The World of Drowned Dreams');
+    assert.equal(app.currentWorld, 'How Am I Breathing?');
     assert.equal(observations.water.at(-1).active, false);
     assert.equal(observations.output, 'opaque');
-    assert.deepEqual(observations.passes, [app.worldUnderwater.scene, app.overlay]);
+    assert.deepEqual(observations.passes, [app.worldUnderwater.scene]);
+    assert.equal(observations.foreground, app.overlay);
     app.swallow = 1.49;
     app.tick(150);
     app.tick(200);

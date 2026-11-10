@@ -1,0 +1,313 @@
+{
+  "license": "CC0-1.0",
+  "processing": "meshoptimizer error-bounded index reduction. Original positions, normals, UVs and textures preserved; bounds locked; no foliage pruning or instance removal.",
+  "sources": "See ../sample/SOURCE-MANIFEST.json and original model source records for Poly Haven attribution.",
+  "assets": [
+    {
+      "name": "grass",
+      "source": "sample/grass_medium_01/sample.gltf",
+      "sourceSHA256": "a4edb90f71f4b2da4a8b8a260b10a6a8b4117e045e47c23612cc8b956d3a2b80",
+      "meshes": [
+        {
+          "name": "grass_tall_a",
+          "beforeTriangles": 290,
+          "afterTriangles": 114,
+          "relativeError": 0.00794471986591816,
+          "errorLimit": 0.008,
+          "maxPositionErrorBound": 0.002562540733598795,
+          "boundsLocked": true
+        },
+        {
+          "name": "grass_tall_b",
+          "beforeTriangles": 310,
+          "afterTriangles": 145,
+          "relativeError": 0.007969817146658897,
+          "errorLimit": 0.008,
+          "maxPositionErrorBound": 0.002276681944822778,
+          "boundsLocked": true
+        },
+        {
+          "name": "grass_tiny_a",
+          "beforeTriangles": 79,
+          "afterTriangles": 43,
+          "relativeError": 0.007550248876214027,
+          "errorLimit": 0.008,
+          "maxPositionErrorBound": 0.0008490507151666105,
+          "boundsLocked": true
+        },
+        {
+          "name": "grass_small_b",
+          "beforeTriangles": 653,
+          "afterTriangles": 357,
+          "relativeError": 0.00780985364690423,
+          "errorLimit": 0.008,
+          "maxPositionErrorBound": 0.0014830296128618692,
+          "boundsLocked": true
+        },
+        {
+          "name": "grass_mid_b",
+          "beforeTriangles": 1257,
+          "afterTriangles": 485,
+          "relativeError": 0.007998310960829258,
+          "errorLimit": 0.008,
+          "maxPositionErrorBound": 0.0016078892575005638,
+          "boundsLocked": true
+        },
+        {
+          "name": "grass_large_b",
+          "beforeTriangles": 4626,
+          "afterTriangles": 1703,
+          "relativeError": 0.007951789535582066,
+          "errorLimit": 0.008,
+          "maxPositionErrorBound": 0.0022590829955324576,
+          "boundsLocked": true
+        }
+      ],
+      "indexSHA256": "9faa3183bd30d5a82b5efb2d61b4a37647408b9c56cf4d3b98169bf3f41fac55",
+      "gltfSHA256": "e82c4676815e879ae903a34cdd10d4755a3288436ab4680059569b52aa57473a"
+    },
+    {
+      "name": "rocks",
+      "source": "sample/rock_moss_set_01/sample.gltf",
+      "sourceSHA256": "bc59790dd3050b3d533585ec81b2cb08a5beaeabdf620e7cd5e01267fc9f06da",
+      "meshes": [
+        {
+          "name": "rock_03",
+          "beforeTriangles": 5000,
+          "afterTriangles": 1622,
+          "relativeError": 0.005978479981422424,
+          "errorLimit": 0.006,
+          "maxPositionErrorBound": 0.012606118245358289,
+          "boundsLocked": true
+        },
+        {
+          "name": "rock_06",
+          "beforeTriangles": 8994,
+          "afterTriangles": 2246,
+          "relativeError": 0.004218198824673891,
+          "errorLimit": 0.006,
+          "maxPositionErrorBound": 0.011630853277442732,
+          "boundsLocked": true
+        },
+        {
+          "name": "pebble_03",
+          "beforeTriangles": 398,
+          "afterTriangles": 390,
+          "relativeError": 0.005986617878079414,
+          "errorLimit": 0.006,
+          "maxPositionErrorBound": 0.01247379435100715,
+          "boundsLocked": true
+        }
+      ],
+      "indexSHA256": "4b51203e920b2462de26c78d9497921a7edb02013436165be4b62a56225b45cf",
+      "gltfSHA256": "b9df07b0f5d2092ff908fbd4d85175d8e3b6b904eb08468a3b577896be5190ed"
+    },
+    {
+      "name": "branches",
+      "source": "sample/dry_branches_medium_01/sample.gltf",
+      "sourceSHA256": "3964769185c145de63dbf2316f08ef46c8d4aefdfb9c7b3802248e704e6e7c19",
+      "meshes": [
+        {
+          "name": "branch_b",
+          "beforeTriangles": 5254,
+          "afterTriangles": 1312,
+          "relativeError": 0.004020316526293755,
+          "errorLimit": 0.006,
+          "maxPositionErrorBound": 0.0041751138533088206,
+          "boundsLocked": true
+        },
+        {
+          "name": "branch_c",
+          "beforeTriangles": 5616,
+          "afterTriangles": 1404,
+          "relativeError": 0.004869806580245495,
+          "errorLimit": 0.006,
+          "maxPositionErrorBound": 0.0037844525070007684,
+          "boundsLocked": true
+        }
+      ],
+      "indexSHA256": "d78c94c0bc64999ea91e06900a857934243e01f99dfbb4873520555f944dfc8c",
+      "gltfSHA256": "8411b38f174d63ca74c5ae45b2829c1e7461e6a9e56504b744d2dac6902cdb88"
+    },
+    {
+      "name": "ferns",
+      "source": "fern_02/fern_02_1k.gltf",
+      "sourceSHA256": "33974295ee19670af4877705fc7d91f33f42d6302f0d44a625e072271223031f",
+      "meshes": [
+        {
+          "name": "Plane.024",
+          "beforeTriangles": 2384,
+          "afterTriangles": 1470,
+          "relativeError": 0.004968836437910795,
+          "errorLimit": 0.005,
+          "maxPositionErrorBound": 0.004917892970550952,
+          "boundsLocked": true
+        },
+        {
+          "name": "Plane.044",
+          "beforeTriangles": 2248,
+          "afterTriangles": 1409,
+          "relativeError": 0.004972935654222965,
+          "errorLimit": 0.005,
+          "maxPositionErrorBound": 0.004347966003220682,
+          "boundsLocked": true
+        },
+        {
+          "name": "Plane.006",
+          "beforeTriangles": 784,
+          "afterTriangles": 581,
+          "relativeError": 0.004974574316293001,
+          "errorLimit": 0.005,
+          "maxPositionErrorBound": 0.003051508762060451,
+          "boundsLocked": true
+        },
+        {
+          "name": "Plane.059",
+          "beforeTriangles": 816,
+          "afterTriangles": 615,
+          "relativeError": 0.004967657383531332,
+          "errorLimit": 0.005,
+          "maxPositionErrorBound": 0.0029472032720510577,
+          "boundsLocked": true
+        }
+      ],
+      "indexSHA256": "8e321f0aa0678a0828e966b3e0f68dcf4aa2873ff0d5ffb3fe273a09ae146e9b",
+      "gltfSHA256": "8617cbd5194883e68ea0a0bb58d80850a4191811d6385548de09066d9ee292b5"
+    },
+    {
+      "name": "stumps",
+      "source": "tree_stump_01/tree_stump_01_1k.gltf",
+      "sourceSHA256": "9c66ba87d693f35eb404acaa96e0eeff831c295b61a0a903795584cbcc3527c9",
+      "meshes": [
+        {
+          "name": "tt_01_rep.001",
+          "beforeTriangles": 41046,
+          "afterTriangles": 10260,
+          "relativeError": 0.0025366898626089096,
+          "errorLimit": 0.003,
+          "maxPositionErrorBound": 0.0040341343870986535,
+          "boundsLocked": true
+        }
+      ],
+      "indexSHA256": "9557a611117dd9d49a48a9cf48f99ebde054d8cba9e89cb96cfeece71878efeb",
+      "gltfSHA256": "bb78fa48d76fadd2db3e8099f762497a8ca2b40d30f6dc3bfde6a1ad311d9703"
+    },
+    {
+      "name": "conifers",
+      "source": "conifers/fir_tree_01.glb",
+      "sourceSHA256": "795f8b075cb6cdaa8c8934e761f6a405571738fcbc9c9f0810529c966c3d2480",
+      "meshes": [
+        {
+          "name": "NurbsPath.008",
+          "beforeTriangles": 412,
+          "afterTriangles": 326,
+          "relativeError": 0.001955300336703658,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.01333145089277965,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.009",
+          "beforeTriangles": 535,
+          "afterTriangles": 481,
+          "relativeError": 0.0018363520503044128,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.008567501667556598,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.010",
+          "beforeTriangles": 2019,
+          "afterTriangles": 1686,
+          "relativeError": 0.0019879101309925318,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.026482640226698884,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.002",
+          "beforeTriangles": 9534,
+          "afterTriangles": 2518,
+          "relativeError": 0.0019877925515174866,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.02451439568032754,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.011",
+          "beforeTriangles": 7923,
+          "afterTriangles": 7139,
+          "relativeError": 0.0019893371500074863,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.03490616083166298,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.012",
+          "beforeTriangles": 33753,
+          "afterTriangles": 33734,
+          "relativeError": 0.0019965092651546,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.026215476845453,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.013",
+          "beforeTriangles": 4292,
+          "afterTriangles": 1693,
+          "relativeError": 0.001999584026634693,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.018517214530434423,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.014",
+          "beforeTriangles": 12394,
+          "afterTriangles": 9884,
+          "relativeError": 0.0019461746560409665,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.024378097452950165,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.015",
+          "beforeTriangles": 17920,
+          "afterTriangles": 17920,
+          "relativeError": 0,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.016",
+          "beforeTriangles": 4280,
+          "afterTriangles": 1646,
+          "relativeError": 0.0019523329101502895,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.017931346334242093,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.017",
+          "beforeTriangles": 5016,
+          "afterTriangles": 5016,
+          "relativeError": 0,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0,
+          "boundsLocked": true
+        },
+        {
+          "name": "NurbsPath.018",
+          "beforeTriangles": 376,
+          "afterTriangles": 258,
+          "relativeError": 0.0019031395204365253,
+          "errorLimit": 0.002,
+          "maxPositionErrorBound": 0.010454688676214685,
+          "boundsLocked": true
+        }
+      ],
+      "indexSHA256": "69635ab6b349ab520a87d850341ea80de4f3982747306808c3fbae91429be916",
+      "gltfSHA256": "df701ea9d16f6899834a5c1fdd55cf9189f12ab6717aacc0a771a39b4f3463f6"
+    }
+  ]
+}

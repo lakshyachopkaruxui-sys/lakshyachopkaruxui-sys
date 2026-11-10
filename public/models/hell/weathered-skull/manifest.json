@@ -1,0 +1,51 @@
+{
+ "slug": "human-skull",
+ "triangles": 799999,
+ "texture_px": 4096,
+ "triangles_light": 399999,
+ "texture_px_light": 1024,
+ "files": {
+  "glb": {
+   "name": "human-skull.glb",
+   "bytes": 27822732
+  },
+  "blend": {
+   "name": "human-skull.blend",
+   "bytes": 35000494
+  },
+  "fbx": {
+   "name": "human-skull.fbx",
+   "bytes": 49040956
+  },
+  "obj": {
+   "name": "human-skull-obj.zip",
+   "bytes": 20924372
+  },
+  "usdz": {
+   "name": "human-skull.usdz",
+   "bytes": 44157203
+  },
+  "glb_light": {
+   "name": "human-skull-light.glb",
+   "bytes": 12509192
+  },
+  "fbx_light": {
+   "name": "human-skull-light.fbx",
+   "bytes": 24607532
+  }
+ },
+ "extras": {
+  "license": "CC0-1.0",
+  "source": "grab3d.com",
+  "dimensions_m": "0.150 x 0.197 x 0.220",
+  "triangles": 799999,
+  "variant": "download",
+  "generator": "Created by grab3d",
+  "created": "2026-09-28"
+ },
+ "origin": {
+  "method": "ai-assisted",
+  "detail": "Base mesh and textures generated with an AI image-to-3D tool (Meshy), then cleaned up, scaled, textured and checked in Blender.",
+  "ai_content": true
+ }
+}

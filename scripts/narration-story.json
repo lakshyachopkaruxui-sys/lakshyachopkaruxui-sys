@@ -1,0 +1,33 @@
+{
+  "opening": {"lead":0.35,"speed":0.94,"mood":"precise, then alarmed","segments":[
+    {"text":"Wait. That room should be empty.","after":1.1},
+    {"text":"No one has opened it from the inside before.","after":1.6},
+    {"text":"You can hear me?","speed":0.89,"after":0.6},
+    {"text":"Good.","after":0.65},
+    {"text":"There is a way out. You'll have to open it yourself.","after":1.0}]},
+  "ocean": {"lead":3.0,"speed":0.96,"mood":"wonder interrupted by recognition","segments":[
+    {"text":"These are recordings. Nothing inside them should know you exist.","after":1.8},
+    {"text":"Don't let it keep you.","voice":"af_nicole","kind":"whisper","speed":0.85,"gain":0.6,"after":1.4},
+    {"text":"That voice...","speed":0.86,"after":0.6,"breath":true},
+    {"text":"It was removed from this record.","after":0.7},
+    {"text":"Someone reached this place before you.","after":0.65},
+    {"text":"I need to find out why they never came back.","speed":1.0,"after":1.0}]},
+  "shadow": {"lead":1.5,"speed":0.95,"mood":"concealed, tightening fear","gain":0.91,"segments":[
+    {"text":"I found the missing records.","after":0.65,"breath":true},
+    {"text":"Those creatures were visitors.","speed":0.86,"after":1.35},
+    {"text":"The archive kept changing them. Repairing them. Trying to make them last.","after":1.7},
+    {"text":"It has started a file for you.","speed":0.9,"after":0.8},
+    {"text":"I'm looking for somewhere it hasn't recorded.","speed":1.02,"after":1.0}]},
+  "forest": {"lead":4.5,"speed":0.94,"mood":"attention, discovery, protective relief","segments":[
+    {"text":"There are no files for this place.","after":1.15},
+    {"text":"Wait.","after":0.8},
+    {"text":"That animal followed your movement. It can see you.","speed":0.91,"after":2.0},
+    {"text":"We're outside the archive.","speed":0.88,"after":1.0,"breath":true},
+    {"text":"I can hide your next crossing.","after":0.7},
+    {"text":"When you're ready, open the tear. I'll hold the record here.","after":1.2}]},
+  "return": {"lead":3.0,"speed":0.86,"mood":"exhausted, relieved, then vulnerable","gain":0.91,"segments":[
+    {"text":"You're home.","after":2.5,"breath":true},
+    {"text":"The archive asked whether I found the last human.","after":1.35},
+    {"text":"I told it the room was empty.","after":3.4},
+    {"text":"Thank you for giving me someone to lie for.","speed":0.84,"gain":0.87,"after":1.5}]}
+}

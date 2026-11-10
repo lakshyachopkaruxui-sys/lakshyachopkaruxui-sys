@@ -1,0 +1,66 @@
+{
+  "sourceTriangles": 399999,
+  "runtimeTriangles": 6942,
+  "sourceVertices": 232831,
+  "runtimeVertices": 3284,
+  "relativeError": 0.024248627945780754,
+  "attributeTriangles": 17750,
+  "spatialRelativeError": 0.006761210970580578,
+  "runtimeGeometryBytes": 146740,
+  "sourceBounds": {
+    "min": [
+      -0.07516790926456451,
+      0.000013972427041153423,
+      -0.09864869713783264
+    ],
+    "max": [
+      0.07517169415950775,
+      0.21998432278633118,
+      0.09865035861730576
+    ]
+  },
+  "runtimeBounds": {
+    "componentType": 5126,
+    "type": "VEC3",
+    "bufferView": 0,
+    "count": 3284,
+    "min": [
+      -0.07516790926456451,
+      0.000013972427041153423,
+      -0.09864869713783264
+    ],
+    "max": [
+      0.07517169415950775,
+      0.21998432278633118,
+      0.09865035861730576
+    ]
+  },
+  "unchangedImages": [
+    {
+      "file": "textures/skull-color.jpg",
+      "bytes": 164549,
+      "sha256": "221bf9349e8f7ec36e7bbc0f63ecc89a6e0d357aa30b91aee932991540226ee3"
+    },
+    {
+      "file": "textures/skull-arm.jpg",
+      "bytes": 92297,
+      "sha256": "f156195f76bc04fa1db8e66159ee781035856df4285cfb88146e770f85c5e096"
+    }
+  ],
+  "primitiveCount": 1,
+  "materialCount": 1,
+  "license": "CC0-1.0",
+  "origin": "AI-assisted Meshy base and textures, cleaned and checked in Blender by Grab3D; not a photogrammetry scan.",
+  "files": [
+    {
+      "file": "skull.gltf",
+      "bytes": 1990,
+      "sha256": "ad633a03d5f143a626de1fdac635bbd1067a4f1882584842533a1712240ae6f6"
+    },
+    {
+      "file": "skull.bin",
+      "bytes": 146740,
+      "sha256": "7fc5ba09b62e92a7afd69494d75fda3547839f4671ecd801ed6e3d97b4c9ccdd"
+    }
+  ]
+}

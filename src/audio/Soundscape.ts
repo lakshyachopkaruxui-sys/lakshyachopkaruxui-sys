@@ -1,3 +1,4 @@
+import { assetUrl } from '../utils/assetUrl';
 import * as THREE from 'three';
 import { CONFIG } from '../config/config';
 import { damp, lerp, smoothstep } from '../utils/math';
@@ -31,20 +32,18 @@ interface ClipSpec {
 export const WORLD_TWO_SOUNDS: ClipSpec[] = [
   { synth: 'insects', spot: 'insectsNear', gain: 0.8, ref: 0.25, near: true },
   { synth: 'wind', spot: 'canopyLeft', gain: 0.55, ref: 3.5 },
-  { file: '/audio/forest-birds.mp3', synth: 'birds', spot: 'canopyLeft', gain: 0.85, ref: 3, seconds: 50 },
-  { file: '/audio/countryside.mp3', synth: 'birds', spot: 'canopyRight', gain: 0.7, ref: 4, seconds: 55 },
-  { file: '/audio/forest-stream.mp3', synth: 'stream', spot: 'stream', gain: 0.9, ref: 1.5, seconds: 45 }
+  { file: assetUrl('/audio/forest-birds.mp3'), synth: 'birds', spot: 'canopyLeft', gain: 0.85, ref: 3, seconds: 50 },
+  { file: assetUrl('/audio/countryside.mp3'), synth: 'birds', spot: 'canopyRight', gain: 0.7, ref: 4, seconds: 55 },
+  { file: assetUrl('/audio/forest-stream.mp3'), synth: 'stream', spot: 'stream', gain: 0.9, ref: 1.5, seconds: 45 }
 ];
 
 export const WORLD_THREE_SOUNDS: ClipSpec[] = [
-  // Violet is the fourth world in the journey; its original export name stays
-  // stable. Sound implies a presence without speech, alarms or jump stings.
-  // The bed is a recorded low drone (Freesound, CC0 — see ASSETS.md), always
-  // present but breathing: a slow swell up and down like waves, never fully
-  // silent and never a flat constant hum.
-  { file: '/audio/dread-drone.mp3', synth: 'drone', spot: 'drone', gain: 0.42, ref: 12, maxCutoff: 1200, seconds: 60, swellPeriod: 26, swellMin: 0.16 },
-  { synth: 'chimes', spot: 'chimes', gain: 0.32, ref: 9, maxCutoff: 2400 },
-  { synth: 'unease', spot: 'near', gain: 0.45, ref: 1.8, near: true, maxCutoff: 2300 }
+  // Strange World's low bed leaves room for its spatial creature calls.
+  // Volcanic wind and a localized vent replace the old metallic chime palette.
+  // Only the drone is a recording; wind/vent texture remain original synthesis.
+  { file: assetUrl('/audio/dread-drone.mp3'), synth: 'drone', spot: 'drone', gain: 0.42, ref: 12, maxCutoff: 1200, seconds: 60, swellPeriod: 26, swellMin: 0.16 },
+  { synth: 'wind', spot: 'volcano', gain: 0.26, ref: 17, maxCutoff: 1000, swellPeriod: 18, swellMin: 0.45 },
+  { synth: 'unease', spot: 'near', gain: 0.30, ref: 1.8, near: true, maxCutoff: 2300 }
 ];
 
 /**
@@ -54,7 +53,7 @@ export const WORLD_THREE_SOUNDS: ClipSpec[] = [
  * whale model so its call always sounds where the whale actually is.
  */
 export const UNDERWATER_SOUNDS: ClipSpec[] = [
-  { file: '/audio/deep-ocean.wav', synth: 'water', spot: 'water', gain: 0.62, ref: 12, maxCutoff: 850, seconds: 50 },
+  { file: assetUrl('/audio/deep-ocean.wav'), synth: 'water', spot: 'water', gain: 0.62, ref: 12, maxCutoff: 850, seconds: 50 },
   { synth: 'bubbles', spot: 'bubbles', gain: 0.28, ref: 4, maxCutoff: 1450 },
   { synth: 'current', spot: 'near', gain: 0.3, ref: 1.8, near: true, maxCutoff: 700 }
 ];

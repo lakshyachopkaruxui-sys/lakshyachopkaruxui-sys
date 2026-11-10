@@ -1,0 +1,33 @@
+{
+  "model": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+  "revision": "0c0e3051f131929182e2c023b9537f8b1c68adfe",
+  "speaker": "Ryan builtin preset",
+  "voice_direction": "B \u2014 trying not to be heard; stronger fear in Shadow and return",
+  "execution": "Local CPU, offline speech synthesis",
+  "sample_rate": 24000,
+  "channels": 1,
+  "pitch_semitones": 0,
+  "nonlinear_compression": false,
+  "tail_seconds": 0.35,
+  "wet_gain": 0,
+  "effects": {
+    "echo": 0,
+    "reverb": 0,
+    "pitch_shift": 0,
+    "external_breath_overlay": false,
+    "level_matching": "One linear gain per scene; preserve performed dynamics"
+  },
+  "deployed": true,
+  "listening_approval": "B direction selected by user; activation explicitly authorized",
+  "generator": "scripts/render-dream-audition.py",
+  "packaging": "scripts/prepare-dream-release.py",
+  "model_source": "https://huggingface.co/Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice/tree/0c0e3051f131929182e2c023b9537f8b1c68adfe",
+  "package": "qwen-tts 0.1.1",
+  "model_license": "Apache-2.0",
+  "package_license": "Apache-2.0",
+  "voice_cloning": false,
+  "cloud_inference": false,
+  "runtime": "Compressed prerecorded mono audio; no TTS model in the browser",
+  "caption_timing": "Local Whisper base.en word alignment, grouped into authored phrases; exact script match verified",
+  "activation_authorization": "User selected B and explicitly requested application to the dream narration"
+}

@@ -1,0 +1,116 @@
+[
+  {
+    "asset": "forrest_ground_03",
+    "source": "https://polyhaven.com/a/forrest_ground_03",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forrest_ground_03/forrest_ground_03_diff_2k.jpg",
+    "file": "public\\textures\\forest-quality\\forrest_ground_03_Diffuse.jpg",
+    "license": "CC0-1.0",
+    "download_sha256": "187a8e33773473939c0e85b5e10ae94eb9e8d91463ab8b74e122d833d2d84dc6",
+    "download_bytes": 3522953,
+    "download_md5": "605bfa541b0d406bcf88a16a8c82b821",
+    "sha256": "f4645c375891fb8cdf65d4a01e4b676e8233428b6b8e51f099740a70b7bb6e2c",
+    "bytes": 2785075,
+    "processing": "Original 2K color; normal and packed AO/roughness/metal downsampled to 1K for standalone headset memory. JPEG quality 90 color, 92 data; no chroma subsampling. Original downloads retained in validation.",
+    "author": "Rob Tuytel",
+    "license_url": "https://polyhaven.com/license",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  {
+    "asset": "forrest_ground_03",
+    "source": "https://polyhaven.com/a/forrest_ground_03",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forrest_ground_03/forrest_ground_03_nor_gl_2k.jpg",
+    "file": "public\\textures\\forest-quality\\forrest_ground_03_nor_gl.jpg",
+    "license": "CC0-1.0",
+    "download_sha256": "dcc26b4fd27a8e1f1f14558214fbaf1d68a61d9b569eee805793498e4b30098c",
+    "download_bytes": 6812765,
+    "download_md5": "104ecda19a7dce8f7b809b332cb41d37",
+    "sha256": "1e3e32d9f6af651ff4de9d96c4eae196aae4316119968b7a7a46b505225b5066",
+    "bytes": 1310969,
+    "processing": "Original 2K color; normal and packed AO/roughness/metal downsampled to 1K for standalone headset memory. JPEG quality 90 color, 92 data; no chroma subsampling. Original downloads retained in validation.",
+    "author": "Rob Tuytel",
+    "license_url": "https://polyhaven.com/license",
+    "dimensions": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "asset": "forrest_ground_03",
+    "source": "https://polyhaven.com/a/forrest_ground_03",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forrest_ground_03/forrest_ground_03_arm_2k.jpg",
+    "file": "public\\textures\\forest-quality\\forrest_ground_03_arm.jpg",
+    "license": "CC0-1.0",
+    "download_sha256": "1833458cb36e03ab3a4024b6c330f9e1ef6191d9fd841e1b59634267516a7a3c",
+    "download_bytes": 1249511,
+    "download_md5": "905e52f65336525f23a64529d42b5018",
+    "sha256": "9f40519ffe32ecfe4e41b802306932c1c7a3f8be33964cc2d543017e2e227939",
+    "bytes": 715203,
+    "processing": "Original 2K color; normal and packed AO/roughness/metal downsampled to 1K for standalone headset memory. JPEG quality 90 color, 92 data; no chroma subsampling. Original downloads retained in validation.",
+    "author": "Rob Tuytel",
+    "license_url": "https://polyhaven.com/license",
+    "dimensions": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "asset": "forest_ground_04",
+    "source": "https://polyhaven.com/a/forest_ground_04",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forest_ground_04/forest_ground_04_diff_2k.jpg",
+    "file": "public\\textures\\forest-quality\\forest_ground_04_Diffuse.jpg",
+    "license": "CC0-1.0",
+    "download_sha256": "24b8aaf4c8547305d80b0e029ec365219ab1b90748d4ca5651bdc9e75bfde5e6",
+    "download_bytes": 4529321,
+    "download_md5": "f6ce9c8af4316c2627a4b3fbab8ad944",
+    "sha256": "b22e6c70a32c496aa070baf996ad4594e5cdf56be6aa82161f5ab899561c963e",
+    "bytes": 2213835,
+    "processing": "Original 2K color; normal and packed AO/roughness/metal downsampled to 1K for standalone headset memory. JPEG quality 90 color, 92 data; no chroma subsampling. Original downloads retained in validation.",
+    "author": "Rob Tuytel",
+    "license_url": "https://polyhaven.com/license",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  {
+    "asset": "forest_ground_04",
+    "source": "https://polyhaven.com/a/forest_ground_04",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forest_ground_04/forest_ground_04_nor_gl_2k.jpg",
+    "file": "public\\textures\\forest-quality\\forest_ground_04_nor_gl.jpg",
+    "license": "CC0-1.0",
+    "download_sha256": "b37ac799ed410976541e0011c246fca254e74eaa3f096ae7a7d74178db5a6d9b",
+    "download_bytes": 5288849,
+    "download_md5": "5fa9256955e7bfa40a0269b4965ce646",
+    "sha256": "4a4f36f36c7270b3fd54231dced2c77d1599cee4977e55b685eb608827082222",
+    "bytes": 979621,
+    "processing": "Original 2K color; normal and packed AO/roughness/metal downsampled to 1K for standalone headset memory. JPEG quality 90 color, 92 data; no chroma subsampling. Original downloads retained in validation.",
+    "author": "Rob Tuytel",
+    "license_url": "https://polyhaven.com/license",
+    "dimensions": [
+      1024,
+      1024
+    ]
+  },
+  {
+    "asset": "forest_ground_04",
+    "source": "https://polyhaven.com/a/forest_ground_04",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/forest_ground_04/forest_ground_04_arm_2k.jpg",
+    "file": "public\\textures\\forest-quality\\forest_ground_04_arm.jpg",
+    "license": "CC0-1.0",
+    "download_sha256": "a6086cb5611fabcc3dd4c9ac74bcf6cf8ed5d07e136ebe51255a5a3bea9e42c6",
+    "download_bytes": 3418726,
+    "download_md5": "c688030cc91fbaab71cbc71fc6b280fe",
+    "sha256": "5dc4f8105f995d280703ca442e925ce60a263de8b062d5415cc12bc55c429724",
+    "bytes": 498024,
+    "processing": "Original 2K color; normal and packed AO/roughness/metal downsampled to 1K for standalone headset memory. JPEG quality 90 color, 92 data; no chroma subsampling. Original downloads retained in validation.",
+    "author": "Rob Tuytel",
+    "license_url": "https://polyhaven.com/license",
+    "dimensions": [
+      1024,
+      1024
+    ]
+  }
+]

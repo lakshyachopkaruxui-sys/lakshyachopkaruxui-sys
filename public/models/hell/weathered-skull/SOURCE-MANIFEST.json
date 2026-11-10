@@ -1,0 +1,42 @@
+{
+  "asset": "Human Skull — light source, Tear balanced derivative",
+  "source": "https://grab3d.com/models/anatomy/human-skull/",
+  "download": "https://grab3d.com/dl/human-skull/human-skull-light.glb",
+  "publisher": "Grab3D",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://grab3d.com/dl/human-skull/LICENSE.txt",
+  "manifestUrl": "https://grab3d.com/dl/human-skull/manifest.json",
+  "downloaded": "2026-11-09",
+  "origin": {
+    "method": "AI-assisted",
+    "aiContent": true,
+    "detail": "Publisher discloses a Meshy AI image-to-3D base and textures, then cleanup, scaling, texturing and checks in Blender. This is not a photogrammetry scan or anatomical accuracy claim."
+  },
+  "sourceFile": {
+    "file": "human-skull-light.glb",
+    "bundled": false,
+    "note": "Source download removed after verification and derivation to avoid shipping12.5MB of unused high-resolution geometry. The rebuild script downloads it into memory on demand and verifies this pinned SHA256.",
+    "bytes": 12509192,
+    "sha256": "b918dcde90bf086501f7e33e5a7b130fc47b97bb5e83d6d301ae953aa31b055e",
+    "triangles": 399999,
+    "vertices": 232831,
+    "materials": 1,
+    "meshes": 1,
+    "images": 2,
+    "imageDimensions": [1024, 1024]
+  },
+  "runtime": {
+    "file": "skull.gltf",
+    "binary": "skull.bin",
+    "triangles": 6942,
+    "vertices": 3284,
+    "materials": 1,
+    "meshes": 1,
+    "geometryBytes": 146740,
+    "images": ["textures/skull-color.jpg", "textures/skull-arm.jpg"],
+    "textureBytes": 256846,
+    "normalMap": false,
+    "processing": "Attribute-aware Meshoptimizer reduction followed by bounded spatial reduction of tiny source topology islands; original JPEG byte payloads unchanged. Original source bounds retained exactly. See prepare-balanced.mjs and BALANCED.json.",
+    "qualityLimits": "Simplifier errors are algorithm estimates, not measured physical deviation. Browser silhouette/material review required. Do not infer anatomical accuracy from the publisher name or high source triangle count."
+  }
+}

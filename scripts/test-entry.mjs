@@ -15,7 +15,7 @@ function element() {
   const classes = new Set();
   const attributes = new Map();
   return {
-    textContent: '', disabled: false, inert: false, open: false,
+    textContent: '', disabled: false, inert: false, open: false, dataset: {},
     classList: { add: value => classes.add(value), remove: value => classes.delete(value), contains: value => classes.has(value) },
     setAttribute: (name, value) => attributes.set(name, value),
     removeAttribute: name => attributes.delete(name),
@@ -26,18 +26,32 @@ function element() {
 }
 
 async function harness(options = {}) {
-  const capabilities = { coarse: false, fine: true, supported: false, secure: true, ...options };
+  const capabilities = { coarse: false, fine: true, supported: false, secure: true, forestPrepared: true, ...options };
   const nodes = new Map(['intro', 'enter-headset', 'enter-desktop', 'xr-note', 'headset-help', 'app'].map(id => [id, element()]));
   const events = [];
   const xrEvents = new Map();
   let activation = false;
   let constructed = 0;
+  let preparationCalls = 0;
+  let pendingPreparation;
   let instance;
   class App {
+    setNarrationEnabled() {}
+    enterIntro() {}
     constructor() {
       constructed++;
       instance = this;
+      this.forestPrepared = capabilities.forestPrepared;
       this.renderer = { xr: { isPresenting: false, addEventListener: (name, callback) => xrEvents.set(name, callback) } };
+    }
+    prepareForestForEntry(onProgress) {
+      preparationCalls++;
+      if (this.forestPrepared) return Promise.resolve();
+      events.push('prepare');
+      onProgress('Loading forest…');
+      return new Promise((resolve, reject) => {
+        pendingPreparation = { resolve, reject, onProgress };
+      });
     }
     enterDesktop() { events.push('desktop'); }
     enterXR() {
@@ -55,8 +69,8 @@ async function harness(options = {}) {
   }
   const context = {
     App,
-    document: { getElementById: id => nodes.get(id) },
-    navigator: { xr: { isSessionSupported: async () => capabilities.supported } },
+    document: { getElementById: id => nodes.get(id), addEventListener() {} },
+    navigator: { userAgent: capabilities.userAgent ?? 'Desktop browser', xr: { isSessionSupported: async () => capabilities.supported } },
     window: {
       isSecureContext: capabilities.secure,
       matchMedia: query => ({ matches: query.includes('coarse') ? capabilities.coarse : capabilities.fine }),
@@ -68,10 +82,28 @@ async function harness(options = {}) {
   return {
     nodes, events, capabilities,
     get constructed() { return constructed; },
+    get preparationCalls() { return preparationCalls; },
     async click(id) {
       activation = true;
       nodes.get(id).click();
       activation = false;
+      await new Promise(resolve => setImmediate(resolve));
+    },
+    preparationProgress(message) {
+      assert.ok(pendingPreparation, 'preparation must be pending before reporting progress');
+      pendingPreparation.onProgress(message);
+    },
+    async completePreparation() {
+      assert.ok(pendingPreparation, 'preparation must be pending before completion');
+      instance.forestPrepared = true;
+      pendingPreparation.resolve();
+      pendingPreparation = undefined;
+      await new Promise(resolve => setImmediate(resolve));
+    },
+    async failPreparation() {
+      assert.ok(pendingPreparation, 'preparation must be pending before failure');
+      pendingPreparation.reject(new Error('Forest GPU preparation failed'));
+      pendingPreparation = undefined;
       await new Promise(resolve => setImmediate(resolve));
     },
     endSession() {
@@ -90,6 +122,25 @@ test('touch-only desktop click keeps setup visible and never constructs the 3D a
   assert.equal(h.nodes.get('headset-help').open, true);
   assert.match(h.nodes.get('xr-note').textContent, /mouse and keyboard/);
   assert.equal(h.nodes.get('enter-headset').disabled, false);
+});
+
+test('phone browsers cannot start either experience or construct the 3D app', async () => {
+  for (const userAgent of ['Mozilla/5.0 (iPhone) Mobile Safari', 'Mozilla/5.0 Android 15 Mobile Chrome']) {
+    const h = await harness({ userAgent, coarse: true, fine: false, supported: true });
+    await h.click('enter-desktop'); await h.click('enter-headset');
+    assert.equal(h.constructed, 0);
+    assert.equal(h.nodes.get('intro').dataset.phone, 'true');
+    assert.equal(h.nodes.get('enter-desktop').disabled, true);
+    assert.equal(h.nodes.get('enter-headset').disabled, true);
+    assert.match(h.nodes.get('xr-note').textContent, /Phone playback is not supported/);
+  }
+});
+
+test('Quest mobile user agent retains native headset entry', async () => {
+  const h = await harness({ userAgent: 'Mozilla/5.0 Android Mobile OculusBrowser Quest', coarse: true, fine: false, supported: true });
+  await h.click('enter-headset');
+  assert.equal(h.constructed, 1);
+  assert.deepEqual(h.events, ['headset', 'audio']);
 });
 
 test('hybrid touchscreen with a fine pointer retains normal desktop entry', async () => {
@@ -147,4 +198,95 @@ test('ending a headset session restores the accessible entry page', async () => 
   assert.equal(h.nodes.get('intro').inert, false);
   assert.equal(h.nodes.get('enter-headset').disabled, false);
   assert.match(h.nodes.get('xr-note').textContent, /session ended/);
+});
+
+test('desktop waits behind the visible intro while Forest prepares and ignores duplicate entry clicks', async () => {
+  const h = await harness({ supported: true, forestPrepared: false });
+  await h.click('enter-desktop');
+  assert.deepEqual(h.events, ['audio', 'prepare'], 'audio unlock happens on the click without awaiting suspended audio');
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), false);
+  assert.equal(h.nodes.get('intro').inert, false);
+  assert.equal(h.nodes.get('enter-desktop').disabled, true);
+  assert.equal(h.nodes.get('enter-headset').disabled, true);
+  assert.match(h.nodes.get('enter-desktop').textContent, /Preparing worlds/);
+  assert.match(h.nodes.get('xr-note').textContent, /Loading forest/);
+  h.preparationProgress('Preparing forest graphics…');
+  assert.equal(h.nodes.get('xr-note').textContent, 'Preparing forest graphics…');
+
+  await h.click('enter-desktop');
+  await h.click('enter-headset');
+  assert.equal(h.constructed, 1);
+  assert.equal(h.preparationCalls, 1);
+  assert.deepEqual(h.events, ['audio', 'prepare']);
+
+  await h.completePreparation();
+  assert.deepEqual(h.events, ['audio', 'prepare', 'desktop']);
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), true);
+  assert.equal(h.nodes.get('intro').inert, true);
+  assert.equal(h.nodes.get('enter-desktop').disabled, false);
+});
+
+test('failed desktop preparation keeps entry usable and retries with the existing app', async () => {
+  const h = await harness({ forestPrepared: false });
+  await h.click('enter-desktop');
+  await h.failPreparation();
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), false);
+  assert.equal(h.nodes.get('intro').inert, false);
+  assert.equal(h.nodes.get('enter-desktop').disabled, false);
+  assert.match(h.nodes.get('xr-note').textContent, /could not start/i);
+  assert.equal(h.events.includes('desktop'), false);
+
+  await h.click('enter-desktop');
+  assert.equal(h.constructed, 1);
+  assert.equal(h.preparationCalls, 2);
+  await h.completePreparation();
+  assert.deepEqual(h.events, ['audio', 'prepare', 'audio', 'prepare', 'desktop']);
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), true);
+});
+
+test('headset preparation finishes outside XR and requires a fresh activated click to request a session', async () => {
+  const h = await harness({ userAgent: 'Android Mobile OculusBrowser Quest', supported: true, coarse: true, fine: false, forestPrepared: false });
+  await h.click('enter-headset');
+  assert.deepEqual(h.events, ['prepare']);
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), false);
+  assert.equal(h.nodes.get('enter-headset').disabled, true);
+  assert.equal(h.nodes.get('intro').dataset.busy, 'true');
+  await h.click('enter-headset');
+  await h.click('enter-desktop');
+  assert.equal(h.preparationCalls, 1);
+  assert.equal(h.constructed, 1);
+
+  await h.completePreparation();
+  assert.deepEqual(h.events, ['prepare'], 'resolving preparation must never issue a session request after await');
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), false);
+  assert.equal(h.nodes.get('intro').inert, false);
+  assert.equal(h.nodes.get('enter-headset').disabled, false);
+  assert.equal(h.nodes.get('intro').dataset.busy, 'false');
+  assert.match(h.nodes.get('xr-note').textContent, /Worlds ready.*Choose Enter headset/);
+
+  await h.click('enter-headset');
+  // enterXR itself asserts the click is still active. Audio remains unresolved.
+  assert.deepEqual(h.events, ['prepare', 'headset', 'audio']);
+  assert.equal(h.preparationCalls, 1);
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), true);
+});
+
+test('failed headset preparation can retry without requesting XR during either asynchronous attempt', async () => {
+  const h = await harness({ supported: true, forestPrepared: false });
+  await h.click('enter-headset');
+  await h.failPreparation();
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), false);
+  assert.equal(h.nodes.get('enter-headset').disabled, false);
+  assert.match(h.nodes.get('xr-note').textContent, /Forest GPU preparation failed/);
+  assert.deepEqual(h.events, ['prepare']);
+
+  await h.click('enter-headset');
+  await h.completePreparation();
+  assert.equal(h.constructed, 1);
+  assert.equal(h.preparationCalls, 2);
+  assert.deepEqual(h.events, ['prepare', 'prepare']);
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), false);
+  await h.click('enter-headset');
+  assert.deepEqual(h.events, ['prepare', 'prepare', 'headset', 'audio']);
+  assert.equal(h.nodes.get('intro').classList.contains('hidden'), true);
 });

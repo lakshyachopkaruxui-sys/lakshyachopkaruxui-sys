@@ -203,3 +203,39 @@ test('failed assets use visible original creatures and report only actual failed
     for (const material of !node.material ? [] : Array.isArray(node.material) ? node.material : [node.material]) assert.equal(material.stencilRef, 1);
   });
 });
+
+test('nearby fish ease aside with bounded motion, retained spacing and the same response after world alignment', async () => {
+  useAssets();
+  const parent = new THREE.Group(), life = new MarineLife(parent, () => 0);
+  await life.ready;
+  life.update(0, 0);
+  const fish = life.heroes.filter(hero => hero.species === 'barramundi');
+  const baseline = fish.map(hero => hero.group.position.clone());
+  const centre = baseline.reduce((sum, p) => sum.add(p), new THREE.Vector3()).divideScalar(fish.length);
+  const viewerLocal = centre.clone().add(new THREE.Vector3(0, -3.8, 1));
+  const run = (viewerWorld, active) => {
+    let previous = fish.map(hero => hero.group.position.clone());
+    for (let frame = 0; frame < 240; frame++) {
+      life.updateView(viewerWorld, active, 1 / 60);
+      life.update(0, 1 / 60);
+      fish.forEach((hero, i) => {
+        assert.ok(hero.group.position.distanceTo(previous[i]) <= .5 / 60 + 1e-8, 'reaction teleported a fish');
+        assert.ok(hero.group.position.distanceTo(baseline[i]) <= .850001);
+        assert.equal(hero.group.position.y, baseline[i].y, 'response cannot push fish into seabed or reef');
+      });
+      for (let a = 0; a < fish.length; a++) for (let b = a + 1; b < fish.length; b++) {
+        assert.ok(Math.abs(fish[a].group.position.distanceTo(fish[b].group.position) - baseline[a].distanceTo(baseline[b])) < 1e-8);
+      }
+      previous = fish.map(hero => hero.group.position.clone());
+    }
+    return fish[0].group.position.clone().sub(baseline[0]);
+  };
+  const first = run(viewerLocal.clone(), true);
+  assert.ok(first.length() > .15, 'approaching the school must cause a visible response');
+  assert.ok(first.z < 0, 'school moves away from the participant');
+  assert.ok(run(viewerLocal, false).length() < .001, 'school returns to its authored route after departure');
+  parent.position.set(17, 0, -23); parent.rotation.y = 1.25; parent.updateMatrixWorld(true);
+  const movedViewer = parent.localToWorld(viewerLocal.clone());
+  const aligned = run(movedViewer, true);
+  assert.ok(aligned.distanceTo(first) < 1e-8, 'response direction must survive translated/yaw-aligned world roots');
+});

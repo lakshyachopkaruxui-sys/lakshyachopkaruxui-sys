@@ -25,7 +25,13 @@
     "test:violet-audio": "node scripts/test-violet-audio.mjs",
     "test:world-alignment": "node scripts/test-world-alignment.mjs",
     "test:guide": "node scripts/test-guide.mjs",
-    "test:xr-help": "node scripts/test-xr-help-gesture.mjs"
+    "test:xr-help": "node scripts/test-xr-help-gesture.mjs",
+    "test": "node --test scripts/test-*.mjs",
+    "test:narration": "node scripts/test-narration.mjs",
+    "test:xr-session": "node scripts/test-xr-session-setup.mjs",
+    "test:environment-response": "node scripts/test-environment-response.mjs",
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "test:browser-xr": "node scripts/browser-xr-smoke.mjs"
   },
   "dependencies": {
     "three": "^0.186.0"
@@ -36,7 +42,11 @@
     "@types/three": "^0.186.0",
     "@vitejs/plugin-basic-ssl": "^2.3.0",
     "iwer": "^2.4.0",
+    "playwright": "1.62.1",
     "typescript": "^7.0.2",
     "vite": "^8.3.0"
+  },
+  "engines": {
+    "node": ">=22.15.0"
   }
 }

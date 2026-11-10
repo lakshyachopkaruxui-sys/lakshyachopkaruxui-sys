@@ -1,19 +1,29 @@
 # Tear
 
+Latest forest revision, 17 October: [Movement performance follow-up](docs/FOREST_MOVEMENT_PERFORMANCE.md) preserves all 128,761 permanent grass plants and their photographic textures. Cached accent patches eliminate repeated movement uploads, precomputed wind preserves the original waves, distant cards change shape continuously, and grass draws before hidden soil shading. The [earlier optimization](docs/FOREST_PERFORMANCE.md) and [brighter daylight revision](docs/FOREST_DAYLIGHT_NATURAL_GRASS.md) remain documented. The former path stays planted and the arrow remains removed. Actual browser/headset frame rates remain unverified; the Quest Browser URL must be checked against the updated build. The [continuous-cover correction](docs/FOREST_WORLD_ROLLOUT.md), [approved sample](docs/FOREST_GROUND_SAMPLE.md), preceding [ground and tree alignment](docs/FOREST_REFERENCE_INTEGRATION.md) and [earlier research](docs/FOREST_QUALITY_REVIEW.md) remain recorded; existing ZIP releases predate these revisions.
+
+For this complete package, start with [START_HERE.md](START_HERE.md), [deployment instructions](DEPLOYMENT.md) and the [complete project handoff](docs/TEAR_COMPLETE_HANDOFF.md).
+
 An immersive journey for **Meta Quest 3S** and desktop. Pinch a seam in the air,
-pull it open, and cross from the familiar into a living forest, a blue underwater sanctuary and an eerie
-violet dimension, then find your way home.
+pull it open, and cross **room → ocean → shadow → forest → room**.
+
+This revised prototype includes five-part natural male narration with a quiet room reflection, visible fingertip help controls,
+environment responses, and strengthened XR startup/return rendering. The
+research and current validation are recorded in [the handoff](docs/IMPLEMENTATION_HANDOFF.md).
+The current [environment, movement and voice rebuild](docs/REALISM_REBUILD.md) uses photographed conifers, a textured moving deer herd, animated horror characters, obstacle collisions and natural-pitch narration.
+The [exact Unity forest and lake](docs/UNITY_TERRAIN_IMPORT.md) remain pending package acquisition; the current browser forest is a separate scene.
+It is not a Behance case-study layout.
 
 ## Two ways to enter
 
 - **Enter headset:** open the site in Quest Browser on the Quest 3S. The first
   environment is the actual room or classroom around the wearer, shown through
   live passthrough. The seam, instruction cues and tracked hand visuals are
-  digital. After crossing, the forest, underwater and violet worlds completely cover the
+  digital. After crossing, the ocean, shadow and forest worlds completely cover the
   real surroundings. The app never silently substitutes a virtual room for this
   headset opening.
 - **Desktop preview:** begin in a furnished, walkable virtual room, then cross
-  the same tear into the same forest, underwater and violet worlds. No webcam permission is
+  the same tear into the same ocean, shadow and forest worlds. No webcam permission is
   needed.
 
 Touch-only phones can open the entry and headset help, but do not have playable
@@ -28,16 +38,16 @@ cast to the laptop. It cannot remotely start a standalone headset session.
 | World | Description |
 |---|---|
 | The World of Stillness | The quiet room where reality first begins to crack. |
-| The World of Golden Growth | A glowing forest filled with life, warmth, and discovery. |
 | The World of Drowned Dreams | An underwater world where marine animals move through a beautiful, silent mystery. |
 | The World of the Watching Shadow | A dark and unsettling world where something is always observing you. |
+| The World of Golden Growth | A glowing forest filled with life, warmth, and discovery. |
+| Back to Stillness | Return through the forest's tear to the same room. |
 
-Together they lead from **comfort → curiosity → wonder → fear**, then back to
-The World of Stillness. These chapter names are the same on desktop and Quest.
+The ocean comes first, the shadow follows, and the forest provides the final
+contrast before returning to Stillness. Chapter names match on desktop and Quest.
 The return
 tear reveals the original room: real passthrough on Quest, or the same furnished
-virtual room in desktop preview. The watcher in the violet dimension provides
-a quiet reason to leave; it never forces the camera or triggers a jump sound.
+virtual room in desktop preview. The shadow creatures patrol the woodland and watch the visitor. They do not force the camera or trigger a jump sound.
 
 ## Preview on Windows
 
@@ -48,9 +58,13 @@ terminal window open while exploring. Node.js 24 is recommended.
 Or use a terminal:
 
 ```bash
-npm ci
+npm ci --ignore-scripts
 npm run dev:http -- --host 127.0.0.1 --open
 ```
+
+After adding new files under `public/`, restart the development server. Asset
+folders are excluded from file watching to avoid OneDrive write-lock errors;
+Vite can otherwise return the entry HTML for a newly added asset path.
 
 ## Use the headset
 
@@ -103,6 +117,8 @@ real-room passthrough image.
 | T | Place a new tear ahead |
 | R | Release and let the tear heal |
 | H | Recall field notes for 20 seconds, or close them early |
+| N | Toggle spoken narration; captions remain available |
+| V | Replay the current world's narration |
 | Esc | Free the mouse |
 
 World headings are large italic Georgia; spatial instructions and keycaps use
@@ -110,21 +126,21 @@ that same serif family, with upright instruction text for readability. A small
 spatial cue guides the first attempt, then idle movement/help hints fade after
 20 seconds in every world. Grip, pull, healing and crossing cues remain contextual.
 
-Press **H** on desktop to recall field notes. In the headset, hold **both open
-palms toward yourself for 1.5 seconds**, with relaxed elbows and hands in view.
-Lower or turn your hands after the gesture; repeat it to close the notes early.
-Notes fade after **20 seconds** and close when you start tearing. No pinch or
-arm extension is needed for this shortcut. Physical Quest rehearsal is still
-needed to assess hand-tracking tolerance and any system-overlay overlap.
+Press **H** on desktop to recall field notes. In the headset, hold either live
+index fingertip inside the visible **Field notes** circle until its ring fills.
+Move the finger away before repeating. While notes are open, nearby voice and
+replay circles control narration. Notes fade after 20 seconds and close during
+tearing. Targets stay anchored where placed and return to a reachable location
+when a new seam is placed. Reach and tracking reliability need physical testing.
 
- XR has approximately
-18% less in-plane hand travel for equivalent progress, with depth and hand
-visuals tied to the real tracked movement.
+The five narration clips use Kokoro's natural male voice at its original pitch, with story copy grounded in the brief's theme of limited perspective. The mix has no bass boost or repeat echoes and a quiet 0.55-second room reflection. Captions remain visible with voice disabled.
+See the [narration plan and complete script](docs/NARRATION_PLAN.md). Headphone/headset listening is still needed to approve the mix.
 
 ## Validation
 
 ```bash
 npm run typecheck
+npm test
 npm run test:interaction
 npm run test:xr-rendering
 npm run test:xr-hands
@@ -148,9 +164,10 @@ The test scripts need Node 22.15+ or Node 24. Add `?debug` for diagnostics;
 `?emulate&debug` enables the development-only hand-tracking emulator. Emulation
 cannot prove real passthrough, hand tracking or headset comfort.
 
-See [BROWSER_QA.md](docs/BROWSER_QA.md) for exactly what was checked, including the
-cloud browser's disabled WebGL renderer. The full 3D experience and Quest 3S
-must still be checked on graphics-capable hardware.
+See [the current handoff](docs/IMPLEMENTATION_HANDOFF.md) and `validation/` for
+checks performed on this revision. Earlier documents under `docs/` describe the
+uploaded project's history; their dates, routes and test claims are not evidence
+for this revision. A physical Quest 3S retest remains required.
 
 ## Project notes
 

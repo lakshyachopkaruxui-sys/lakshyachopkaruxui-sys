@@ -1,3 +1,4 @@
+import { assetUrl } from '../utils/assetUrl';
 import * as THREE from 'three';
 import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
@@ -5,10 +6,23 @@ import { CONFIG } from '../config/config';
 import { mulberry32 } from '../utils/math';
 import { dotTexture } from '../utils/sprites';
 import { applyStencilLayer } from '../portal/PortalRenderer';
-import { applyWind, loadProp } from './props';
+import { applyWind } from './props';
 import { HeightField } from './terrain';
-import { SkyFlock } from './SkyFlock';
 import { surfaceMaps, fernGeometry, stoneGeometry, leafGeometry, contactTexture } from './nature';
+import { EnvironmentalPresence, applyPlantPresence } from './EnvironmentalPresence';
+import { ForestDetails } from './ForestDetails';
+import { ForestFauna } from './ForestFauna';
+import { WorldCollisions } from './WorldCollisions';
+import { ForestConifers, type ForestTreeBase } from './ForestConifers';
+import { loadLayeredForestFloor, forestGrowthAt } from './ForestGround';
+import { ForestSample } from './ForestSample';
+import { inForestSample } from './ForestSampleLayout';
+import { applySampleSoil } from './ForestSampleGround';
+import { ForestUnderstory } from './ForestUnderstory';
+import { forestOrganicRelief } from './ForestHabitat';
+import { ForestShadowRefresh } from './ForestShadowRefresh';
+import { ForestFrameTiming } from './ForestFrameTiming';
+import { forestPondRadius, forestPondBankLift, forestPondGeometry, forestPondShore, forestPondMaterial, applyForestPondBank } from './ForestPond';
 
 type Planting = { x: number; z: number; scale: number; yaw: number };
 
@@ -16,6 +30,7 @@ type Planting = { x: number; z: number; scale: number; yaw: number };
 export class WorldTwo {
   readonly scene = new THREE.Scene();
   readonly root = new THREE.Group();
+  readonly collisions = new WorldCollisions(this.root);
   readonly leakColor = new THREE.Color(0xe9d1a0);
   readonly leanDetails: THREE.MeshBasicMaterial[] = [];
   readonly perchLocal = new THREE.Vector3(-1.7, 0.55, -4.8);
@@ -27,44 +42,76 @@ export class WorldTwo {
     insectsNear: new THREE.Vector3(-0.4, 0.6, -1)
   };
   readonly ready: Promise<void>;
+  readonly scannedDetails: ForestDetails;
+  readonly fauna: ForestFauna;
+  readonly groundSample: ForestSample;
+  readonly understory: ForestUnderstory;
+  conifers!: ForestConifers;
+  forestFloorReady = false;
+  photographicSkyReady = false;
   stencilLayer = 1;
   private rng = mulberry32(2301);
   private windTime = { value: 0 };
-  private skyTime = { value: 0 };
-  private flock: SkyFlock;
+  readonly presence = new EnvironmentalPresence();
+  readonly frameTiming = new ForestFrameTiming();
   private previousTime: number | undefined;
   private motes: THREE.Points;
   private moteBase: Float32Array;
-  private pondMaterial: THREE.MeshStandardMaterial;
   private worldPoint = new THREE.Vector3();
   private alignmentDirection = new THREE.Vector3();
   private alignmentQuaternion = new THREE.Quaternion();
+  private proceduralFerns!: THREE.InstancedMesh;
+  private shadowRefresh?: ForestShadowRefresh;
 
   constructor(origin: THREE.Vector3) {
     this.root.name = 'Forest · grounded glade';
     this.root.position.set(origin.x, 0, origin.z);
     this.scene.add(this.root);
-    this.scene.fog = new THREE.FogExp2(0xb6c6b0, 0.017);
-    // 32,768 terrain triangles, instead of a single perimeter fan. The same
+    this.scene.fog = new THREE.FogExp2(0x9ba78b, 0.012);
+    // 32,768 terrain triangles carry shallow forest-wide organic relief. The same
     // stored triangles are queried for every planting and the walking camera.
     this.terrain = new HeightField(112, 128, (x, z) => {
       const d = Math.hypot(x, z + 4);
       const banks = THREE.MathUtils.smoothstep(d, 5, 18);
-      const hills = (0.6 + Math.sin(x * 0.16) * Math.cos(z * 0.13) * 0.55 + Math.sin(z * 0.09) * 0.3) * banks;
+      const hills = (1.0 + Math.sin(x * .18) * Math.cos(z * .12) * .85 + Math.sin(z * .10) * .48) * banks;
       const pond = this.pondRadius(x, z);
-      return hills - (1 - THREE.MathUtils.smoothstep(pond, 0.6, 1.18)) * (hills + 0.23);
+      const trailDistance = Math.abs(x - Math.sin(z * .15) * 1.25);
+      const relief = .11 * Math.sin(x * 1.7 + Math.cos(z * .8)) * Math.sin(z * 1.1)
+        * THREE.MathUtils.smoothstep(trailDistance, 1, 2.6) * THREE.MathUtils.smoothstep(Math.hypot(x,z), 1.8, 3.2);
+      return hills + relief * THREE.MathUtils.smoothstep(pond, 1.25, 1.65) - (1 - THREE.MathUtils.smoothstep(pond, 0.6, 1.18)) * (hills + 0.23)
+        + forestOrganicRelief(x, z) + forestPondBankLift(x, z);
     });
-    this.buildGround();
-    this.buildSkyAndLight();
-    this.pondMaterial = this.buildPond();
+    const treesReady = this.buildTrees();
+    const floorReady = this.buildGround();
+    const skyReady = this.buildSkyAndLight();
+    this.buildPond();
     this.buildPlanting();
     this.buildPerch();
     this.buildForestDetails();
-    this.flock = new SkyFlock(this.root, () => this.stencilLayer);
+    this.scannedDetails = new ForestDetails(this.root, (x, z) => this.groundHeight(x, z),
+      () => this.stencilLayer, this.windTime, this.presence, () => { this.proceduralFerns.visible = false; }, this.collisions);
+    this.groundSample = new ForestSample(this.root, (x, z) => this.terrain.heightAt(x, z),
+      () => this.stencilLayer, this.windTime, this.presence, this.collisions,
+      Promise.all([treesReady, floorReady, this.scannedDetails.ready]), () => this.activateGroundSample());
+    this.fauna = new ForestFauna(this.root, (x, z) => this.groundHeight(x, z), () => this.stencilLayer, this.collisions);
+    this.understory = new ForestUnderstory(this.root, this.groundSample, (x, z) => this.groundHeight(x, z),
+      () => this.stencilLayer, this.windTime, this.presence, this.collisions, this.fauna);
     this.moteBase = new Float32Array(90 * 3);
     this.motes = this.buildMotes();
     this.refreshStencil();
-    this.ready = Promise.all([this.buildTrees(), this.flock.ready]).then(() => undefined).catch(error => {
+    this.ready = Promise.all([treesReady, floorReady, skyReady,
+      this.scannedDetails.ready, this.fauna.ready, this.groundSample.ready, this.understory.ready]).then(() => {
+      if (this.forestFloorReady) {
+        const floor = this.root.getObjectByName('Continuous forest floor') as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
+        applyForestPondBank(floor.material);
+      }
+      // The canopy shadow is cached. Moving animals must not leave frozen
+      // silhouettes in it; their existing contact shading remains available.
+      this.fauna.root.traverse(object => {
+        if ((object as THREE.Mesh).isMesh) (object as THREE.Mesh).castShadow = false;
+      });
+      this.shadowRefresh?.invalidate();
+    }).catch(error => {
       console.error('Forest tree assets could not load.', error);
     });
   }
@@ -77,12 +124,17 @@ export class WorldTwo {
     // Keep the glade's open arrival facing the tear, including when the user
     // turns before pinching. Follow yaw only: the floor must remain level.
     this.root.rotation.set(0, Math.atan2(this.alignmentDirection.x, this.alignmentDirection.z), 0);
+    this.scene.environmentRotation.y = Math.PI / 2 + this.root.rotation.y;
     this.root.updateMatrixWorld(true);
+    this.shadowRefresh?.invalidate();
   }
   get walkBounds() { return { center: this.root.localToWorld(new THREE.Vector3(0, 0, -4)), radius: 20 }; }
   get nextSeamHint() { return this.root.localToWorld(new THREE.Vector3(0, 0, -3)); }
   refreshStencil() { applyStencilLayer(this.scene, this.stencilLayer); }
-  groundHeight(x: number, z: number) { return this.terrain.heightAt(x, z); }
+  groundHeight(x: number, z: number) {
+    return this.groundSample?.status === 'ready' && inForestSample(x, z)
+      ? this.groundSample.heightAt(x, z) : this.terrain.heightAt(x, z);
+  }
   groundHeightWorld(x: number, z: number) { return this.groundAt(x, z); }
   groundAt(x: number, z: number) {
     this.root.updateWorldMatrix(true, false);
@@ -91,20 +143,25 @@ export class WorldTwo {
     return this.groundHeight(this.worldPoint.x, this.worldPoint.z) + this.root.position.y;
   }
 
-  private pondRadius(x: number, z: number) {
-    return Math.hypot((x - 5) / 2.4, (z + 9) / 4.2);
+  updateView(viewerPosition: THREE.Vector3, active: boolean, dt: number) {
+    this.frameTiming.sample(performance.now(), active);
+    this.presence.update(viewerPosition, active, dt);
+    this.fauna.updateView(viewerPosition, active, dt);
+    this.understory.updateView(viewerPosition, active, dt);
   }
+
+  private pondRadius(x: number, z: number) { return forestPondRadius(x, z); }
 
   private buildGround() {
     const g = this.terrain.geometry;
     const p = g.attributes.position, color = new Float32Array(p.count * 3);
-    const moss = new THREE.Color(0xb5c29e), earth = new THREE.Color(0xc9b990), c = new THREE.Color();
+    const moss = new THREE.Color(0x7b9668), earth = new THREE.Color(0xa49b83), c = new THREE.Color();
     for (let i = 0; i < p.count; i++) {
       const x = p.getX(i), z = p.getZ(i);
       // A soft winding trail gives the foreground a legible direction.
       const pathX = Math.sin(z * 0.15) * 1.25;
       const trail = 1 - THREE.MathUtils.smoothstep(Math.abs(x - pathX), 0.8, 2.3);
-      c.copy(moss).lerp(earth, trail * 0.55).multiplyScalar(0.93 + 0.07 * Math.sin(x * 0.5 + z * 0.37));
+      c.copy(moss).lerp(earth, trail * 0.76).multiplyScalar(0.87 + 0.13 * Math.sin(x * 0.5 + z * 0.37));
       color.set([c.r, c.g, c.b], i * 3);
     }
     g.setAttribute('color', new THREE.BufferAttribute(color, 3));
@@ -114,86 +171,86 @@ export class WorldTwo {
     });
     const ground = new THREE.Mesh(g, material);
     ground.name = 'Continuous forest floor'; ground.receiveShadow = true;
+    // Grass writes depth first, so the layered soil shader runs only in gaps.
+    // This changes opaque submission order, never geometry or visible layers.
+    ground.renderOrder = 5;
     this.root.add(ground);
+    return loadLayeredForestFloor(material, this.conifers.ready.then(() => this.conifers.bases))
+      .then(loaded => { this.forestFloorReady = loaded; });
   }
 
   private buildSkyAndLight() {
-    // A stencil-tested sky mesh: scene.background would cover the real room.
-    const sky = new THREE.Mesh(new THREE.SphereGeometry(155, 32, 20), new THREE.ShaderMaterial({
-      side: THREE.BackSide, depthWrite: false, uniforms: { uTime: this.skyTime },
-      vertexShader: 'varying vec3 vDirection; void main(){vDirection=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
-      fragmentShader: `varying vec3 vDirection; uniform float uTime;
-        float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
-        float noise(vec2 p){ vec2 i=floor(p),f=fract(p); f=f*f*(3.-2.*f);
-          return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y); }
-        float cloud(vec2 p){ return noise(p)*.56+noise(p*2.03)*.28+noise(p*4.1)*.11+noise(p*8.2)*.05; }
-        void main(){
-          vec3 d=normalize(vDirection), sunDir=normalize(vec3(-.52,.67,-.53));
-          vec3 c=mix(vec3(.70,.79,.76),vec3(.12,.34,.59),smoothstep(-.03,.82,d.y));
-          float sunDistance=distance(d,sunDir);
-          float glow=exp(-sunDistance*sunDistance*85.);
-          float disc=1.-smoothstep(.011,.014,sunDistance);
-          c+=vec3(1.,.78,.42)*glow*.4;
-          c=mix(c,vec3(3.4,2.7,1.6),disc);
-          // Slow world-space drift: clouds remain above the viewer in both XR eyes.
-          vec2 uv=d.xz/(max(d.y,0.)+.24)*1.7+vec2(uTime*.007,uTime*.002);
-          float shape=cloud(uv);
-          float coverage=smoothstep(.49,.71,shape)*smoothstep(.05,.17,d.y);
-          float lining=cloud(uv+vec2(-.08,.07));
-          vec3 cloudColor=mix(vec3(.66,.73,.77),vec3(1.05,1.02,.93),smoothstep(.40,.67,lining));
-          cloudColor+=vec3(.21,.15,.07)*glow;
-          c=mix(c,cloudColor,coverage*.94);
-          gl_FragColor=vec4(c,1.);
-          #include <tonemapping_fragment>
-          #include <colorspace_fragment>
-        }`
-    }));
-    sky.name = 'Daylight sky · visible sun and drifting clouds';
-    sky.renderOrder = -10; this.root.add(sky);
-    new HDRLoader().load('/hdri/sky_sunset_1k.hdr', texture => {
+    // Photographed distant pine canopy, on a stencil-tested sphere. Scene.background
+    // would paint over the passthrough room outside a preview tear.
+    const material = new THREE.MeshBasicMaterial({ color: 0xc6d6db, side: THREE.BackSide, depthWrite: false, fog: false });
+    // Fade only the low distant treeline toward the same aerial-perspective
+    // color as the 3D ground. The overhead photographic canopy stays intact.
+    material.onBeforeCompile = shader => {
+      shader.uniforms.forestHorizonFog = { value: new THREE.Color(0x9ba78b) };
+      shader.fragmentShader = 'uniform vec3 forestHorizonFog;\n' + shader.fragmentShader;
+      shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>',
+        '#include <map_fragment>\n#ifdef USE_MAP\nfloat horizonMist = 1.0 - smoothstep(0.495, 0.555, vMapUv.y);\ndiffuseColor.rgb = mix(diffuseColor.rgb, forestHorizonFog, horizonMist * 0.70);\n#endif');
+    };
+    material.customProgramCacheKey = () => 'forest-photographic-horizon-mist-v2-daylight';
+    const skyGeometry = new THREE.SphereGeometry(155, 48, 28);
+    // SphereGeometry's longitude runs opposite Three's equirectangular lookup.
+    // Match the visible photograph to the same HDR used for environment light.
+    const skyUV = skyGeometry.attributes.uv;
+    for (let i = 0; i < skyUV.count; i++) skyUV.setX(i, 1 - skyUV.getX(i));
+    const sky = new THREE.Mesh(skyGeometry, material);
+    sky.name = 'Photographic Forest Slope distant pine canopy';
+    // This longitude looks into the photographed distant stand, rather than
+    // putting a nearby panoramic trunk at an impossible scale behind the glade.
+    sky.rotation.y = Math.PI / 2;
+    // The depth buffer already identifies uncovered sky pixels at this point.
+    sky.renderOrder = 10; this.root.add(sky);
+    const ready = new HDRLoader().loadAsync(assetUrl('/hdri/forest_slope_2k.hdr')).then(texture => {
+      material.map = texture; material.color.setScalar(.98); material.needsUpdate = true;
       texture.mapping = THREE.EquirectangularReflectionMapping;
-      this.scene.environment = texture; this.scene.environmentIntensity = 0.32;
-    }, undefined, () => console.warn('Forest HDR unavailable; local lighting remains active.'));
-    this.root.add(new THREE.HemisphereLight(0xd9e8f0, 0x4d6040, 1.5));
-    const sun = new THREE.DirectionalLight(0xffe7b9, 2.5);
-    sun.position.set(-16, 23, -18); sun.target.position.set(0, 0, -6);
+      this.scene.environment = texture; this.scene.environmentIntensity = .68;
+      this.scene.environmentRotation.y = Math.PI / 2 + this.root.rotation.y;
+      applyStencilLayer(sky, this.stencilLayer);
+      this.photographicSkyReady = true;
+    }).catch(error => console.warn('Photographic forest sky unavailable; retaining local daylight.', error));
+    this.root.add(new THREE.HemisphereLight(0xe3efff, 0x87915e, 1.02));
+    const sun = new THREE.DirectionalLight(0xfff2d8, 1.90);
+    sun.position.set(-20, 28, 8); sun.target.position.set(0, 0, -10);
     sun.castShadow = CONFIG.render.shadows;
     sun.shadow.mapSize.set(1024, 1024);
-    Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 80 });
-    sun.shadow.bias = -0.0003; sun.shadow.normalBias = 0.025;
+    Object.assign(sun.shadow.camera, { left: -22, right: 22, top: 22, bottom: -22, near: 1, far: 95 });
+    sun.shadow.bias = -.00015; sun.shadow.normalBias = .018;
+    this.shadowRefresh = new ForestShadowRefresh(sun.shadow, 0);
     this.root.add(sun, sun.target);
+    return ready;
   }
 
   private buildPond() {
-    // Solve each shoreline vertex against the actual terrain at water level.
-    // This replaces the rectangular ribbon that crossed through the old floor.
-    const waterY = -0.045, p: number[] = [5, waterY, -9], indices: number[] = [];
-    for (let i = 0; i <= 96; i++) {
-      const a = i / 96 * Math.PI * 2;
-      let lo = 0.2, hi = 1.3;
-      for (let j = 0; j < 22; j++) {
-        const t = (lo + hi) / 2;
-        const h = this.groundHeight(5 + Math.cos(a) * 2.4 * t, -9 + Math.sin(a) * 4.2 * t);
-        if (h < waterY) lo = t; else hi = t;
-      }
-      p.push(5 + Math.cos(a) * 2.4 * hi, waterY, -9 + Math.sin(a) * 4.2 * hi);
-      if (i < 96) indices.push(0, i + 2, i + 1);
+    const shore = forestPondShore((x, z) => this.groundHeight(x, z));
+    const water = new THREE.Mesh(forestPondGeometry(this.terrain.geometry), forestPondMaterial(this.windTime));
+    water.name = 'Shallow glade pool'; water.receiveShadow = true;
+    water.matrixAutoUpdate = false; water.updateMatrix(); this.root.add(water);
+    // Follow the actual clipped shoreline, including its shallow irregular
+    // edges on the lighter terrain grid, rather than a fixed ellipse.
+    this.collisions.addPolygon({ id: 'forest-pond', headOcclusion: false, points: shore.map(p => {
+      const dx = p.x - 5, dz = p.z + 9, scale = 1 + .12 / Math.hypot(dx, dz);
+      return { x: 5 + dx * scale, z: -9 + dz * scale };
+    }) });
+    const shoreRandom = mulberry32(9812), shoreline: Planting[] = [];
+    const colonies = [.16, 1.31, 2.83, 4.16, 5.54];
+    for (let i = 0; i < 20; i++) {
+      const angle = colonies[Math.floor(i / 4)] + (shoreRandom() - .5) * .40;
+      const j = Math.round(angle / (Math.PI * 2) * shore.length) % shore.length;
+      const at = shore[(j + shore.length) % shore.length];
+      const inset = .975 + shoreRandom() * .095;
+      shoreline.push({ x: 5 + (at.x - 5) * inset, z: -9 + (at.z + 9) * inset,
+        yaw: shoreRandom() * Math.PI * 2, scale: .075 + shoreRandom() ** 1.6 * .20 });
     }
-    const g = new THREE.BufferGeometry();
-    g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); g.setIndex(indices); g.computeVertexNormals();
-    const material = new THREE.MeshStandardMaterial({ color: 0x487d78, roughness: 0.19, metalness: 0.32, transparent: true, opacity: 0.78, depthWrite: false });
-    const water = new THREE.Mesh(g, material); water.name = 'Shallow glade pool'; this.root.add(water);
-    // Small ripples, clipped well inside the shore, add a readable water cue.
-    const ripples: THREE.BufferGeometry[] = [];
-    for (let i = 0; i < 5; i++) {
-      const ring = new THREE.RingGeometry(0.22 + i * 0.24, 0.229 + i * 0.24, 64);
-      ring.rotateX(-Math.PI / 2); ring.scale(0.8, 1, 1.5); ring.translate(5, waterY + 0.008, -9);
-      ripples.push(ring);
-    }
-    const rippleGeometry = mergeGeometries(ripples)!;
-    ripples.forEach(g => g.dispose());
-    this.root.add(new THREE.Mesh(rippleGeometry, new THREE.MeshBasicMaterial({ color: 0xd6e8da, transparent: true, opacity: 0.11, depthWrite: false })));
-    return material;
+    // Keep twenty calls to instance()'s colour RNG, so later forest planting
+    // retains exactly the same horizontal distribution as the approved scene.
+    const stones = this.instance(stoneGeometry(), new THREE.MeshStandardMaterial({ ...surfaceMaps('rock'),
+      color: 0x9ba38e, roughness: .66, normalScale: new THREE.Vector2(.4, .4) }),
+      shoreline, 'Small wet stones along irregular waterline', .075);
+    stones.matrixAutoUpdate = false; stones.updateMatrix();
   }
 
   private candidate(min: number, max: number): Planting {
@@ -202,7 +259,7 @@ export class WorldTwo {
       const a = this.rng() * Math.PI * 2, d = min + this.rng() * (max - min);
       const x = Math.cos(a) * d, z = Math.sin(a) * d - 4;
       const path = Math.abs(x - Math.sin(z * 0.15) * 1.25);
-      if ((path < 2.1 && z < 3 && z > -25) || this.pondRadius(x, z) < 1.3 || Math.hypot(x + 1.7, z + 4.8) < 1.3) continue;
+      if ((path < 1.15 && z < 3 && z > -25) || this.pondRadius(x, z) < 1.3 || Math.hypot(x + 1.7, z + 4.8) < 1.3) continue;
       return { x, z, yaw: this.rng() * Math.PI * 2, scale: 1 };
     }
     return { x: min, z: 4, yaw: 0, scale: 1 };
@@ -227,47 +284,91 @@ export class WorldTwo {
   }
 
   private buildPlanting() {
-    const ferns = Array.from({ length: 84 }, () => {
-      const p = this.candidate(4.2, 19); p.scale = 0.65 + this.rng() * 0.5; return p;
+    const ferns = Array.from({ length: 84 }, (_, i) => {
+      // A few low fronds at the trail's edge make the response discoverable
+      // without putting plants inside the clear landing or movement corridor.
+      const z = -3.6 - Math.floor(i / 2) * 1.9;
+      const p = i < 10 ? { x: Math.sin(z * .15) * 1.25 + (i % 2 ? 1.7 : -1.7), z, yaw: i * 1.7, scale: 1 } : this.candidate(4.2, 19);
+      p.scale = 0.65 + this.rng() * 0.5; return p;
     });
     const fernMaterial = new THREE.MeshStandardMaterial({ color: 0x547841, roughness: 0.86, side: THREE.DoubleSide });
     applyWind(fernMaterial, this.windTime, 0.04, 1.2);
-    this.instance(fernGeometry(), fernMaterial, ferns, 'Paired fern fronds');
+    applyPlantPresence(fernMaterial, this.presence, 2.2, 0.24);
+    const fernMesh = this.instance(fernGeometry(), fernMaterial, ferns, 'Paired fern fronds');
+    this.proceduralFerns = fernMesh;
+    fernMesh.customDepthMaterial = this.plantDepthMaterial(.04, 1.2, 2.2, .24);
+    if (fernMesh.boundingSphere) fernMesh.boundingSphere.radius += 0.35;
     // Leaves grow as low clumps, 12–26cm high, and never in the landing area.
     const blades: THREE.BufferGeometry[] = [];
     for (let i = 0; i < 7; i++) {
-      const g = leafGeometry(0.24 + (i % 3) * 0.04, 0.013);
+      const g = leafGeometry(0.19 + (i % 3) * 0.06, 0.012, 2);
       g.rotateX(-0.8 - (i % 2) * 0.3); g.rotateY(i * 2.4); blades.push(g);
     }
     const grassGeometry = mergeGeometries(blades)!; blades.forEach(g => g.dispose());
-    const grassMaterial = new THREE.MeshStandardMaterial({ color: 0x71824b, roughness: 0.95, side: THREE.DoubleSide });
+    const grassMaterial = new THREE.MeshStandardMaterial({ color: 0x53693b, roughness: 0.95, side: THREE.DoubleSide });
     applyWind(grassMaterial, this.windTime, 0.08, 1.4);
-    const grass = Array.from({ length: 290 }, () => {
-      const p = this.candidate(3.8, 26); p.scale = 0.55 + this.rng() * 0.65; return p;
+    applyPlantPresence(grassMaterial, this.presence, 1.8, 0.14);
+    const grass = Array.from({ length: 1400 }, () => {
+      // The same broad cover pattern controls the moss below each clump.
+      // Keep the count bounded while leaving natural gaps between colonies.
+      let p = this.candidate(1.9, 23);
+      for (let attempt = 0; attempt < 12 && this.rng() > .12 + forestGrowthAt(p.x, p.z) * .88; attempt++)
+        p = this.candidate(1.9, 23);
+      p.scale = 0.55 + this.rng() * 0.9; return p;
     });
-    this.instance(grassGeometry, grassMaterial, grass, 'Low meadow planting');
+    const grassMesh = this.instance(grassGeometry, grassMaterial, grass, 'Low woodland sedges along the trail');
+    grassMesh.customDepthMaterial = this.plantDepthMaterial(.08, 1.4, 1.8, .14);
+    if (grassMesh.boundingSphere) grassMesh.boundingSphere.radius += .2;
     const rockMaterial = new THREE.MeshStandardMaterial({ ...surfaceMaps('rock'), color: 0x9caa96, roughness: 0.94, normalScale: new THREE.Vector2(0.45, 0.45) });
     const rocks = Array.from({ length: 30 }, () => {
       const p = this.candidate(5.5, 26); p.scale = 0.17 + this.rng() ** 2 * 0.68; return p;
     });
-    this.instance(stoneGeometry(), rockMaterial, rocks, 'Weathered woodland stones', 0.075);
-    this.buildFlowers();
+    const stoneMesh = stoneGeometry();
+    stoneMesh.computeBoundingBox();
+    const stonePoints = stoneMesh.attributes.position;
+    let stoneRadius = 0;
+    for (let i = 0; i < stonePoints.count; i++) stoneRadius = Math.max(stoneRadius, Math.hypot(stonePoints.getX(i), stonePoints.getZ(i)));
+    this.instance(stoneMesh, rockMaterial, rocks, 'Weathered woodland stones', 0.075);
+    rocks.forEach((p, i) => this.collisions.addCircle({ id: `forest-stone-${i}`, x: p.x, z: p.z,
+      radius: p.scale * stoneRadius, minY: this.groundHeight(p.x, p.z) + stoneMesh.boundingBox!.min.y * p.scale - .075,
+      maxY: this.groundHeight(p.x, p.z) + stoneMesh.boundingBox!.max.y * p.scale - .075 }));
   }
 
-  private buildFlowers() {
-    const stem = new THREE.CylinderGeometry(0.004, 0.007, 0.28, 5); stem.translate(0, 0.14, 0);
-    const petals: THREE.BufferGeometry[] = [];
-    for (let j = 0; j < 5; j++) {
-      const petal = leafGeometry(0.062, 0.024);
-      petal.rotateX(-0.3); petal.rotateY(j * Math.PI * 2 / 5); petal.translate(0, 0.28, 0); petals.push(petal);
+  private plantDepthMaterial(wind: number, stiffness: number, radius: number, bend: number) {
+    const material = new THREE.MeshDepthMaterial({ depthPacking: THREE.RGBADepthPacking, side: THREE.DoubleSide });
+    // Desktop shadows must follow the same wind/proximity displacement as the
+    // visible fronds. Both passes share clocks and participant-position uniforms.
+    applyWind(material, this.windTime, wind, stiffness);
+    applyPlantPresence(material, this.presence, radius, bend);
+    return material;
+  }
+
+  private activateGroundSample() {
+    // Compact after the original deterministic forest has been generated.
+    // Filtering earlier would consume fewer RNG values and move outside props.
+    const matrix = new THREE.Matrix4(), color = new THREE.Color();
+    for (const name of ['Low woodland sedges along the trail', 'Weathered woodland stones']) {
+      const mesh = this.root.getObjectByName(name) as THREE.InstancedMesh;
+      let kept = 0;
+      for (let i = 0; i < mesh.count; i++) {
+        mesh.getMatrixAt(i, matrix);
+        if (inForestSample(matrix.elements[12], matrix.elements[14])) {
+          if (name === 'Weathered woodland stones') this.collisions.remove(`forest-stone-${i}`);
+          continue;
+        }
+        mesh.setMatrixAt(kept, matrix);
+        if (mesh.instanceColor) { mesh.getColorAt(i, color); mesh.setColorAt(kept, color); }
+        kept++;
+      }
+      mesh.count = kept; mesh.instanceMatrix.needsUpdate = true;
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+      mesh.computeBoundingSphere();
+      if (mesh.boundingSphere && name.startsWith('Low woodland')) mesh.boundingSphere.radius += .2;
     }
-    const petalGeometry = mergeGeometries(petals)!;
-    petals.forEach(g => g.dispose());
-    const spots = Array.from({ length: 64 }, () => {
-      const p = this.candidate(4.7, 12); p.scale = 0.7 + this.rng() * 0.4; return p;
-    });
-    this.instance(stem, new THREE.MeshStandardMaterial({ color: 0x627343, roughness: 1 }), spots, 'Flower stems');
-    this.instance(petalGeometry, new THREE.MeshStandardMaterial({ color: 0xe8dac8, roughness: 0.85, side: THREE.DoubleSide }), spots, 'Woodland blossom');
+    if (this.forestFloorReady) {
+      const ground = this.root.getObjectByName('Continuous forest floor') as THREE.Mesh<THREE.BufferGeometry, THREE.MeshStandardMaterial>;
+      applySampleSoil(ground.material);
+    }
   }
 
   private buildPerch() {
@@ -278,30 +379,18 @@ export class WorldTwo {
     stone.position.set(-1.7, base - 0.08, -4.8); stone.scale.set(0.74, 0.4, 0.64);
     stone.castShadow = true; stone.receiveShadow = true; stone.name = 'Visitor resting stone';
     this.root.add(stone);
+    stone.geometry.computeBoundingBox();
+    const perimeter = stone.geometry.attributes.position;
+    let radius = 0;
+    for (let i = 0; i < perimeter.count; i++) radius = Math.max(radius, Math.hypot(perimeter.getX(i) * stone.scale.x, perimeter.getZ(i) * stone.scale.z));
+    this.collisions.addCircle({ id: 'forest-perch', x: -1.7, z: -4.8, radius,
+      minY: base - .08 + stone.geometry.boundingBox!.min.y * stone.scale.y,
+      maxY: base - .08 + stone.geometry.boundingBox!.max.y * stone.scale.y });
     this.perchLocal.set(-1.7, base + 0.43, -4.8);
   }
 
   private buildForestDetails() {
-    // Small discoveries sit beside the trail, not in the user's landing space.
-    const mushrooms: Planting[] = [];
-    for (const [cx, cz] of [[-4.1, -3.5], [-5.7, -8], [3.4, -4.2], [8.1, -12], [-8, 2]]) {
-      for (let i = 0; i < 7; i++) {
-        const a = i * 2.399, d = 0.12 + this.rng() * 0.48;
-        mushrooms.push({ x: cx + Math.cos(a) * d, z: cz + Math.sin(a) * d, scale: 0.65 + this.rng() * 0.75, yaw: a });
-      }
-    }
-    const stalk = new THREE.CylinderGeometry(0.028, 0.042, 0.17, 10);
-    stalk.translate(0, 0.085, 0);
-    const cap = new THREE.LatheGeometry([
-      new THREE.Vector2(0, 0.178), new THREE.Vector2(0.06, 0.174),
-      new THREE.Vector2(0.12, 0.165), new THREE.Vector2(0.135, 0.18),
-      new THREE.Vector2(0.11, 0.21), new THREE.Vector2(0.075, 0.246),
-      new THREE.Vector2(0.032, 0.261), new THREE.Vector2(0, 0.265)
-    ], 18);
-    this.instance(stalk, new THREE.MeshStandardMaterial({ color: 0xe0d0ac, roughness: 0.93 }), mushrooms, 'Mushroom stems on the forest floor');
-    this.instance(cap, new THREE.MeshStandardMaterial({ color: 0xa56b43, roughness: 0.66 }), mushrooms, 'Chestnut mushroom caps');
-
-    const barkTexture = new THREE.TextureLoader().load('/textures/refined/oak_color.jpg');
+    const barkTexture = new THREE.TextureLoader().load(assetUrl('/textures/refined/oak_color.jpg'));
     barkTexture.colorSpace = THREE.SRGBColorSpace;
     barkTexture.wrapS = barkTexture.wrapT = THREE.RepeatWrapping;
     barkTexture.repeat.set(2, 1);
@@ -317,6 +406,9 @@ export class WorldTwo {
       }
       const log = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 24, 0.18, 14, false), bark);
       log.name = 'Fallen branch resting on the bank'; log.castShadow = true; log.receiveShadow = true; this.root.add(log);
+      this.collisions.addCapsule({ id: `forest-log-${x}`, ax: points[0].x, az: points[0].z,
+        bx: points[8].x, bz: points[8].z, radius: .2, minY: Math.min(...points.map(p => p.y)) - .18,
+        maxY: Math.max(...points.map(p => p.y)) + .18 });
       for (const index of [0, points.length - 1]) {
         const end = new THREE.Mesh(new THREE.CircleGeometry(0.177, 20), new THREE.MeshStandardMaterial({ color: 0xb5976d, roughness: 1, side: THREE.DoubleSide }));
         end.name = 'Weathered cut wood'; end.position.copy(points[index]);
@@ -325,61 +417,16 @@ export class WorldTwo {
       }
     }
 
-    // Lily pads are intentionally supported by the water surface, not terrain.
-    const lilyMaterial = new THREE.MeshStandardMaterial({ color: 0x648a54, roughness: 0.48, side: THREE.DoubleSide });
-    const lilyShape = new THREE.Shape();
-    lilyShape.moveTo(0, 0);
-    for (let i = 0; i <= 40; i++) {
-      const angle = 0.18 + i / 40 * (Math.PI * 2 - 0.36);
-      lilyShape.lineTo(Math.cos(angle) * 0.23, Math.sin(angle) * 0.2);
-    }
-    lilyShape.lineTo(0, 0);
-    const lilyGeo = new THREE.ShapeGeometry(lilyShape, 20); lilyGeo.rotateX(-Math.PI / 2);
-    for (let i = 0; i < 6; i++) {
-      const leaf = new THREE.Mesh(lilyGeo, lilyMaterial);
-      leaf.name = 'Lily pad supported by pool water';
-      leaf.position.set(5.2 + Math.sin(i * 2.4) * 0.55, -0.032, -9.6 + Math.cos(i * 2.4) * 0.8);
-      leaf.rotation.y = i * 1.7; leaf.scale.setScalar(0.7 + (i % 3) * 0.15); this.root.add(leaf);
-    }
   }
 
-  private async buildTrees() {
-    const specs: Planting[][] = [[], [], [], []];
-    const accepted: Planting[] = [];
-    for (let i = 0; i < 72; i++) {
-      let p: Planting;
-      let attempts = 0;
-      do { p = this.candidate(i < 24 ? 7.5 : 22, i < 24 ? 20 : 49); }
-      while (accepted.some(s => Math.hypot(s.x - p.x, s.z - p.z) < (i < 24 ? 3.7 : 4.2)) && ++attempts < 100);
-      p.scale = i < 24 ? 0.92 + this.rng() * 0.32 : 0.95 + this.rng() * 0.5;
-      accepted.push(p); specs[(i < 24 ? 0 : 2) + i % 2].push(p);
-    }
-    this.buildContactShade(accepted);
-    const loader = new THREE.TextureLoader();
-    const texture = (file: string, color = false) => {
-      const t = loader.load(`/textures/refined/${file}`); t.flipY = false; t.anisotropy = 4;
-      if (color) t.colorSpace = THREE.SRGBColorSpace;
-      return t;
-    };
-    // Species load independently; one missing file cannot prevent the other.
-    await Promise.all(['oak', 'ash', 'oak_lod', 'ash_lod'].map(async (name, species) => {
-      const leafName = name.startsWith('oak') ? 'oak' : 'ash';
-      const source = await loadProp(`/models/refined/${name}.glb`);
-      source.traverse(object => {
-        if (!(object instanceof THREE.Mesh)) return;
-        const isLeaves = object.name.toLowerCase().includes('leav');
-        const material = isLeaves
-          ? new THREE.MeshStandardMaterial({ map: texture(`${leafName}_leaves.png`, true), alphaTest: 0.48, side: THREE.DoubleSide, roughness: 0.86, color: species % 2 ? 0xa0b479 : 0xb8c095 })
-          : new THREE.MeshStandardMaterial({ map: texture('oak_color.jpg', true), normalMap: texture('oak_normal.jpg'), roughnessMap: texture('oak_roughness.jpg'), normalScale: new THREE.Vector2(0.6, 0.6), roughness: 1, color: 0xb9b2a2 });
-        applyWind(material, this.windTime, isLeaves ? 0.004 : 0.0014, 1.25);
-        const instances = this.instance(object.geometry, material, specs[species], `${name} ${isLeaves ? 'canopy' : 'branching trunks'}`, 0.025);
-        instances.castShadow = species < 2;
-        if (isLeaves && species < 2) instances.customDepthMaterial = new THREE.MeshDepthMaterial({ map: material.map, alphaTest: 0.48, side: THREE.DoubleSide, depthPacking: THREE.RGBADepthPacking });
-      });
-    }));
+  private buildTrees() {
+    this.conifers = new ForestConifers(this.root, (x, z) => this.groundHeight(x, z),
+      () => this.stencilLayer, this.windTime, this.collisions);
+    return this.conifers.ready.then(() => this.buildContactShade(this.conifers.bases));
   }
 
-  private buildContactShade(spots: Planting[]) {
+  private buildContactShade(spots: readonly ForestTreeBase[]) {
+    if (!spots.length) return;
     const patches: THREE.BufferGeometry[] = [];
     for (const p of spots) {
       const g = new THREE.PlaneGeometry(3.2 * p.scale, 3.2 * p.scale, 5, 5);
@@ -389,7 +436,9 @@ export class WorldTwo {
       patches.push(g);
     }
     const geometry = mergeGeometries(patches)!; patches.forEach(g => g.dispose());
-    this.root.add(new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ map: contactTexture(), color: 0x263927, transparent: true, opacity: 0.34, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1 })));
+    const shade = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({ map: contactTexture(), color: 0x202719, transparent: true, opacity: 0.34, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -1 }));
+    shade.name = 'Contact shade at measured forest trunk bases';
+    this.root.add(shade);
     this.refreshStencil();
   }
 
@@ -404,16 +453,18 @@ export class WorldTwo {
 
   update(time: number, _lean: number) {
     this.windTime.value = time;
-    this.skyTime.value = time;
+    this.understory.updateWind(time);
+    this.conifers.optimizedWind.update(time);
+    this.scannedDetails.optimizedWind.update(time);
+    this.shadowRefresh?.update(time);
     const dt = this.previousTime === undefined ? 0 : THREE.MathUtils.clamp(time - this.previousTime, 0, 0.1);
     this.previousTime = time;
-    this.flock.update(time, dt);
+    this.fauna.update(dt);
     const p = this.motes.geometry.attributes.position;
     for (let i = 0; i < p.count; i++) {
       p.setXYZ(i, this.moteBase[i * 3] + Math.sin(time * 0.23 + i) * 0.15,
         this.moteBase[i * 3 + 1] + Math.sin(time * 0.35 + i * 2) * 0.08, this.moteBase[i * 3 + 2]);
     }
     p.needsUpdate = true;
-    this.pondMaterial.roughness = 0.18 + Math.sin(time * 0.4) * 0.012;
   }
 }

@@ -80,6 +80,10 @@ export class WorldUnderwater {
     return this.groundHeight(this.worldPoint.x, this.worldPoint.z) + this.root.position.y;
   }
 
+  updateView(viewerPosition: THREE.Vector3, active: boolean, dt: number) {
+    this.marineLife.updateView(viewerPosition, active, dt);
+  }
+
   /** The same low-frequency caustic pattern lights sand, stone and coral. */
   private underwaterMaterial(parameters: THREE.MeshStandardMaterialParameters, current = 0, sand = false) {
     const material = new THREE.MeshStandardMaterial(parameters);

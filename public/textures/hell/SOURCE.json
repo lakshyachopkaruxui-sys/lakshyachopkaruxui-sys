@@ -1,0 +1,50 @@
+[
+  {
+    "file": "Lava004_1K-JPG_Color.jpg",
+    "bytes": 1483553,
+    "sha256": "ed619f8b336fb3c4c1dec40e3447ad437a1c06eea0e74d12c5ac4a8f87919eab",
+    "source": "https://ambientcg.com/view?id=Lava004",
+    "archive": "https://ambientcg.com/get?file=Lava004_1K-JPG.zip",
+    "license": "CC0-1.0"
+  },
+  {
+    "file": "Lava004_1K-JPG_NormalGL.jpg",
+    "bytes": 1861084,
+    "sha256": "68ffde8869ae7aeaaab5414047fc1018f59f49f0de02800422e0f0dd0459d28e",
+    "source": "https://ambientcg.com/view?id=Lava004",
+    "archive": "https://ambientcg.com/get?file=Lava004_1K-JPG.zip",
+    "license": "CC0-1.0"
+  },
+  {
+    "file": "Lava004_1K-JPG_Emission.jpg",
+    "bytes": 1476091,
+    "sha256": "651491faeaf46d9253c37278aac357a2991ce5c583462174b99a8fbd83f7fb04",
+    "source": "https://ambientcg.com/view?id=Lava004",
+    "archive": "https://ambientcg.com/get?file=Lava004_1K-JPG.zip",
+    "license": "CC0-1.0"
+  },
+  {
+    "file": "Rock030_1K-JPG_Color.jpg",
+    "bytes": 1483352,
+    "sha256": "1dca8a336518ce0adca4b5cbe2ab30819c8769388f1c15278082a99f022c615a",
+    "source": "https://ambientcg.com/view?id=Rock030",
+    "archive": "https://ambientcg.com/get?file=Rock030_1K-JPG.zip",
+    "license": "CC0-1.0"
+  },
+  {
+    "file": "Rock030_1K-JPG_NormalGL.jpg",
+    "bytes": 2528233,
+    "sha256": "8fd1d22eb6c7b6e4a374196c0de791f724538b8b86eb9c7a946fec1f5834cb94",
+    "source": "https://ambientcg.com/view?id=Rock030",
+    "archive": "https://ambientcg.com/get?file=Rock030_1K-JPG.zip",
+    "license": "CC0-1.0"
+  },
+  {
+    "file": "Rock030_1K-JPG_Roughness.jpg",
+    "bytes": 669875,
+    "sha256": "f37850f72994458994716d084683d80611528d1685264bde3071569e8ca53489",
+    "source": "https://ambientcg.com/view?id=Rock030",
+    "archive": "https://ambientcg.com/get?file=Rock030_1K-JPG.zip",
+    "license": "CC0-1.0"
+  }
+]

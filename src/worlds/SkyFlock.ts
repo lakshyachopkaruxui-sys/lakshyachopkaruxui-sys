@@ -1,10 +1,11 @@
+import { assetUrl } from '../utils/assetUrl';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkeleton } from 'three/addons/utils/SkeletonUtils.js';
 import { applyStencilLayer } from '../portal/PortalRenderer';
 import { fitProp, measureProp } from './props';
 
-export const SKY_BIRD_MODEL = '/models/Owl.glb';
+export const SKY_BIRD_MODEL = assetUrl('/models/Owl.glb');
 
 interface Flyer {
   group: THREE.Group;

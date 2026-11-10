@@ -1,0 +1,48 @@
+{
+  "title": "Deer Female",
+  "author": "Čestmír Dammer (CDmir)",
+  "collaborator": "TinyWorlds",
+  "project": "Kelgar",
+  "source_page": "https://opengameart.org/content/deer-female",
+  "license": "CC0-1.0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "download_url": "https://opengameart.org/sites/default/files/doe.blend",
+  "retrieved": "2026-09-19",
+  "source": {
+    "file": "public/models/realistic-deer/source/doe.blend",
+    "bytes": 5359688,
+    "sha256": "577b9e48ce7cee955c6dac1b0a70333eccdfcad3f11eaa1f96a15900b64ca25e"
+  },
+  "runtime": {
+    "file": "public/models/realistic-deer/doe.glb",
+    "bytes": 617628,
+    "sha256": "78b94cc412103e1238b2883f9248e5a74b04b88d470b5d587b54343caac28b50"
+  },
+  "appearance": "Textured, realistically proportioned game model; not a photogrammetry scan. Two original 1024x1024 diffuse textures.",
+  "conversion": {
+    "tool": "Blender 4.5.9 LTS, --disable-autoexec",
+    "script": "scripts/convert-realistic-deer.py",
+    "changes": [
+      "Converted Blender Internal materials into rough nonmetallic glTF PBR materials while preserving original diffuse maps and UVs.",
+      "Repaired invalid mesh bookkeeping using Blender mesh.validate, kept smooth shading.",
+      "Exported only deer meshes and armature, excluding source camera, lamps and plane.",
+      "Removed obsolete misspelled IK-Fronleg_L animation channels targeting no source bone.",
+      "Constraint-baked Idle, LookAround, Run and Eat from existing source actions.",
+      "Exported standard glTF four highest skin influences per vertex, normalized by Blender.",
+      "Embedded original 1K textures as JPEG quality92. Runtime wrapper sizes doe to1.4m ear height; original asset scale retained in GLB."
+    ],
+    "triangles": 4784,
+    "texture_count": 2,
+    "bone_count": 31,
+    "source_animation_clips": [
+      "Eat",
+      "Idle",
+      "LookAround",
+      "Run"
+    ],
+    "official_blender_url": "https://download.blender.org/release/Blender4.5/blender-4.5.9-windows-x64.zip",
+    "official_blender_checksum_url": "https://download.blender.org/release/Blender4.5/blender-4.5.9.sha256",
+    "official_blender_sha256": "41da973b9bf95bb312cbeff4d1982feb13259b43c821686b9bafea4dfe5477cf"
+  },
+  "runtime_behavior": "October forest revision: three does walk, graze, and observe. New project-authored four-beat two-bone IK walking gait uses forest-local planted feet, measured travel, bounded steering, and terrain pitch/roll. Original Run clip retained in the unchanged GLB but not used for ordinary locomotion. Source Eat and LookAround clips remain active during rest. This movement code is not attributed to the original asset creator."
+}

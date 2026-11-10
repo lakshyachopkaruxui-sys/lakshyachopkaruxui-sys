@@ -79,7 +79,7 @@ export class PortalRenderer {
     this.roomThroughPortal.add(cutout);
   }
 
-  render(camera: THREE.Camera, passes: THREE.Scene[], output: PortalOutput = 'opaque') {
+  render(camera: THREE.Camera, passes: THREE.Scene[], output: PortalOutput = 'opaque', foreground?: THREE.Scene) {
     this.preserveXRBuffers();
     // Set the GL clear value immediately before the explicit clear: Three's
     // WebGLBackground changes it to transparent during alpha-blend XR renders.
@@ -93,6 +93,9 @@ export class PortalRenderer {
       this.renderer.render(this.opaqueOutput, camera);
       if (output === 'portal-passthrough') this.renderer.render(this.roomThroughPortal, camera);
     }
+    // Hands and guidance must survive the return cutout. Draw foreground once,
+    // after the world alpha operation, including over the transparent live room.
+    if (foreground) this.renderer.render(foreground, camera);
   }
 
   /** The tear's scene passes share depth, stencil and the accumulated colour. */

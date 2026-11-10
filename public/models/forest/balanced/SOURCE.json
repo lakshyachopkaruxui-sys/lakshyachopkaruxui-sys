@@ -1,0 +1,1219 @@
+{
+  "license": "CC0-1.0",
+  "processing": "Attribute-aware bounded simplification; original UV/normal values on retained vertices; compact vertex/index buffers. Conifers use permissive simplification with higher retention for young canopy. Original woody root/collar samples and mesh extrema retained as unindexed metadata vertices. No texture resampling.",
+  "sources": [
+    "../sample/SOURCE-MANIFEST.json",
+    "../conifers/SOURCE-MANIFEST.json",
+    "../fern_02",
+    "../tree_stump_01"
+  ],
+  "limitations": "Foliage pruning changes canopy coverage; bounds and triangle counts are not proof of pixel-identical silhouettes. Review the live forest before accepting.",
+  "assets": [
+    {
+      "name": "grass",
+      "source": "sample/grass_medium_01/sample.gltf",
+      "sourceSHA256": "a4edb90f71f4b2da4a8b8a260b10a6a8b4117e045e47c23612cc8b956d3a2b80",
+      "previousRuntimeTriangles": 2847,
+      "balancedTriangles": 1105,
+      "previousRuntimeBufferBytes": 323220,
+      "balancedBufferBytes": 57610,
+      "compactGeometryBytes": 57606,
+      "unchangedEmbeddedTextureBytes": 0,
+      "meshes": [
+        {
+          "name": "grass_tall_a",
+          "material": "grass_medium_01",
+          "foliage": false,
+          "beforeTriangles": 290,
+          "afterTriangles": 43,
+          "beforeVertices": 330,
+          "afterVertices": 81,
+          "relativeError": 0.024968858808279037,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.008053615337927034,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.08047820627689362,
+              0,
+              -0.07926574349403381
+            ],
+            [
+              0.08047820627689362,
+              0.3225463926792145,
+              0.07926574349403381
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.08047820627689362,
+              0,
+              -0.07926574349403381
+            ],
+            [
+              0.08047820627689362,
+              0.3225463926792145,
+              0.07926574349403381
+            ]
+          ]
+        },
+        {
+          "name": "grass_tall_b",
+          "material": "grass_medium_01",
+          "foliage": false,
+          "beforeTriangles": 310,
+          "afterTriangles": 46,
+          "beforeVertices": 354,
+          "afterVertices": 84,
+          "relativeError": 0.024471359327435493,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.0069905621322063904,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.07497423142194748,
+              0,
+              -0.06739483773708344
+            ],
+            [
+              0.07497423142194748,
+              0.28566300868988037,
+              0.06739483773708344
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.07497423142194748,
+              0,
+              -0.06739483773708344
+            ],
+            [
+              0.07497423142194748,
+              0.28566300868988037,
+              0.06739483773708344
+            ]
+          ]
+        },
+        {
+          "name": "grass_tiny_a",
+          "material": "grass_medium_01",
+          "foliage": false,
+          "beforeTriangles": 79,
+          "afterTriangles": 17,
+          "beforeVertices": 87,
+          "afterVertices": 25,
+          "relativeError": 0.024605415761470795,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.0027669612209821892,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.03367387875914574,
+              0,
+              -0.036884378641843796
+            ],
+            [
+              0.03367387875914574,
+              0.11245334148406982,
+              0.036884378641843796
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.03367387875914574,
+              0,
+              -0.036884378641843796
+            ],
+            [
+              0.03367387875914574,
+              0.11245334148406982,
+              0.036884378641843796
+            ]
+          ]
+        },
+        {
+          "name": "grass_small_b",
+          "material": "grass_medium_01",
+          "foliage": false,
+          "beforeTriangles": 653,
+          "afterTriangles": 118,
+          "beforeVertices": 700,
+          "afterVertices": 170,
+          "relativeError": 0.024853775277733803,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.004719535908704775,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.08297835290431976,
+              0,
+              -0.09494605660438538
+            ],
+            [
+              0.08297835290431976,
+              0.09989527612924576,
+              0.09494605660438538
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.08297835290431976,
+              0,
+              -0.09494605660438538
+            ],
+            [
+              0.08297835290431976,
+              0.09989527612924576,
+              0.09494605660438538
+            ]
+          ]
+        },
+        {
+          "name": "grass_mid_b",
+          "material": "grass_medium_01",
+          "foliage": false,
+          "beforeTriangles": 1257,
+          "afterTriangles": 188,
+          "beforeVertices": 1386,
+          "afterVertices": 312,
+          "relativeError": 0.020570365712046623,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.0041352318274743005,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.09389440715312958,
+              0,
+              -0.10051430016756058
+            ],
+            [
+              0.09389440715312958,
+              0.17772157490253448,
+              0.10051430016756058
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.09389440715312958,
+              0,
+              -0.10051430016756058
+            ],
+            [
+              0.09389440715312958,
+              0.17772157490253448,
+              0.10051430016756058
+            ]
+          ]
+        },
+        {
+          "name": "grass_large_b",
+          "material": "grass_medium_01",
+          "foliage": false,
+          "beforeTriangles": 4626,
+          "afterTriangles": 693,
+          "beforeVertices": 4823,
+          "afterVertices": 921,
+          "relativeError": 0.02097467891871929,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.005958852440699491,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.14204871654510498,
+              0,
+              -0.1378699392080307
+            ],
+            [
+              0.14204871654510498,
+              0.1692626178264618,
+              0.1378699392080307
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.14204871654510498,
+              0,
+              -0.1378699392080307
+            ],
+            [
+              0.14204871654510498,
+              0.1692626178264618,
+              0.1378699392080307
+            ]
+          ]
+        }
+      ],
+      "bufferSHA256": "09f7575bd93b159b5b4ecae37fccfabc78e5f815f0a54f07c577a1ecd2133095",
+      "gltfSHA256": "105dc72383d5962dc3da48488ae6f4aabc23aa4120a48d07bb7326fe69cbe4e5"
+    },
+    {
+      "name": "rocks",
+      "source": "sample/rock_moss_set_01/sample.gltf",
+      "sourceSHA256": "bc59790dd3050b3d533585ec81b2cb08a5beaeabdf620e7cd5e01267fc9f06da",
+      "previousRuntimeTriangles": 4258,
+      "balancedTriangles": 1854,
+      "previousRuntimeBufferBytes": 386504,
+      "balancedBufferBytes": 51252,
+      "compactGeometryBytes": 51252,
+      "unchangedEmbeddedTextureBytes": 0,
+      "meshes": [
+        {
+          "name": "rock_03",
+          "material": "rock_moss_set_01",
+          "foliage": false,
+          "beforeTriangles": 5000,
+          "afterTriangles": 600,
+          "beforeVertices": 2741,
+          "afterVertices": 425,
+          "relativeError": 0.013951842673122883,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.029418611256464722,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -1.0542912483215332,
+              0,
+              -1.039792776107788
+            ],
+            [
+              1.0542912483215332,
+              1.0996944904327393,
+              1.039792776107788
+            ]
+          ],
+          "afterBounds": [
+            [
+              -1.0542912483215332,
+              0,
+              -1.039792776107788
+            ],
+            [
+              1.0542912483215332,
+              1.0996944904327393,
+              1.039792776107788
+            ]
+          ]
+        },
+        {
+          "name": "rock_06",
+          "material": "rock_moss_set_01",
+          "foliage": false,
+          "beforeTriangles": 8994,
+          "afterTriangles": 1078,
+          "beforeVertices": 4748,
+          "afterVertices": 670,
+          "relativeError": 0.007806158624589443,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.02152394645125888,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -1.0629911422729492,
+              0,
+              -1.3786516189575195
+            ],
+            [
+              1.0629911422729492,
+              1.261852741241455,
+              1.3786516189575195
+            ]
+          ],
+          "afterBounds": [
+            [
+              -1.0629911422729492,
+              0,
+              -1.3786516189575195
+            ],
+            [
+              1.0629911422729492,
+              1.261852741241455,
+              1.3786516189575195
+            ]
+          ]
+        },
+        {
+          "name": "pebble_03",
+          "material": "rock_moss_set_01",
+          "foliage": false,
+          "beforeTriangles": 398,
+          "afterTriangles": 176,
+          "beforeVertices": 294,
+          "afterVertices": 159,
+          "relativeError": 0.024975402280688286,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.05203907084561177,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -1.0418064594268799,
+              0,
+              -1.0391749143600464
+            ],
+            [
+              1.0418064594268799,
+              1.0947265625,
+              1.0391749143600464
+            ]
+          ],
+          "afterBounds": [
+            [
+              -1.0418064594268799,
+              0,
+              -1.0391749143600464
+            ],
+            [
+              1.0418064594268799,
+              1.0947265625,
+              1.0391749143600464
+            ]
+          ]
+        }
+      ],
+      "bufferSHA256": "62aa390e011369508dbccb188a77ca7b8321841ead5b3fb96a1ff88e7b6c0e4a",
+      "gltfSHA256": "09900cdeb298d80f79609dd5cd5f45eb9e7dfe24d2fa3cf3d2930c9dc16780a4"
+    },
+    {
+      "name": "branches",
+      "source": "sample/dry_branches_medium_01/sample.gltf",
+      "sourceSHA256": "3964769185c145de63dbf2316f08ef46c8d4aefdfb9c7b3802248e704e6e7c19",
+      "previousRuntimeTriangles": 2716,
+      "balancedTriangles": 1574,
+      "previousRuntimeBufferBytes": 326100,
+      "balancedBufferBytes": 69476,
+      "compactGeometryBytes": 69476,
+      "unchangedEmbeddedTextureBytes": 0,
+      "meshes": [
+        {
+          "name": "branch_b",
+          "material": "dry_branches_medium_01",
+          "foliage": false,
+          "beforeTriangles": 5254,
+          "afterTriangles": 780,
+          "beforeVertices": 3493,
+          "afterVertices": 951,
+          "relativeError": 0.01524664368480444,
+          "errorLimit": 0.016,
+          "maxPositionErrorBound": 0.015833696886442428,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.07558189332485199,
+              0,
+              -0.5192518830299377
+            ],
+            [
+              0.07558189332485199,
+              0.14188739657402039,
+              0.5192518830299377
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.07558189332485199,
+              0,
+              -0.5192518830299377
+            ],
+            [
+              0.07558189332485199,
+              0.14188739657402039,
+              0.5192518830299377
+            ]
+          ]
+        },
+        {
+          "name": "branch_c",
+          "material": "dry_branches_medium_01",
+          "foliage": false,
+          "beforeTriangles": 5616,
+          "afterTriangles": 794,
+          "beforeVertices": 3641,
+          "afterVertices": 925,
+          "relativeError": 0.015916764736175537,
+          "errorLimit": 0.016,
+          "maxPositionErrorBound": 0.012369329092763337,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.06528449058532715,
+              0,
+              -0.3885629177093506
+            ],
+            [
+              0.06528449058532715,
+              0.14325982332229614,
+              0.3885629177093506
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.06528449058532715,
+              0,
+              -0.3885629177093506
+            ],
+            [
+              0.06528449058532715,
+              0.14325982332229614,
+              0.3885629177093506
+            ]
+          ]
+        }
+      ],
+      "bufferSHA256": "999c0e3be2d3ae92737e22ff760df9203919397845dd50745c2f262e0151ac50",
+      "gltfSHA256": "7a581c164f6bd2406ce37a61dde714be4ec9be9d10a599b41bd9d45864683b2c"
+    },
+    {
+      "name": "ferns",
+      "source": "fern_02/fern_02_1k.gltf",
+      "sourceSHA256": "33974295ee19670af4877705fc7d91f33f42d6302f0d44a625e072271223031f",
+      "previousRuntimeTriangles": 4075,
+      "balancedTriangles": 1368,
+      "previousRuntimeBufferBytes": 225076,
+      "balancedBufferBytes": 47186,
+      "compactGeometryBytes": 47184,
+      "unchangedEmbeddedTextureBytes": 0,
+      "meshes": [
+        {
+          "name": "Plane.024",
+          "material": "fern_02",
+          "foliage": false,
+          "beforeTriangles": 2384,
+          "afterTriangles": 524,
+          "beforeVertices": 1660,
+          "afterVertices": 464,
+          "relativeError": 0.01291266642510891,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.012780278086556018,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.5281425714492798,
+              -0.030510280281305313,
+              -0.421874463558197
+            ],
+            [
+              0.4616048336029053,
+              0.39718443155288696,
+              0.4718152582645416
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.5281425714492798,
+              -0.030510280281305313,
+              -0.421874463558197
+            ],
+            [
+              0.4616048336029053,
+              0.39718443155288696,
+              0.4718152582645416
+            ]
+          ]
+        },
+        {
+          "name": "Plane.044",
+          "material": "fern_02",
+          "foliage": false,
+          "beforeTriangles": 2248,
+          "afterTriangles": 493,
+          "beforeVertices": 1568,
+          "afterVertices": 440,
+          "relativeError": 0.013109015300869942,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.011461550445656887,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.4299395680427551,
+              -0.028773672878742218,
+              -0.4172818064689636
+            ],
+            [
+              0.44438624382019043,
+              0.32024669647216797,
+              0.34794387221336365
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.4299395680427551,
+              -0.028773672878742218,
+              -0.4172818064689636
+            ],
+            [
+              0.44438624382019043,
+              0.32024669647216797,
+              0.34794387221336365
+            ]
+          ]
+        },
+        {
+          "name": "Plane.006",
+          "material": "fern_02",
+          "foliage": false,
+          "beforeTriangles": 784,
+          "afterTriangles": 172,
+          "beforeVertices": 544,
+          "afterVertices": 157,
+          "relativeError": 0.015995202586054802,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.009811794485090841,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.2976571321487427,
+              -0.028773518279194832,
+              -0.31126806139945984
+            ],
+            [
+              0.25428348779678345,
+              0.2580300271511078,
+              0.3021530210971832
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.2976571321487427,
+              -0.028773518279194832,
+              -0.31126806139945984
+            ],
+            [
+              0.25428348779678345,
+              0.2580300271511078,
+              0.3021530210971832
+            ]
+          ]
+        },
+        {
+          "name": "Plane.059",
+          "material": "fern_02",
+          "foliage": false,
+          "beforeTriangles": 816,
+          "afterTriangles": 179,
+          "beforeVertices": 565,
+          "afterVertices": 157,
+          "relativeError": 0.017398035153746605,
+          "errorLimit": 0.025,
+          "maxPositionErrorBound": 0.010321876525214657,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.2907802164554596,
+              -0.013578944839537144,
+              -0.35213664174079895
+            ],
+            [
+              0.28200197219848633,
+              0.19950860738754272,
+              0.2411416471004486
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.2907802164554596,
+              -0.013578944839537144,
+              -0.35213664174079895
+            ],
+            [
+              0.28200197219848633,
+              0.19950860738754272,
+              0.2411416471004486
+            ]
+          ]
+        }
+      ],
+      "bufferSHA256": "eaef856cc796afb3cb6e08843f83868618f76078ccde3f2c3af613fb175f53e7",
+      "gltfSHA256": "d6c3b2b06dee6f3dddbd288bce8e3b5744b46b463d6f3b0ea894126764ae0e57"
+    },
+    {
+      "name": "stumps",
+      "source": "tree_stump_01/tree_stump_01_1k.gltf",
+      "sourceSHA256": "9c66ba87d693f35eb404acaa96e0eeff831c295b61a0a903795584cbcc3527c9",
+      "previousRuntimeTriangles": 10260,
+      "balancedTriangles": 2872,
+      "previousRuntimeBufferBytes": 1088500,
+      "balancedBufferBytes": 82608,
+      "compactGeometryBytes": 82608,
+      "unchangedEmbeddedTextureBytes": 0,
+      "meshes": [
+        {
+          "name": "tt_01_rep.001",
+          "material": "tree_stump_01",
+          "foliage": false,
+          "beforeTriangles": 41046,
+          "afterTriangles": 2872,
+          "beforeVertices": 22472,
+          "afterVertices": 2043,
+          "relativeError": 0.006506469566375017,
+          "errorLimit": 0.012,
+          "maxPositionErrorBound": 0.010347332168280543,
+          "flags": [],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -0.7844194173812866,
+              -0.1929784119129181,
+              -0.7604432702064514
+            ],
+            [
+              0.6411310434341431,
+              0.37968912720680237,
+              0.8298710584640503
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.7844194173812866,
+              -0.1929784119129181,
+              -0.7604432702064514
+            ],
+            [
+              0.6411310434341431,
+              0.37968912720680237,
+              0.8298710584640503
+            ]
+          ]
+        }
+      ],
+      "bufferSHA256": "f5e513b17d7c2f69990cd888b2c04f713c5f635fbc28b0b0e756a26d6882b42c",
+      "gltfSHA256": "aef5c051534f82f9637d516b2c4138b49c55449658b0cbcbdfb698660f2455c3"
+    },
+    {
+      "name": "conifers",
+      "source": "conifers/fir_tree_01.glb",
+      "sourceSHA256": "795f8b075cb6cdaa8c8934e761f6a405571738fcbc9c9f0810529c966c3d2480",
+      "previousRuntimeTriangles": 82301,
+      "balancedTriangles": 31402,
+      "previousRuntimeBufferBytes": 17956576,
+      "balancedBufferBytes": 13517844,
+      "compactGeometryBytes": 3921804,
+      "unchangedEmbeddedTextureBytes": 9596007,
+      "meshes": [
+        {
+          "name": "NurbsPath.008",
+          "material": "fir_tree_01_dead_branches_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 412,
+          "afterTriangles": 40,
+          "beforeVertices": 620,
+          "afterVertices": 152,
+          "relativeError": 0.007823742926120758,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.053343132335950116,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 58,
+          "beforeBounds": [
+            [
+              -1.218194842338562,
+              1.9157127141952515,
+              -0.9883599281311035
+            ],
+            [
+              0.8581433892250061,
+              8.733821868896484,
+              0.9978430867195129
+            ]
+          ],
+          "afterBounds": [
+            [
+              -1.218194842338562,
+              1.9157127141952515,
+              -0.9883599281311035
+            ],
+            [
+              0.8581433892250061,
+              8.733821868896484,
+              0.9978430867195129
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.009",
+          "material": "fir_tree_01_dead_branches_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 535,
+          "afterTriangles": 46,
+          "beforeVertices": 650,
+          "afterVertices": 262,
+          "relativeError": 0.009495101869106293,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.044299403855433184,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 160,
+          "beforeBounds": [
+            [
+              -1.0358868837356567,
+              1.8729479312896729,
+              -1.373801589012146
+            ],
+            [
+              1.289887547492981,
+              6.538448333740234,
+              0.7627924084663391
+            ]
+          ],
+          "afterBounds": [
+            [
+              -1.0358868837356567,
+              1.8729479312896729,
+              -1.373801589012146
+            ],
+            [
+              1.289887547492981,
+              6.538448333740234,
+              0.7627924084663391
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.010",
+          "material": "fir_tree_01_trunk_c_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 2019,
+          "afterTriangles": 229,
+          "beforeVertices": 3862,
+          "afterVertices": 2923,
+          "relativeError": 0.016389045864343643,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.21833240774701324,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 2439,
+          "beforeBounds": [
+            [
+              -0.6798847317695618,
+              -0.09317847341299057,
+              -0.6609088182449341
+            ],
+            [
+              0.5438889265060425,
+              13.228671073913574,
+              0.5267517566680908
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.6798847317695618,
+              -0.09317847341299057,
+              -0.6609088182449341
+            ],
+            [
+              0.5438889265060425,
+              13.228671073913574,
+              0.5267517566680908
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.002",
+          "material": "fir_tree_01_bark_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 9534,
+          "afterTriangles": 867,
+          "beforeVertices": 6820,
+          "afterVertices": 1190,
+          "relativeError": 0.0035729804076254368,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.0440636802888319,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 231,
+          "beforeBounds": [
+            [
+              -2.6741154193878174,
+              6.086908340454102,
+              -3.002617359161377
+            ],
+            [
+              2.7882299423217773,
+              18.41938018798828,
+              2.3043291568756104
+            ]
+          ],
+          "afterBounds": [
+            [
+              -2.6741154193878174,
+              6.086908340454102,
+              -3.002617359161377
+            ],
+            [
+              2.7882299423217773,
+              18.41938018798828,
+              2.3043291568756104
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.011",
+          "material": "fir_tree_01_trunk_a_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 7923,
+          "afterTriangles": 1735,
+          "beforeVertices": 15965,
+          "afterVertices": 13377,
+          "relativeError": 0.015835490077733994,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.27785946866749356,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 9752,
+          "beforeBounds": [
+            [
+              -0.5313907861709595,
+              -0.08021006733179092,
+              -0.600381076335907
+            ],
+            [
+              0.5954908728599548,
+              17.466419219970703,
+              0.5709737539291382
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.5313907861709595,
+              -0.08021006733179092,
+              -0.600381076335907
+            ],
+            [
+              0.5954908728599548,
+              17.466419219970703,
+              0.5709737539291382
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.012",
+          "material": "fir_tree_01_twig_WebPBR",
+          "foliage": true,
+          "beforeTriangles": 33753,
+          "afterTriangles": 13503,
+          "beforeVertices": 52437,
+          "afterVertices": 22427,
+          "relativeError": 0.008949199691414833,
+          "errorLimit": 0.028,
+          "maxPositionErrorBound": 0.11750886479229727,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -3.2415592670440674,
+              5.746180534362793,
+              -3.5599477291107178
+            ],
+            [
+              3.3415348529815674,
+              18.8768367767334,
+              2.907454490661621
+            ]
+          ],
+          "afterBounds": [
+            [
+              -3.2415592670440674,
+              5.746180534362793,
+              -3.5599477291107178
+            ],
+            [
+              3.3415348529815674,
+              18.8768367767334,
+              2.907454490661621
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.013",
+          "material": "fir_tree_01_bark_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 4292,
+          "afterTriangles": 422,
+          "beforeVertices": 3046,
+          "afterVertices": 566,
+          "relativeError": 0.004575867671519518,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.04237497509870147,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 95,
+          "beforeBounds": [
+            [
+              -2.0633928775787354,
+              4.191083908081055,
+              -2.6680402755737305
+            ],
+            [
+              2.5268898010253906,
+              13.451617240905762,
+              2.4301869869232178
+            ]
+          ],
+          "afterBounds": [
+            [
+              -2.0633928775787354,
+              4.191083908081055,
+              -2.6680402755737305
+            ],
+            [
+              2.5268898010253906,
+              13.451617240905762,
+              2.4301869869232178
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.014",
+          "material": "fir_tree_01_trunk_b_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 12394,
+          "afterTriangles": 2957,
+          "beforeVertices": 17810,
+          "afterVertices": 16769,
+          "relativeError": 0.01791081205010414,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.22435371885231348,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 12593,
+          "beforeBounds": [
+            [
+              -0.5692565441131592,
+              -0.08712916821241379,
+              -0.7007052898406982
+            ],
+            [
+              0.6633175611495972,
+              12.439031600952148,
+              0.5547907948493958
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.5692565441131592,
+              -0.08712916821241379,
+              -0.7007052898406982
+            ],
+            [
+              0.6633175611495972,
+              12.439031600952148,
+              0.5547907948493958
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.015",
+          "material": "fir_tree_01_twig_WebPBR",
+          "foliage": true,
+          "beforeTriangles": 17920,
+          "afterTriangles": 7173,
+          "beforeVertices": 28416,
+          "afterVertices": 12331,
+          "relativeError": 0.011044989340007305,
+          "errorLimit": 0.028,
+          "maxPositionErrorBound": 0.11121162116144845,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -2.5891804695129395,
+              3.921795606613159,
+              -3.1580493450164795
+            ],
+            [
+              3.042766571044922,
+              13.990761756896973,
+              2.9264464378356934
+            ]
+          ],
+          "afterBounds": [
+            [
+              -2.5891804695129395,
+              3.921795606613159,
+              -3.1580493450164795
+            ],
+            [
+              3.042766571044922,
+              13.990761756896973,
+              2.9264464378356934
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.016",
+          "material": "fir_tree_01_bark_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 4280,
+          "afterTriangles": 383,
+          "beforeVertices": 3036,
+          "afterVertices": 663,
+          "relativeError": 0.0050415764562785625,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.04630473268062296,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 261,
+          "beforeBounds": [
+            [
+              -2.397446393966675,
+              4.914968013763428,
+              -2.776984214782715
+            ],
+            [
+              3.0384345054626465,
+              14.099542617797852,
+              2.5421195030212402
+            ]
+          ],
+          "afterBounds": [
+            [
+              -2.397446393966675,
+              4.914968013763428,
+              -2.776984214782715
+            ],
+            [
+              3.0384345054626465,
+              14.099542617797852,
+              2.5421195030212402
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.017",
+          "material": "fir_tree_01_twig_WebPBR",
+          "foliage": true,
+          "beforeTriangles": 5016,
+          "afterTriangles": 4012,
+          "beforeVertices": 8152,
+          "afterVertices": 6968,
+          "relativeError": 0.010328399017453194,
+          "errorLimit": 0.028,
+          "maxPositionErrorBound": 0.07807259980385606,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": false,
+          "retainedMetadataVertices": 0,
+          "beforeBounds": [
+            [
+              -2.761598587036133,
+              6.899463176727295,
+              -3.023411273956299
+            ],
+            [
+              3.5883054733276367,
+              14.45848560333252,
+              2.982006311416626
+            ]
+          ],
+          "afterBounds": [
+            [
+              -2.761598587036133,
+              6.899463176727295,
+              -3.023411273956299
+            ],
+            [
+              3.5883054733276367,
+              14.45848560333252,
+              2.982006311416626
+            ]
+          ]
+        },
+        {
+          "name": "NurbsPath.018",
+          "material": "fir_tree_01_dead_branches_WebPBR",
+          "foliage": false,
+          "beforeTriangles": 376,
+          "afterTriangles": 35,
+          "beforeVertices": 482,
+          "afterVertices": 151,
+          "relativeError": 0.0047575742937624454,
+          "errorLimit": 0.018,
+          "maxPositionErrorBound": 0.026135213714567618,
+          "flags": [
+            "Permissive"
+          ],
+          "rootCollarLocked": true,
+          "retainedMetadataVertices": 77,
+          "beforeBounds": [
+            [
+              -0.6117242574691772,
+              1.9503470659255981,
+              -0.6727609038352966
+            ],
+            [
+              0.6600403785705566,
+              7.443737506866455,
+              0.6552221775054932
+            ]
+          ],
+          "afterBounds": [
+            [
+              -0.6117242574691772,
+              1.9503470659255981,
+              -0.6727609038352966
+            ],
+            [
+              0.6600403785705566,
+              7.443737506866455,
+              0.6552221775054932
+            ]
+          ]
+        }
+      ],
+      "bufferSHA256": "08b36fd7bb1eff59aad6c10da90f6e568efd39ddd50d36cb7697422b1874d111",
+      "gltfSHA256": "35462c9bcf8c62e15c10458b3589612fdd1066a5d7e05297e57b7bbb17d6d99a"
+    }
+  ]
+}

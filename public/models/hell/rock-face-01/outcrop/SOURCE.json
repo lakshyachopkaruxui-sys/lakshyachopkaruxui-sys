@@ -1,0 +1,57 @@
+{
+  "source": "https://polyhaven.com/a/rock_face_01",
+  "author": "Dario Barresi",
+  "license": "CC0-1.0",
+  "sourceTriangles": 20174,
+  "runtimeTriangles": 1800,
+  "sourceVertices": 11106,
+  "runtimeVertices": 1136,
+  "relativeSimplifierError": 0.006235390901565552,
+  "sourceBounds": {
+    "min": [
+      -2.133601427078247,
+      -0.03435921296477318,
+      -3.466048240661621
+    ],
+    "max": [
+      2.8199098110198975,
+      3.5296897888183594,
+      0.36125504970550537
+    ]
+  },
+  "runtimeBounds": {
+    "bufferView": 0,
+    "componentType": 5126,
+    "type": "VEC3",
+    "count": 1136,
+    "min": [
+      -2.133601427078247,
+      -0.03435921296477318,
+      -3.466048240661621
+    ],
+    "max": [
+      2.8199098110198975,
+      3.5296897888183594,
+      0.36125504970550537
+    ]
+  },
+  "sourceHashes": {
+    "gltf": "96c332c01d173a2431115f3bac29be101fba341e5500e2a08e384f4edd17299e",
+    "bin": "873eac0319333e92bc96ddeedf8ebf69dc3c68ff1dfe32d8c14ddc165cdb20ac"
+  },
+  "images": 0,
+  "materials": 0,
+  "textureOwnership": "Caller shares existing original rock-face maps",
+  "files": [
+    {
+      "file": "outcrop.gltf",
+      "bytes": 1123,
+      "sha256": "0fc2b39cd0c29d90c1737bd7802ec12441100abdde7b344721d0dcb7c0ba2231"
+    },
+    {
+      "file": "outcrop.bin",
+      "bytes": 47152,
+      "sha256": "34b03793c632eee37f252886790c9ff972a28dd866675e19ef6240718580f8d8"
+    }
+  ]
+}

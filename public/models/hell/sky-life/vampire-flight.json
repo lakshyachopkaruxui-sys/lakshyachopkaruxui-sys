@@ -1,0 +1,174 @@
+{
+  "source": "Vampire Bat (Animated), Rubberduck, OpenGameArt, CC0",
+  "sourceAction": "Bat_Flying",
+  "sourceFrames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "sourceTriangles": 7732,
+  "triangles": 1700,
+  "vertices": 1444,
+  "morphPoses": 8,
+  "poseNormals": true,
+  "wingspanMetres": 2.8,
+  "boundsMin": [
+    -1.4,
+    -0.4783000583343499,
+    -0.5841912017906137
+  ],
+  "boundsMax": [
+    1.4,
+    0.4783000583343499,
+    0.5841912017906137
+  ],
+  "binaryBytes": 333656,
+  "accessors": {
+    "position": {
+      "offset": 0,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal": {
+      "offset": 17328,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "uv": {
+      "offset": 34656,
+      "bytes": 11552,
+      "components": 2,
+      "count": 1444,
+      "type": "float32"
+    },
+    "index": {
+      "offset": 46208,
+      "bytes": 10200,
+      "components": 1,
+      "count": 5100,
+      "type": "uint16"
+    },
+    "pose0": {
+      "offset": 56408,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal0": {
+      "offset": 73736,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "pose1": {
+      "offset": 91064,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal1": {
+      "offset": 108392,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "pose2": {
+      "offset": 125720,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal2": {
+      "offset": 143048,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "pose3": {
+      "offset": 160376,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal3": {
+      "offset": 177704,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "pose4": {
+      "offset": 195032,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal4": {
+      "offset": 212360,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "pose5": {
+      "offset": 229688,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal5": {
+      "offset": 247016,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "pose6": {
+      "offset": 264344,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal6": {
+      "offset": 281672,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "pose7": {
+      "offset": 299000,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    },
+    "normal7": {
+      "offset": 316328,
+      "bytes": 17328,
+      "components": 3,
+      "count": 1444,
+      "type": "float32"
+    }
+  },
+  "processing": "Original decimate modifier applied at 0.22 before armature; all 8 authored flight frames sampled with identical topology. Smooth vertex normals retained per pose. Two materials atlas-remapped into one opaque textured batch. No lights, scene, armature, unused actions, HDRI or frost model exported."
+}

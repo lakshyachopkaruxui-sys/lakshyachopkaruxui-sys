@@ -1,0 +1,238 @@
+{
+  "model": "Qwen/Qwen3-TTS-12Hz-1.7B-CustomVoice",
+  "revision": "0c0e3051f131929182e2c023b9537f8b1c68adfe",
+  "speaker": "Ryan builtin preset",
+  "voice_direction": "B \u2014 trying not to be heard; stronger fear in Shadow and return",
+  "execution": "Local CPU, offline speech synthesis",
+  "sample_rate": 24000,
+  "channels": 1,
+  "pitch_semitones": 0,
+  "nonlinear_compression": false,
+  "tail_seconds": 0.35,
+  "wet_gain": 0,
+  "effects": {
+    "echo": 0,
+    "reverb": 0,
+    "pitch_shift": 0,
+    "external_breath_overlay": false,
+    "level_matching": "One linear gain per scene; preserve performed dynamics"
+  },
+  "deployed": true,
+  "listening_approval": "B direction selected by user; activation explicitly authorized",
+  "clips": {
+    "opening": {
+      "text": "I thought I'd woken up. Same room. Same light. Then I saw it. A cut... in the air.",
+      "segments": [
+        {
+          "start": 0.25,
+          "end": 2.23,
+          "text": "I thought I'd woken up.",
+          "kind": "narrator"
+        },
+        {
+          "start": 3.85,
+          "end": 4.27,
+          "text": "Same room.",
+          "kind": "narrator"
+        },
+        {
+          "start": 5.45,
+          "end": 6.31,
+          "text": "Same light.",
+          "kind": "narrator"
+        },
+        {
+          "start": 7.95,
+          "end": 9.01,
+          "text": "Then I saw it.",
+          "kind": "narrator"
+        },
+        {
+          "start": 10.03,
+          "end": 10.47,
+          "text": "A cut...",
+          "kind": "narrator"
+        },
+        {
+          "start": 12.01,
+          "end": 12.47,
+          "text": "in the air.",
+          "kind": "narrator"
+        }
+      ],
+      "seconds": 13.0,
+      "total_seconds": 13.0,
+      "peak": 0.7810218334197998,
+      "bytes": 74782,
+      "sha256": "f5598038505abaf680cdd0ba7ccde919e290a9a2eb8734fb74bff9cceece6a3c",
+      "source_sha256": "034484b2ea2472aebf78ed0cb64984edb3ec5df79c1571ecd75587a6812146b5",
+      "linear_gain": 1.7409604250391664,
+      "pause_insert_seconds": 0,
+      "source": "opening-stifled-v3.wav",
+      "word_check": "Whisper base.en normalized words match; performance direction B selected by user"
+    },
+    "ocean": {
+      "text": "I should be drowning. But I can breathe. For once... I don't want to wake up.",
+      "segments": [
+        {
+          "start": 0.25,
+          "end": 5.09,
+          "text": "I should be drowning.",
+          "kind": "narrator"
+        },
+        {
+          "start": 5.11,
+          "end": 10.27,
+          "text": "But I can breathe.",
+          "kind": "narrator"
+        },
+        {
+          "start": 11.79,
+          "end": 12.39,
+          "text": "For once...",
+          "kind": "narrator"
+        },
+        {
+          "start": 12.85,
+          "end": 16.77,
+          "text": "I don't want to wake up.",
+          "kind": "narrator"
+        }
+      ],
+      "seconds": 17.16,
+      "total_seconds": 17.16,
+      "peak": 0.7981676459312439,
+      "bytes": 102075,
+      "sha256": "68587dc6fdeb2cc18f77418d4e1d328b247e0d71e80bb9dbb3238f93e8e76ef6",
+      "source_sha256": "c780818acdcdca4a8dff36a7b520c2978f43b1a5a0a2b396b7d6dd3fd2629ec2",
+      "linear_gain": 1.4810824592918816,
+      "pause_insert_seconds": 0,
+      "source": "ocean-stifled-v3.wav",
+      "word_check": "Whisper base.en normalized words match; performance direction B selected by user"
+    },
+    "shadow": {
+      "text": "No... I remember this part. This is where I always wake up. Why haven't I woken up?",
+      "segments": [
+        {
+          "start": 0.25,
+          "end": 0.65,
+          "text": "[Whisper] No...",
+          "kind": "whisper"
+        },
+        {
+          "start": 1.23,
+          "end": 3.25,
+          "text": "I remember this part.",
+          "kind": "whisper"
+        },
+        {
+          "start": 4.01,
+          "end": 6.71,
+          "text": "This is where I always wake up.",
+          "kind": "whisper"
+        },
+        {
+          "start": 10.01,
+          "end": 12.13,
+          "text": "Why haven't I woken up?",
+          "kind": "whisper"
+        }
+      ],
+      "seconds": 12.52,
+      "total_seconds": 12.52,
+      "peak": 0.78053879737854,
+      "bytes": 60423,
+      "sha256": "ef5352518e6f7ed3172c812af321024bb7296c6eb5c3f3506ec8cd40e892c178",
+      "source_sha256": "21675535e32241eca31aae87410c91a86411972eded15c696f8f3d5e351c8d29",
+      "linear_gain": 1.6605405405405407,
+      "pause_insert_seconds": 2.56,
+      "source": "shadow-stifled-v2.wav",
+      "word_check": "Whisper base.en normalized words match; performance direction B selected by user"
+    },
+    "forest": {
+      "text": "Fresh air. This feels real. If I open it again... will I wake up? Or go deeper?",
+      "segments": [
+        {
+          "start": 0.25,
+          "end": 1.05,
+          "text": "Fresh air.",
+          "kind": "narrator"
+        },
+        {
+          "start": 2.51,
+          "end": 3.75,
+          "text": "This feels real.",
+          "kind": "narrator"
+        },
+        {
+          "start": 5.15,
+          "end": 6.29,
+          "text": "If I open it again...",
+          "kind": "narrator"
+        },
+        {
+          "start": 7.25,
+          "end": 8.21,
+          "text": "will I wake up?",
+          "kind": "narrator"
+        },
+        {
+          "start": 9.45,
+          "end": 10.21,
+          "text": "Or go deeper?",
+          "kind": "narrator"
+        }
+      ],
+      "seconds": 10.84,
+      "total_seconds": 10.84,
+      "peak": 0.7897480726242065,
+      "bytes": 61328,
+      "sha256": "ce2faba04b58f60050544c7a4a5bed35ca41323bb953a44423a4361187275b9b",
+      "source_sha256": "8cf17d74ce428a55fd02142acda0e918e902956d20ab2bf6ecfa5a7a408c362b",
+      "linear_gain": 1.3557733927434756,
+      "pause_insert_seconds": 0,
+      "source": "forest-stifled-v4.wav",
+      "word_check": "Whisper base.en normalized words match; performance direction B selected by user"
+    },
+    "return": {
+      "text": "I'm back. I thought I'd feel it... when I woke up. Then why is the tear still here?",
+      "segments": [
+        {
+          "start": 0.79,
+          "end": 1.53,
+          "text": "I'm back.",
+          "kind": "narrator"
+        },
+        {
+          "start": 2.29,
+          "end": 3.19,
+          "text": "I thought I'd feel it...",
+          "kind": "narrator"
+        },
+        {
+          "start": 3.21,
+          "end": 4.57,
+          "text": "when I woke up.",
+          "kind": "narrator"
+        },
+        {
+          "start": 7.869958,
+          "end": 10.649958,
+          "text": "[Whisper] Then why is the tear still here?",
+          "kind": "whisper"
+        }
+      ],
+      "seconds": 11.099958333333333,
+      "total_seconds": 11.099958333333333,
+      "peak": 0.6317517757415771,
+      "bytes": 52445,
+      "sha256": "958f0cfe800426a2113427f585f3f95e7942e00bf451bcc8887415904f40fc11",
+      "source_sha256": "02e897a15e71e5368101ae7622e77fe4a4ea44b2a9f72cefe14738187e8270ea",
+      "linear_gain": 1.2177233798318297,
+      "pause_insert_seconds": 2.1799583333333334,
+      "source": "return-stifled-v3.wav",
+      "word_check": "Whisper base.en normalized words match; performance direction B selected by user"
+    }
+  },
+  "activation_authorization": "User selected B and explicitly requested application to the dream narration"
+}
